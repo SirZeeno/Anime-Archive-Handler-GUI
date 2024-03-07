@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AvaloniaProject">
+    <option name="projectPerEditor">
+      <map>
+        <entry key="Anime Archive Handler GUI/Anime Archive Handler GUI/Views/MainView.axaml" value="Anime Archive Handler GUI/Anime Archive Handler GUI.Browser/Anime Archive Handler GUI.Browser.csproj" />
+      </map>
+    </option>
+  </component>
+</project>

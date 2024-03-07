@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anime Archive Handler GUI", "Anime Archive Handler GUI\Anime Archive Handler GUI\Anime Archive Handler GUI.csproj", "{66211AEF-E727-4EED-896D-A4CEB5178B3F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anime Archive Handler GUI.Desktop", "Anime Archive Handler GUI\Anime Archive Handler GUI.Desktop\Anime Archive Handler GUI.Desktop.csproj", "{CB53D362-E489-4450-8886-C40DB22DD1CA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anime Archive Handler GUI.iOS", "Anime Archive Handler GUI\Anime Archive Handler GUI.iOS\Anime Archive Handler GUI.iOS.csproj", "{EAE4DA6E-C91D-485F-930F-C7815183D40C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anime Archive Handler GUI.Browser", "Anime Archive Handler GUI\Anime Archive Handler GUI.Browser\Anime Archive Handler GUI.Browser.csproj", "{0490E89F-F94C-4BDF-AAC0-2932A1D954E3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{66211AEF-E727-4EED-896D-A4CEB5178B3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66211AEF-E727-4EED-896D-A4CEB5178B3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66211AEF-E727-4EED-896D-A4CEB5178B3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66211AEF-E727-4EED-896D-A4CEB5178B3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CB53D362-E489-4450-8886-C40DB22DD1CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB53D362-E489-4450-8886-C40DB22DD1CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB53D362-E489-4450-8886-C40DB22DD1CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB53D362-E489-4450-8886-C40DB22DD1CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAE4DA6E-C91D-485F-930F-C7815183D40C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAE4DA6E-C91D-485F-930F-C7815183D40C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAE4DA6E-C91D-485F-930F-C7815183D40C}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{EAE4DA6E-C91D-485F-930F-C7815183D40C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAE4DA6E-C91D-485F-930F-C7815183D40C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAE4DA6E-C91D-485F-930F-C7815183D40C}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{0490E89F-F94C-4BDF-AAC0-2932A1D954E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0490E89F-F94C-4BDF-AAC0-2932A1D954E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0490E89F-F94C-4BDF-AAC0-2932A1D954E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0490E89F-F94C-4BDF-AAC0-2932A1D954E3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
