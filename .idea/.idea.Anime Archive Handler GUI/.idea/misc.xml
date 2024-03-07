@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectResources">
+    <resource url="XML" location="$APPLICATION_HOME_DIR$/lib/app.jar!/standardSchemas/XMLSchema.dtd" />
+    <resource url="XML2" location="$PROJECT_DIR$" />
+  </component>
+</project>

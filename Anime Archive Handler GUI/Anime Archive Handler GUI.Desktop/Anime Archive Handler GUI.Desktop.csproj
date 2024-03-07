@@ -20,6 +20,5 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Anime Archive Handler GUI\Anime Archive Handler GUI.csproj" />
-        <ProjectReference Include="..\Anime_Archive_Handler_GUI\Anime_Archive_Handler_GUI.csproj"/>
     </ItemGroup>
 </Project>
