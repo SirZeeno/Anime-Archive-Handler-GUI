@@ -3,6 +3,7 @@
   <component name="AvaloniaProject">
     <option name="projectPerEditor">
       <map>
+        <entry key="Anime Archive Handler GUI/Anime Archive Handler GUI/App.axaml" value="Anime Archive Handler GUI/Anime Archive Handler GUI.Browser/Anime Archive Handler GUI.Browser.csproj" />
         <entry key="Anime Archive Handler GUI/Anime Archive Handler GUI/Views/MainView.axaml" value="Anime Archive Handler GUI/Anime Archive Handler GUI.Browser/Anime Archive Handler GUI.Browser.csproj" />
       </map>
     </option>

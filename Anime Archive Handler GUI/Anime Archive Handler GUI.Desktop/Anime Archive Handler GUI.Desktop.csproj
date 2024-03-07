@@ -21,4 +21,10 @@
     <ItemGroup>
         <ProjectReference Include="..\Anime Archive Handler GUI\Anime Archive Handler GUI.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <None Update="app.manifest">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
 </Project>
