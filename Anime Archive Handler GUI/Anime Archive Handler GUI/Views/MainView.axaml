@@ -6,11 +6,61 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Anime_Archive_Handler_GUI.Views.MainView"
              x:DataType="vm:MainViewModel">
-  <Design.DataContext>
+    
+    <UserControl.Resources>
+        <!-- Define the ItemsPanelTemplate for WrapPanel within UserControl resources -->
+        <ItemsPanelTemplate x:Key="WrapPanelTemplate">
+            <WrapPanel Orientation="Horizontal" />
+        </ItemsPanelTemplate>
+    </UserControl.Resources>
+    
+    <Design.DataContext>
     <!-- This only sets the DataContext for the previewer in an IDE,
          to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
     <vm:MainViewModel />
   </Design.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
-  <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <!-- Header -->
+        <Panel Grid.Row="0" Background="Black">
+            <TextBlock Text="AHA" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20"/>
+        </Panel>
+
+        <!-- Main Content Area -->
+        <Grid Grid.Row="1" Background="#111" ColumnDefinitions="*,250">
+            <Grid Grid.Column="0" RowDefinitions="*,*">
+                <!-- Featured Section and Thumbnails Grid -->
+                <StackPanel Grid.Row="0">
+                    <!-- Carousel for featured content -->
+                    <Carousel Height="200">
+                        <Image x:Name="OnlineImage1"/>
+                        <!-- Featured content items here -->
+                    </Carousel>
+                </StackPanel>
+                <Grid Grid.Row="1" RowDefinitions="*,*" ColumnDefinitions="*,*">
+                    <Image Grid.Row="0" Grid.Column="0" x:Name="OnlineImage3"/>
+                    <Image Grid.Row="1" Grid.Column="1" x:Name="OnlineImage4"/>
+                </Grid>
+                <Grid x:Name="DynamicGrid">
+                    <!-- Initial content can go here if necessary -->
+                </Grid>
+            </Grid>
+
+            <!-- Sidebar for Most Viewed -->
+            <ListBox Grid.Column="1" Background="#222">
+                <Image x:Name="OnlineImage2"/>
+                <!-- Most viewed items here -->
+            </ListBox>
+        </Grid>
+
+        <!-- Footer -->
+        <Panel Grid.Row="2" Background="Black">
+            <!-- Footer content here -->
+        </Panel>
+    </Grid>
 </UserControl>
