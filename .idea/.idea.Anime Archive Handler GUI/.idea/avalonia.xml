@@ -5,6 +5,7 @@
       <map>
         <entry key="Anime Archive Handler GUI/Anime Archive Handler GUI/App.axaml" value="Anime Archive Handler GUI/Anime Archive Handler GUI.Browser/Anime Archive Handler GUI.Browser.csproj" />
         <entry key="Anime Archive Handler GUI/Anime Archive Handler GUI/Views/MainView.axaml" value="Anime Archive Handler GUI/Anime Archive Handler GUI.Desktop/Anime Archive Handler GUI.Desktop.csproj" />
+        <entry key="Anime Archive Handler GUI/Anime Archive Handler GUI/Views/MainWindow.axaml" value="Anime Archive Handler GUI/Anime Archive Handler GUI.Browser/Anime Archive Handler GUI.Browser.csproj" />
       </map>
     </option>
   </component>

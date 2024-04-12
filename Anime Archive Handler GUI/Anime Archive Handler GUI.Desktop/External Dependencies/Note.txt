@@ -1,0 +1,4 @@
+﻿Add a possibility that the program doesnt have to search through the entire folder structure to find the external dependencies, but instead search only a specific folder, and or cache the results so the program doesnt have to waste resources
+searching for those external dependencies again.
+
+https://storage.animetosho.org/dbexport/torrents-latest.txt.xz

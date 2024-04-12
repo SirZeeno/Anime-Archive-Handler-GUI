@@ -1,0 +1,1 @@
+﻿Add the ffmpeg.exe and ffprobe.exe in this directory for this program to run properly
