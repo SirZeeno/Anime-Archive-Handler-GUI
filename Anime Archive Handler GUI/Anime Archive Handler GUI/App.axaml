@@ -18,7 +18,7 @@
                     <Border Background="#4c4c4c" Opacity="60"></Border>
                 </Panel>
                 <StackPanel Orientation="Horizontal">
-                    <!-- Featured content items here -->
+                    <!-- Featured content items are here -->
                     <Image Source="{Binding ImagePath}" Stretch="UniformToFill"/>
                     <StackPanel Orientation="Vertical" >
                         <TextBlock Text="{Binding Title}" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="25"></TextBlock>
