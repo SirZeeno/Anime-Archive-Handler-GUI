@@ -1,11 +1,32 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:Anime_Archive_Handler_GUI"
+             xmlns:animeArchiveHandlerGui="clr-namespace:Anime_Archive_Handler_GUI"
+             xmlns:conv="clr-namespace:Anime_Archive_Handler_GUI.Converters"
              x:Class="Anime_Archive_Handler_GUI.App"
-             RequestedThemeVariant="Default">
+             RequestedThemeVariant="Dark">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
-
+             
+    <Application.Resources>
+        <conv:BitmapAssetValueConverter x:Key="BitmapConverter"></conv:BitmapAssetValueConverter>
+    </Application.Resources>
     <Application.DataTemplates>
+        <DataTemplate DataType="animeArchiveHandlerGui:CarouselItem">
+            <Panel>
+                <Panel>
+                    <Image Source="{Binding BgImagePath}" Stretch="UniformToFill" IsVisible="True"></Image>
+                    <Border Background="#4c4c4c" Opacity="60"></Border>
+                </Panel>
+                <StackPanel Orientation="Horizontal">
+                    <!-- Featured content items here -->
+                    <Image Source="{Binding ImagePath}" Stretch="UniformToFill"/>
+                    <StackPanel Orientation="Vertical" >
+                        <TextBlock Text="{Binding Title}" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="25"></TextBlock>
+                        <TextBlock Text="{Binding Description}" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="12"></TextBlock>
+                    </StackPanel>
+                </StackPanel>
+            </Panel>
+        </DataTemplate>
         <local:ViewLocator/>
     </Application.DataTemplates>
 
