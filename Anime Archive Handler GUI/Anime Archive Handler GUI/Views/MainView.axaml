@@ -100,7 +100,7 @@
                         <Popup x:Name="SearchResultsPopup" PlacementTarget="{Binding ElementName=SearchBox}" Placement="Bottom" Focusable="False" IsOpen="{Binding IsPopupOpen}">
                             <Border Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="1">
                                 <ListBox x:Name="SearchResultsListBox" MaxHeight="200" Width="{Binding Width, ElementName=SearchBox}">
-                                    <!-- Bind to your search results here -->
+                                    <!-- Bind to the search results here -->
                                 </ListBox>
                             </Border>
                         </Popup>
@@ -138,7 +138,7 @@
                 </StackPanel>
                 <ScrollViewer Grid.Row="2" x:Name="DynamicScrollViewer" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                     <Grid Name="DynamicGrid" HorizontalAlignment="Center" VerticalAlignment="Top">
-                        <!-- Initial content can go here if necessary -->
+                        <!-- Initial content can go here -->
                     </Grid>
                 </ScrollViewer>
             </Grid>
