@@ -41,8 +41,8 @@ public class TabIndexToDataTemplateConverter : IValueConverter
         switch (index)
         {
             case 0:
-                ConsoleExt.WriteLineWithPretext("Layout 1", ConsoleExt.OutputType.Info);
-                return Application.Current.FindResource("Layout1Template");
+                ConsoleExt.WriteLineWithPretext("Layout 0", ConsoleExt.OutputType.Info);
+                return Application.Current.FindResource("HomePage");
             case 1:
                 return Application.Current.FindResource("Layout2Template");
             // Add more cases for additional layouts

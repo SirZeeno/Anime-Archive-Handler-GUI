@@ -15,6 +15,7 @@ using Avalonia.Threading;
 using Avalonia.Controls;
 using Avalonia.VisualTree;
 using Avalonia.Controls.Primitives;
+using Avalonia.Markup.Xaml.Templates;
 using DynamicData;
 
 namespace Anime_Archive_Handler_GUI.Views;
@@ -31,6 +32,8 @@ public partial class MainView : UserControl
     private const int TotalImageWidth = ImageMaxWidth + PaddingThickness * 2; // Responsible for the column spacing that each square of the grid takes
     private const int TotalImageHeight = ImageMaxHeight + PaddingThickness * 2; // Responsible for the row spacing that each square of the grid takes
     private const int AnimeListViewColor = 32;
+    private TabControl tabControl;
+    private ContentControl contentControl;
     public ObservableCollection<YourResultType> SearchResults { get; } = new ObservableCollection<YourResultType>();
 
 
@@ -40,8 +43,11 @@ public partial class MainView : UserControl
         MainViewModel.AnimePreviewItems = new ObservableCollection<CarouselItem>(); 
         this.GetObservable(BoundsProperty).Subscribe(_ => AdjustGridLayout());
         LoadImageAsync("https://cdn.myanimelist.net/images/anime/4/19644l.jpg");
-        DataContext = this; // Only for example purposes, consider proper MVVM practices
+        DataContext = this; // Only for example purposes
         //AddColumnToAnimeList("https://cdn.myanimelist.net/images/anime/4/19644l.jpg", "Cowboy Bebop", 20); // Add three columns with an image in each
+        tabControl = this.FindControl<TabControl>("TabControl");
+        contentControl = this.FindControl<ContentControl>("ContentControl");
+        tabControl.SelectionChanged += TabControl_SelectionChanged;
         AdjustGridLayout();
         Dispatcher.UIThread.InvokeAsync(InitializeAsync);
     }
@@ -274,57 +280,46 @@ public partial class MainView : UserControl
         }
     }
     
-    private T FindElementByName<T>(Control control, string name) where T : Control
+    private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        switch (control)
+        // Get the selected tab item
+        TabItem selectedTab = (TabItem)tabControl.SelectedItem;
+
+        // Set the content of the ContentControl based on the selected tab
+        if (tabControl.SelectedIndex == 0)
         {
-            case T element when element.Name == name:
-                return element;
-            case ContentControl contentControl when contentControl.Content is Control content:
-            {
-                T foundElement = FindElementByName<T>(content, name);
-                return foundElement;
-            }
-            case ItemsControl itemsControl:
-            {
-                foreach (object item in itemsControl.Items)
-                {
-                    if (item is not Control itemControl) continue;
-                    T foundElement = FindElementByName<T>(itemControl, name);
-                    return foundElement;
-                }
-
-                break;
-            }
+            // Load content for Tab 1
+            Dispatcher.UIThread.Invoke(() => contentControl.ContentTemplate = (DataTemplate)Resources["HomePage"]);
+            Dispatcher.UIThread.InvokeAsync(InitializeAsync);
         }
-
-        return null;
     }
 
 
     public void Next(object source, RoutedEventArgs args)
     {
-        var Slides = ContentControl.FindControl<Carousel>("Slides");
-        if (Slides.SelectedItem == Slides.Items.Last())
+        var slides = ContentControl.FindControl<Carousel>("Slides");
+        if (slides == null) return;
+        if (slides.SelectedItem == slides.Items[^1])
         {
-            Slides.SelectedItem = Slides.Items.First();
+            slides.SelectedItem = slides.Items[0];
         }
         else
         {
-            Slides.Next();
+            slides.Next();
         }
     }
 
     public void Previous(object source, RoutedEventArgs args) 
     {
-        var Slides = ContentControl.FindControl<Carousel>("Slides");
-        if (Slides.SelectedItem == Slides.Items.First())
+        var slides = ContentControl.FindControl<Carousel>("Slides");
+        if (slides == null) return;
+        if (slides.SelectedItem == slides.Items.First())
         {
-            Slides.SelectedItem = Slides.Items.Last();
+            slides.SelectedItem = slides.Items.Last();
         }
         else
         {
-            Slides.Previous();
+            slides.Previous();
         }
     }
 }

@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Anime_Archive_Handler_GUI.ViewModels"
+             xmlns:animeArchiveHandlerGui="clr-namespace:Anime_Archive_Handler_GUI"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Anime_Archive_Handler_GUI.Views.MainView"
              x:DataType="vm:MainViewModel">
@@ -12,6 +13,7 @@
          to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainViewModel/>
     </Design.DataContext>
+    
     <UserControl.DataContext>
         <vm:MainViewModel/>
     </UserControl.DataContext>
@@ -69,10 +71,13 @@
     <UserControl.Resources>
         <vm:TabIndexToDataTemplateConverter x:Key="TabIndexToDataTemplateConverter"></vm:TabIndexToDataTemplateConverter>
         <vm:SharedViewModel x:Key="SharedViewModelInstance" x:DataType="vm:MainViewModel"/>
-        <DataTemplate x:Key="0">
+    </UserControl.Resources>
+    
+    <UserControl.DataTemplates>
+        <DataTemplate DataType="vm:MainViewModel">
             <Border BorderThickness="2" BorderBrush="#191919" CornerRadius="10" Margin="10" ClipToBounds="True" MaxHeight="335">
                 <Panel>
-                    <Carousel x:Name="Slides" ItemsSource="{ReflectionBinding AnimePreviewItems}">
+                    <Carousel x:Name="Slides" ItemsSource="{Binding AnimePreviewItems}">
                         <Carousel.PageTransition>
                             <CompositePageTransition>
                                 <PageSlide Duration="0:00:00.250" Orientation="Horizontal" />
@@ -86,7 +91,7 @@
                 </Panel>
             </Border>
         </DataTemplate>
-    </UserControl.Resources>
+    </UserControl.DataTemplates>
     
     <Grid Background="#191919" RowDefinitions="Auto,*,Auto">
 
@@ -112,7 +117,7 @@
                         </Button>
                     </Grid>
                 </Border>
-                <TabControl SelectedIndex="{Binding Source={StaticResource SharedViewModelInstance}, Path=SelectedTabIndex}">
+                <TabControl Name="TabControl" SelectedIndex="{Binding Source={StaticResource SharedViewModelInstance}, Path=SelectedTabIndex}">
                     <TabItem Header="Genres" FontWeight="Heavy" Height="20" FontSize="15"></TabItem>
                     <TabItem Header="Types" FontWeight="Heavy" Height="20" FontSize="15"></TabItem>
                     <TabItem Header="Updated" FontWeight="Heavy" Height="20" FontSize="15"></TabItem>
@@ -130,10 +135,10 @@
         <Grid Grid.Row="1" Background="#191919" ColumnDefinitions="*,250">
             <Grid Grid.Column="0" RowDefinitions="335,40,*">
                 <!-- Featured Section and Thumbnails Grid -->
-                <ContentControl Name="ContentControl" Grid.Row="0" ContentTemplate="{StaticResource 0}"/>
+                <ContentControl Name="ContentControl" Grid.Row="0" ContentTemplate="{Binding SelectedIndex, Converter={StaticResource TabIndexToDataTemplateConverter}}"></ContentControl>
 
 
-                <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="10" x:Name="MainMenuButtonStackPanel">
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="10" x:Name="AnimeMenuButtonStackPanel">
                     
                 </StackPanel>
                 <ScrollViewer Grid.Row="2" x:Name="DynamicScrollViewer" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
