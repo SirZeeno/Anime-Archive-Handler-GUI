@@ -17,6 +17,8 @@ public class CarouselItem(Bitmap imagePath, Bitmap bgImagePath, string title, st
     public string Description { get; set; } = description;
 }
 
+
+
 public abstract class Animetosho
 {
     public int? id { get; set; }
