@@ -69,15 +69,11 @@
     </UserControl.Styles>
     
     <UserControl.Resources>
-        <vm:TabIndexToDataTemplateConverter x:Key="TabIndexToDataTemplateConverter"></vm:TabIndexToDataTemplateConverter>
         <vm:SharedViewModel x:Key="SharedViewModelInstance" x:DataType="vm:MainViewModel"/>
-    </UserControl.Resources>
-    
-    <UserControl.DataTemplates>
-        <DataTemplate DataType="vm:MainViewModel">
+        <DataTemplate x:Key="HomePage" DataType="animeArchiveHandlerGui:AnimeCarousel">
             <Border BorderThickness="2" BorderBrush="#191919" CornerRadius="10" Margin="10" ClipToBounds="True" MaxHeight="335">
                 <Panel>
-                    <Carousel x:Name="Slides" ItemsSource="{Binding AnimePreviewItems}">
+                    <Carousel x:Name="Slides" ItemsSource="{Binding Items}">
                         <Carousel.PageTransition>
                             <CompositePageTransition>
                                 <PageSlide Duration="0:00:00.250" Orientation="Horizontal" />
@@ -91,7 +87,7 @@
                 </Panel>
             </Border>
         </DataTemplate>
-    </UserControl.DataTemplates>
+    </UserControl.Resources>
     
     <Grid Background="#191919" RowDefinitions="Auto,*,Auto">
 
@@ -117,14 +113,14 @@
                         </Button>
                     </Grid>
                 </Border>
-                <TabControl Name="TabControl" SelectedIndex="{Binding Source={StaticResource SharedViewModelInstance}, Path=SelectedTabIndex}">
+                <TabStrip Name="HeaderTabControl" SelectedIndex="{Binding Source={StaticResource SharedViewModelInstance}, Path=SelectedTabIndex}">
                     <TabItem Header="Genres" FontWeight="Heavy" Height="20" FontSize="15"></TabItem>
                     <TabItem Header="Types" FontWeight="Heavy" Height="20" FontSize="15"></TabItem>
                     <TabItem Header="Updated" FontWeight="Heavy" Height="20" FontSize="15"></TabItem>
                     <TabItem Header="Added" FontWeight="Heavy" Height="20" FontSize="15"></TabItem>
                     <TabItem Header="Ongoing" FontWeight="Heavy" Height="20" FontSize="15"></TabItem>
                     <TabItem Header="Upcoming" FontWeight="Heavy" Height="20" FontSize="15"></TabItem>
-                </TabControl>
+                </TabStrip>
                 
                 <TextBlock Text="{Binding Source={StaticResource SharedViewModelInstance}, Path=SelectedTabIndex}"/>
             </StackPanel>
@@ -135,7 +131,7 @@
         <Grid Grid.Row="1" Background="#191919" ColumnDefinitions="*,250">
             <Grid Grid.Column="0" RowDefinitions="335,40,*">
                 <!-- Featured Section and Thumbnails Grid -->
-                <ContentControl Name="ContentControl" Grid.Row="0" ContentTemplate="{Binding SelectedIndex, Converter={StaticResource TabIndexToDataTemplateConverter}}"></ContentControl>
+                <ContentControl Name="AnimePreviewContentControl" Grid.Row="0"></ContentControl>
 
 
                 <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="10" x:Name="AnimeMenuButtonStackPanel">
