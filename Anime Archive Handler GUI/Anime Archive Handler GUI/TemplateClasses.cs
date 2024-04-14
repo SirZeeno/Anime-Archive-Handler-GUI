@@ -1,4 +1,5 @@
-﻿using Avalonia.Media.Imaging;
+﻿using System.Collections.ObjectModel;
+using Avalonia.Media.Imaging;
 using JikanDotNet;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -17,7 +18,10 @@ public class CarouselItem(Bitmap imagePath, Bitmap bgImagePath, string title, st
     public string Description { get; set; } = description;
 }
 
-
+public class AnimeCarousel(ObservableCollection<CarouselItem> items)
+{
+    public ObservableCollection<CarouselItem>? Items { get; set; } = items;
+}
 
 public abstract class Animetosho
 {

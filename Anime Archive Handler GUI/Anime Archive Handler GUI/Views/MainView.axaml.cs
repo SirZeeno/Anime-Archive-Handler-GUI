@@ -32,9 +32,7 @@ public partial class MainView : UserControl
     private const int TotalImageWidth = ImageMaxWidth + PaddingThickness * 2; // Responsible for the column spacing that each square of the grid takes
     private const int TotalImageHeight = ImageMaxHeight + PaddingThickness * 2; // Responsible for the row spacing that each square of the grid takes
     private const int AnimeListViewColor = 32;
-    private TabControl tabControl;
-    private ContentControl contentControl;
-    public ObservableCollection<YourResultType> SearchResults { get; } = new ObservableCollection<YourResultType>();
+    private ObservableCollection<YourResultType> SearchResults { get; } = new ObservableCollection<YourResultType>();
 
 
     public MainView()
@@ -45,9 +43,7 @@ public partial class MainView : UserControl
         LoadImageAsync("https://cdn.myanimelist.net/images/anime/4/19644l.jpg");
         DataContext = this; // Only for example purposes
         //AddColumnToAnimeList("https://cdn.myanimelist.net/images/anime/4/19644l.jpg", "Cowboy Bebop", 20); // Add three columns with an image in each
-        tabControl = this.FindControl<TabControl>("TabControl");
-        contentControl = this.FindControl<ContentControl>("ContentControl");
-        tabControl.SelectionChanged += TabControl_SelectionChanged;
+        HeaderTabControl.SelectionChanged += TabControl_SelectionChanged;
         AdjustGridLayout();
         Dispatcher.UIThread.InvokeAsync(InitializeAsync);
     }
@@ -283,22 +279,29 @@ public partial class MainView : UserControl
     private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         // Get the selected tab item
-        TabItem selectedTab = (TabItem)tabControl.SelectedItem;
+        TabItem selectedTab = (TabItem)HeaderTabControl.SelectedItem;
 
         // Set the content of the ContentControl based on the selected tab
-        if (tabControl.SelectedIndex == 0)
+        if (HeaderTabControl.SelectedIndex == 0)
         {
             // Load content for Tab 1
-            Dispatcher.UIThread.Invoke(() => contentControl.ContentTemplate = (DataTemplate)Resources["HomePage"]);
+            ConsoleExt.WriteLineWithPretext("HomePage Tab selected", ConsoleExt.OutputType.Info);
             Dispatcher.UIThread.InvokeAsync(InitializeAsync);
+            Dispatcher.UIThread.Invoke(() => AnimePreviewContentControl.ContentTemplate = (DataTemplate)Resources["HomePage"]);
+            Dispatcher.UIThread.Invoke(() => AnimePreviewContentControl.Content = new AnimeCarousel(MainViewModel.AnimePreviewItems));
         }
     }
 
 
     public void Next(object source, RoutedEventArgs args)
     {
-        var slides = ContentControl.FindControl<Carousel>("Slides");
-        if (slides == null) return;
+        var slides = AnimePreviewContentControl.FindControl<Carousel>("Slides");
+        if (slides == null)
+        {
+            ConsoleExt.WriteLineWithPretext("Slides not found", ConsoleExt.OutputType.Info);
+            slides = AnimePreviewContentControl.FindControl<Carousel>("Slides");
+            return;
+        }
         if (slides.SelectedItem == slides.Items[^1])
         {
             slides.SelectedItem = slides.Items[0];
@@ -311,7 +314,7 @@ public partial class MainView : UserControl
 
     public void Previous(object source, RoutedEventArgs args) 
     {
-        var slides = ContentControl.FindControl<Carousel>("Slides");
+        var slides = AnimePreviewContentControl.FindControl<Carousel>("Slides");
         if (slides == null) return;
         if (slides.SelectedItem == slides.Items.First())
         {
