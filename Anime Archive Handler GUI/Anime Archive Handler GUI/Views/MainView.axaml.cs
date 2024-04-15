@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Avalonia;
 using System.Linq;
@@ -12,9 +11,6 @@ using System.Threading.Tasks;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Threading;
-using Avalonia.Controls;
-using Avalonia.VisualTree;
-using Avalonia.Controls.Primitives;
 using Avalonia.Markup.Xaml.Templates;
 using DynamicData;
 
@@ -289,40 +285,6 @@ public partial class MainView : UserControl
             Dispatcher.UIThread.InvokeAsync(InitializeAsync);
             Dispatcher.UIThread.Invoke(() => AnimePreviewContentControl.ContentTemplate = (DataTemplate)Resources["HomePage"]);
             Dispatcher.UIThread.Invoke(() => AnimePreviewContentControl.Content = new AnimeCarousel(MainViewModel.AnimePreviewItems));
-        }
-    }
-
-
-    public void Next(object source, RoutedEventArgs args)
-    {
-        var slides = AnimePreviewContentControl.FindControl<Carousel>("Slides");
-        if (slides == null)
-        {
-            ConsoleExt.WriteLineWithPretext("Slides not found", ConsoleExt.OutputType.Info);
-            slides = AnimePreviewContentControl.FindControl<Carousel>("Slides");
-            return;
-        }
-        if (slides.SelectedItem == slides.Items[^1])
-        {
-            slides.SelectedItem = slides.Items[0];
-        }
-        else
-        {
-            slides.Next();
-        }
-    }
-
-    public void Previous(object source, RoutedEventArgs args) 
-    {
-        var slides = AnimePreviewContentControl.FindControl<Carousel>("Slides");
-        if (slides == null) return;
-        if (slides.SelectedItem == slides.Items.First())
-        {
-            slides.SelectedItem = slides.Items.Last();
-        }
-        else
-        {
-            slides.Previous();
         }
     }
 }
