@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using System.Linq;
+using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using JikanDotNet;
 
@@ -21,6 +23,30 @@ public class CarouselItem(Bitmap imagePath, Bitmap bgImagePath, string title, st
 public class AnimeCarousel(ObservableCollection<CarouselItem> items)
 {
     public ObservableCollection<CarouselItem>? Items { get; set; } = items;
+    
+    public void Next(Carousel source)
+    {
+        if (source.SelectedItem == source.Items[^1])
+        {
+            source.SelectedItem = source.Items[0];
+        }
+        else
+        {
+            source.Next();
+        }
+    }
+
+    public void Previous(Carousel source) 
+    {
+        if (source.SelectedItem == source.Items.First())
+        {
+            source.SelectedItem = source.Items.Last();
+        }
+        else
+        {
+            source.Previous();
+        }
+    }
 }
 
 public abstract class Animetosho

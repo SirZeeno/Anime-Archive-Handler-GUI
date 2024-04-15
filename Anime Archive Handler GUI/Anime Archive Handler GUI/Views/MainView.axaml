@@ -81,8 +81,8 @@
                         </Carousel.PageTransition>
                     </Carousel>
                     <Panel Margin="10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="80">
-                        <Button Classes="transparentButton" Background="Transparent" FontWeight="Bold" FontSize="30" Click="Previous">&lt;</Button>
-                        <Button Classes="transparentButton" Background="Transparent" FontWeight="Bold" FontSize="30" Click="Next" HorizontalAlignment="Right">&gt;</Button>
+                        <Button Classes="transparentButton" Command="{Binding Previous}" CommandParameter="{Binding ElementName=Slides}" Background="Transparent" FontWeight="Bold" FontSize="30">&lt;</Button>
+                        <Button Classes="transparentButton" Command="{Binding Next}" CommandParameter="{Binding ElementName=Slides}" Background="Transparent" FontWeight="Bold" FontSize="30" HorizontalAlignment="Right">&gt;</Button>
                     </Panel>
                 </Panel>
             </Border>
