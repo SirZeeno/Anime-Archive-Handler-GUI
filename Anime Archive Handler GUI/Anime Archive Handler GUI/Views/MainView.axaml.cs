@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Avalonia;
 using System.Linq;
@@ -8,7 +9,6 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
 using System.Threading.Tasks;
-using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Threading;
@@ -20,7 +20,6 @@ namespace Anime_Archive_Handler_GUI.Views;
 using static Helpers.DailyFeatured;
 using static Helpers.ImageHelper;
 using ViewModels;
-using Helpers;
 
 public partial class MainView : UserControl
 {
@@ -148,25 +147,30 @@ public partial class MainView : UserControl
         int columns = Math.Max(1, (int)(availableWidth / (TotalImageWidth)));
 
         // Calculate the required number of rows based on the total number of children and columns
-        int totalImages = DynamicGrid.Children.Count;
-        var rows = (totalImages + columns - 1) / columns; // Ceiling of division
+        if (AnimeItemsControl.ItemsPanelRoot is Grid testGrid)
+        {
+            int totalImages = AnimeItemsControl.ItemCount;
+            var rows = (totalImages + columns - 1) / columns; // Ceiling of division
 
-        UpdateGridDefinitions(columns, rows);
+            UpdateGridDefinitions(columns, rows);
+        }
+        
         RearrangeGridItems(columns);
     }
 
     private void UpdateGridDefinitions(int columns, int rows)
     {
-        DynamicGrid.ColumnDefinitions.Clear();
+        if (AnimeItemsControl.ItemsPanelRoot is not Grid testGrid) throw new ArgumentNullException(nameof(testGrid));
+        testGrid.ColumnDefinitions.Clear();
         for (int col = 0; col < columns; col++)
         {
-            DynamicGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            testGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
         }
 
-        DynamicGrid.RowDefinitions.Clear();
+        testGrid.RowDefinitions.Clear();
         for (int row = 0; row < rows; row++)
         {
-            DynamicGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            testGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
         }
     }
     
@@ -181,23 +185,26 @@ public partial class MainView : UserControl
         };
         
         // Remove the TextBlock from the grid if it exists
-        if (DynamicGrid.Children.Count > 1)
+        if (AnimeItemsControl.ItemCount > 1)
         {
-            var textBlockToRemove = DynamicGrid.Children.OfType<TextBlock>().Where(child => child.Name == "NoAnimeFoundTextBlock");
-            DynamicGrid.Children.RemoveAll(textBlockToRemove);
+            var textBlockToRemove = AnimeItemsControl.Items.OfType<TextBlock>().Where(child => child.Name == "NoAnimeFoundTextBlock");
+            //DynamicGrid.Children.RemoveAll(textBlockToRemove);
+            //AnimeItemsControl.Items.Remove(textBlock); //need to fix this to remove from itemsource instead of items
         }
 
-        for (int i = 0; i < DynamicGrid.Children.Count; i++)
+        ConsoleExt.WriteLineWithPretext($"Count: {AnimeItemsControl.ItemCount}", ConsoleExt.OutputType.Info);
+        for (int i = 0; i < AnimeItemsControl.ItemCount; i++)
         {
-            var child = DynamicGrid.Children[i];
+            var child = AnimeItemsControl.ContainerFromIndex(i);
+            if (child == null) continue;
             Grid.SetColumn(child, i % columns);
             Grid.SetRow(child, i / columns);
         }
 
         // Add the "No anime found" TextBlock to the grid
-        if (DynamicGrid.Children.Count > 0) return;
+        if (AnimeItemsControl.ItemCount > 0) return;
         ConsoleExt.WriteLineWithPretext("No anime found", ConsoleExt.OutputType.Info);
-        DynamicGrid.Children.Add(textBlock);
+        //AnimeItemsControl.ItemsSource = new List<TextBlock> { textBlock };
     }
     
     public void AddColumnToAnimeList(string animeImageUrl, string animeName, int subEpisodeCount, int dubEpisodeCount, Language subOrDub = default, int columnCount = 1)
