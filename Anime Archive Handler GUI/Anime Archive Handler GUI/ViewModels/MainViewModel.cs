@@ -8,11 +8,11 @@ namespace Anime_Archive_Handler_GUI.ViewModels;
 public class MainViewModel
 {
     public static ObservableCollection<CarouselItem>? AnimePreviewItems { get; set; }
+    public static ObservableCollection<AnimeDisplayItem> DynamicAnimeItemGrid { get; set; } = [];
     
     public ObservableCollection<YourResultType> SearchResults { get; } = [];
     public bool IsPopupOpen { get; set; }
 
-    public static ObservableCollection<AnimeDisplayItem> DynamicAnimeItemGrid { get; set; } = [];
     
     public static int SelectedIndex { get; set; }
     
