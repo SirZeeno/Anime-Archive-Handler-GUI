@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Anime_Archive_Handler;
+using Anime_Archive_Handler_GUI.Views;
 using FFMpegCore;
 using Spectre.Console;
 
@@ -40,10 +40,6 @@ using static CommonSettings;
 internal abstract partial class AnimeArchiveHandler
 {
     private static readonly bool MultiplePartsInOneFolder = bool.Parse(GetSetting("Execution Settings", "MultiplePartsInOneFolder"));
-
-    private static Language? _subOrDub;
-    public static Language? GetSubOrDub() { return _subOrDub;}
-    public static void SetSubOrDub(Language subOrDub) { _subOrDub = subOrDub;}
     
     private static string? _animeName;
     public static string? GetAnimeName() { return _animeName;}
@@ -213,25 +209,25 @@ internal abstract partial class AnimeArchiveHandler
     // Creates all the folders if they dont already exist and is used for the folder structure that is the output and store folder for the entire program
     private static void DirectoryCreator()
     {
-        if (_subOrDub == null || _animeName == null || _seasonNumbers!.Length == 0)
+        if (GetSubOrDub() == null || _animeName == null || _seasonNumbers!.Length == 0)
         {
-            ConsoleExt.WriteLineWithPretext($"Anime Name: {_animeName}, Sub or Dub: {_subOrDub.ToString()}, or Season Number: {_seasonNumbers!.Length} is null",
+            ConsoleExt.WriteLineWithPretext($"Anime Name: {_animeName}, Sub or Dub: {GetSubOrDub().ToString()}, or Season Number: {_seasonNumbers!.Length} is null",
                 ConsoleExt.OutputType.Error);
             return;
         }
 
         if (!Directory.Exists(AnimeOutputFolder)) Directory.CreateDirectory(AnimeOutputFolder);
-        if (!Directory.Exists(Path.Combine(AnimeOutputFolder, _subOrDub.ToString()!)))
-            Directory.CreateDirectory(Path.Combine(AnimeOutputFolder, _subOrDub.ToString()!));
-        if (!Directory.Exists(Path.Combine(AnimeOutputFolder, _subOrDub.ToString()!, _animeName)))
-            Directory.CreateDirectory(Path.Combine(AnimeOutputFolder, _subOrDub.ToString()!, _animeName));
+        if (!Directory.Exists(Path.Combine(AnimeOutputFolder, GetSubOrDub().ToString()!)))
+            Directory.CreateDirectory(Path.Combine(AnimeOutputFolder, GetSubOrDub().ToString()!));
+        if (!Directory.Exists(Path.Combine(AnimeOutputFolder, GetSubOrDub().ToString()!, _animeName)))
+            Directory.CreateDirectory(Path.Combine(AnimeOutputFolder, GetSubOrDub().ToString()!, _animeName));
 
         foreach (var season in _seasonNumbers)
         {
-            if (Directory.Exists(Path.Combine(AnimeOutputFolder, _subOrDub.ToString()!, _animeName, @"\Season ",
+            if (Directory.Exists(Path.Combine(AnimeOutputFolder, GetSubOrDub().ToString()!, _animeName, @"\Season ",
                     season.ToString())))
                 return;
-            Directory.CreateDirectory(Path.Combine(AnimeOutputFolder, _subOrDub.ToString()!, _animeName, @"\Season ",
+            Directory.CreateDirectory(Path.Combine(AnimeOutputFolder, GetSubOrDub().ToString()!, _animeName, @"\Season ",
                 season.ToString()));
         }
     }
@@ -249,7 +245,7 @@ internal abstract partial class AnimeArchiveHandler
                 var fileExtension = new FileInfo(sourceFile).Extension;
                 if (_animeName != null)
                 {
-                    var destinationFile = Path.Combine(AnimeOutputFolder, _subOrDub.ToString()!, _animeName, "Season " + season, _animeName + " #" + episodeNumber + fileExtension);
+                    var destinationFile = Path.Combine(AnimeOutputFolder, GetSubOrDub().ToString()!, _animeName, "Season " + season, _animeName + " #" + episodeNumber + fileExtension);
                     if (IsValidToMove(sourceFile, destinationFile))
                     {
                         try
@@ -292,12 +288,6 @@ internal abstract partial class AnimeArchiveHandler
                 episodeNumber++;
             }
         }
-    }
-
-    internal enum Language
-    {
-        Sub,
-        Dub
     }
 
     [System.Text.RegularExpressions.GeneratedRegex(@"\d+")]

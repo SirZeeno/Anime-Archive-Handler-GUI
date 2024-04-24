@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Anime_Archive_Handler_GUI.ViewModels"
              xmlns:animeArchiveHandlerGui="clr-namespace:Anime_Archive_Handler_GUI"
+             xmlns:ui="using:FluentAvalonia.UI.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Anime_Archive_Handler_GUI.Views.MainView"
              x:DataType="vm:MainViewModel">
@@ -28,12 +29,20 @@
         </Style>
         
         <!-- Style for hover effect -->
-        <Style Selector="Button.transparentButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Style Selector="Button.transparentButton:pointerover /template/ ui|FABorder#Root">
             <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+        </Style>
+        <Style Selector="Button.transparentButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Foreground" Value="#96b6d0"/>
         </Style>
         
-        <Style Selector="Button.transparentIcon:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Style Selector="Button.transparentIcon">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+        </Style>
+        
+        <Style Selector="Button.transparentIcon:pointerover /template/ ui|FABorder#Root">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
         </Style>
@@ -87,14 +96,39 @@
                 </Panel>
             </Border>
         </DataTemplate>
+        
+        <DataTemplate x:Key="HomePageAnimeDynamicGridItem" DataType="animeArchiveHandlerGui:AnimeDisplayItem">
+            <Border Name="{Binding AnimeName}" CornerRadius="5" ClipToBounds="True" Margin="10" Background="#202020">
+                <Grid RowDefinitions="Auto,Auto">
+                    <Panel Grid.Row="0" Name="ImagePanel">
+                        <Image MaxHeight="335" MaxWidth="225" MinHeight="335" MinWidth="225" Stretch="UniformToFill" Source="{Binding AnimeImage}"/>
+                        <Border Background="{Binding LinearGradientBrush}" Height="335" Width="225"/>
+                        <StackPanel Name = "SubDubStackPanel" Background="Transparent" Height="40" Width="80" VerticalAlignment="Bottom" HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,0,0,10">
+                            <StackPanel Name="DubStackPanel" Background="#313131" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2,0,0,0" Orientation="Horizontal">
+                                <ui:SymbolIcon Symbol="Microphone" FontSize="20" Foreground="White" HorizontalAlignment="Center"/>
+                                <TextBlock Text="{Binding DubEpisodeCount}" Foreground="White" FontSize="16"/>
+                            </StackPanel>
+                            <StackPanel Name="SubStackPanel" Background="#313131" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2,0,0,0" Orientation="Horizontal">
+                                <ui:SymbolIcon Symbol="ClosedCaption" FontSize="20" Foreground="White" HorizontalAlignment="Center"/>
+                                <TextBlock Text="{Binding SubEpisodeCount}" Foreground="White" FontSize="16"/>
+                            </StackPanel>
+                        </StackPanel>
+                        <TextBlock Text="{Binding AnimeName}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,10"/>
+                    </Panel>
+                </Grid>
+            </Border>
+        </DataTemplate>
     </UserControl.Resources>
     
-    <Grid Background="#191919" RowDefinitions="Auto,*,Auto">
+    <Grid Background="#191919" RowDefinitions="Auto,Auto,*,Auto">
 
+        <Border Grid.Row="0" Height="32">
+            <TextBlock Text="{Binding Title, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" VerticalAlignment="Center" Margin="10 0"></TextBlock>
+        </Border>
         <!-- Header -->
-        <Border Grid.Row="0" Background="Transparent" BoxShadow="0 0 10 5 #161616" Margin="0,0,0,10">
+        <Border Grid.Row="1" MaxHeight="40" Background="Transparent" BoxShadow="0 0 10 5 #161616" Margin="0,0,0,10">
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="AHA" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" FontWeight="Heavy" Margin="10,0,0,0"/>
+                <Button x:Name="HomeButton" Classes="transparentButton" Background="Transparent" BorderBrush="Transparent" Margin="10,0,0,0" Content="AHA" FontSize="20" FontWeight="Heavy" VerticalAlignment="Center"/>
                 <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="5" Padding="2" Margin="10,0,0,0" Background="#141414">
                     <Grid>
                         <TextBox Classes="transparentTextbox" x:Name="SearchBox" VerticalAlignment="Center" Background="Transparent" BorderThickness="0" Margin="55,0,25,0" Width="200" Watermark="Search Anime.." KeyUp="SearchBox_KeyUp"/>
@@ -105,15 +139,16 @@
                                 </ListBox>
                             </Border>
                         </Popup>
-                        <Button Classes="transparentIcon" Width="20" Height="20" HorizontalAlignment="Right" Margin="25,0,5,0" VerticalAlignment="Center" Background="Transparent">
+                        <Button Classes="transparentIcon" Width="25" Height="25" HorizontalAlignment="Right" Margin="25,0,5,0" VerticalAlignment="Center" Background="Transparent">
                             <Image Source="/Assets/Magnifying-Glass-256.png" Width="20" Height="20"></Image> <!-- Search Button icon here -->
                         </Button>
-                        <Button x:Name="FilterButton" Width="50" Height="20" HorizontalAlignment="Left" Margin="5,0,0,0" VerticalAlignment="Center" Padding="5, 0,5,0">
+                        <Button x:Name="FilterButton" Width="50" Height="25" HorizontalAlignment="Left" Margin="5,0,0,0" VerticalAlignment="Center" Padding="5, 0,5,0">
                             <TextBlock Text="Filter" HorizontalAlignment="Center" ClipToBounds="True" Opacity=".5"></TextBlock>
                         </Button>
                     </Grid>
                 </Border>
-                <TabStrip Name="HeaderTabControl" SelectedIndex="{Binding Source={StaticResource SharedViewModelInstance}, Path=SelectedTabIndex}">
+                <TabStrip Name="HeaderTabControl" SelectedIndex="{Binding Source={StaticResource SharedViewModelInstance}, Path=SelectedAnimeHeaderMenuTabIndex}">
+                    <TabItem Header="Home" FontWeight="Heavy" Height="20" FontSize="15" IsVisible="False"></TabItem>
                     <TabItem Header="Genres" FontWeight="Heavy" Height="20" FontSize="15"></TabItem>
                     <TabItem Header="Types" FontWeight="Heavy" Height="20" FontSize="15"></TabItem>
                     <TabItem Header="Updated" FontWeight="Heavy" Height="20" FontSize="15"></TabItem>
@@ -122,23 +157,54 @@
                     <TabItem Header="Upcoming" FontWeight="Heavy" Height="20" FontSize="15"></TabItem>
                 </TabStrip>
                 
-                <TextBlock Text="{Binding Source={StaticResource SharedViewModelInstance}, Path=SelectedTabIndex}"/>
+                <TextBlock Text="{Binding Source={StaticResource SharedViewModelInstance}, Path=SelectedAnimeHeaderMenuTabIndex}"/>
             </StackPanel>
         </Border>
 
         <!-- selection color is #4c4c4c -->
         <!-- Main Content Area -->
-        <Grid Grid.Row="1" Background="#191919" ColumnDefinitions="*,250">
-            <Grid Grid.Column="0" RowDefinitions="335,40,*">
+        <Grid Grid.Row="2" Background="#191919" ColumnDefinitions="*,250">
+            <Grid Grid.Column="0" RowDefinitions="Auto,40,*">
                 <!-- Featured Section and Thumbnails Grid -->
                 <ContentControl Name="AnimePreviewContentControl" Grid.Row="0"></ContentControl>
 
 
-                <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="10" x:Name="AnimeMenuButtonStackPanel">
-                    
+                <StackPanel Grid.Row="1" Orientation="Horizontal" x:Name="AnimeMenuButtonStackPanel">
+                    <TabStrip Name="AnimeTypeTabControl" SelectedIndex="{Binding Source={StaticResource SharedViewModelInstance}, Path=SelectedAnimeTypeMenuTabIndex}" HorizontalAlignment="Right" FlowDirection="LeftToRight">
+                        <TabItem Header="All" FontWeight="Heavy" Height="20" FontSize="15" BorderThickness="1" BorderBrush="Black"></TabItem>
+                        <TabItem Header="Sub" FontWeight="Heavy" Height="20" FontSize="15" BorderThickness="1" BorderBrush="Black"></TabItem>
+                        <TabItem Header="Dub" FontWeight="Heavy" Height="20" FontSize="15" BorderThickness="1" BorderBrush="Black"></TabItem>
+                        <TabItem Header="Chinese" FontWeight="Heavy" Height="20" FontSize="15" BorderThickness="1" BorderBrush="Black"></TabItem>
+                        <TabItem Header="Trending" FontWeight="Heavy" Height="20" FontSize="15" BorderThickness="1" BorderBrush="Black"></TabItem>
+                    </TabStrip>
                 </StackPanel>
                 <ScrollViewer Grid.Row="2" x:Name="DynamicScrollViewer" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                     <Grid Name="DynamicGrid" HorizontalAlignment="Center" VerticalAlignment="Top">
+                        <ItemsControl ItemsSource="{Binding DynamicAnimeItemGrid}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="animeArchiveHandlerGui:AnimeDisplayItem">
+                                    <Border Name="{Binding AnimeName}" CornerRadius="5" ClipToBounds="True" Margin="10" Background="#202020">
+                                        <Grid RowDefinitions="Auto,Auto">
+                                            <Panel Grid.Row="0" Name="ImagePanel">
+                                                <Image MaxHeight="335" MaxWidth="225" MinHeight="335" MinWidth="225" Stretch="UniformToFill" Source="{Binding AnimeImage}"/>
+                                                <Border Background="{Binding LinearGradientBrush}" Height="335" Width="225"/>
+                                                <StackPanel Name = "SubDubStackPanel" Background="Transparent" Height="40" Width="80" VerticalAlignment="Bottom" HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,0,0,10">
+                                                    <StackPanel Name="DubStackPanel" Background="#313131" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2,0,0,0" Orientation="Horizontal">
+                                                        <ui:SymbolIcon Symbol="Microphone" FontSize="20" Foreground="White" HorizontalAlignment="Center"/>
+                                                        <TextBlock Text="{Binding DubEpisodeCount}" Foreground="White" FontSize="16"/>
+                                                    </StackPanel>
+                                                    <StackPanel Name="SubStackPanel" Background="#313131" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2,0,0,0" Orientation="Horizontal">
+                                                        <ui:SymbolIcon Symbol="ClosedCaption" FontSize="20" Foreground="White" HorizontalAlignment="Center"/>
+                                                        <TextBlock Text="{Binding SubEpisodeCount}" Foreground="White" FontSize="16"/>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                                <TextBlock Text="{Binding AnimeName}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,10"/>
+                                            </Panel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                         <!-- Initial content can go here -->
                     </Grid>
                 </ScrollViewer>
@@ -153,7 +219,7 @@
         </Grid>
 
         <!-- Footer -->
-        <StackPanel Grid.Row="2" Background="Black">
+        <StackPanel Grid.Row="3" Background="Black">
             <TextBlock Text="Footer" HorizontalAlignment="Center"></TextBlock>
             <!-- Footer content here -->
         </StackPanel>

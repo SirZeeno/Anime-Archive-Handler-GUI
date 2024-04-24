@@ -9,16 +9,28 @@ namespace Anime_Archive_Handler_GUI.ViewModels;
 
 public class SharedViewModel : INotifyPropertyChanged
 {
-    private int _selectedTabIndex;
+    private int _selectedAnimeHeaderMenuTabIndex;
+    private int _selectedAnimeTypeMenuTabIndex;
 
-    public int SelectedTabIndex
+    public int SelectedAnimeHeaderMenuTabIndex
     {
-        get => _selectedTabIndex;
+        get => _selectedAnimeHeaderMenuTabIndex;
         set
         {
-            if (_selectedTabIndex == value) return;
-            _selectedTabIndex = value;
-            OnPropertyChanged(nameof(SelectedTabIndex));
+            if (_selectedAnimeHeaderMenuTabIndex == value) return;
+            _selectedAnimeHeaderMenuTabIndex = value;
+            OnPropertyChanged(nameof(SelectedAnimeHeaderMenuTabIndex));
+        }
+    }
+    
+    public int SelectedAnimeTypeMenuTabIndex
+    {
+        get => _selectedAnimeHeaderMenuTabIndex;
+        set
+        {
+            if (_selectedAnimeTypeMenuTabIndex == value) return;
+            _selectedAnimeTypeMenuTabIndex = value;
+            OnPropertyChanged(nameof(SelectedAnimeTypeMenuTabIndex));
         }
     }
 
@@ -27,32 +39,5 @@ public class SharedViewModel : INotifyPropertyChanged
     protected virtual void OnPropertyChanged(string propertyName)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-}
-
-public class TabIndexToDataTemplateConverter : IValueConverter
-{
-    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
-    {
-        int index = (int)value;
-        ConsoleExt.WriteLineWithPretext(index, ConsoleExt.OutputType.Info);
-        
-        // Select data template based on tab index
-        switch (index)
-        {
-            case 0:
-                ConsoleExt.WriteLineWithPretext("Layout 0", ConsoleExt.OutputType.Info);
-                return Application.Current.FindResource("HomePage");
-            case 1:
-                return Application.Current.FindResource("Layout2Template");
-            // Add more cases for additional layouts
-            default:
-                return null;
-        }
-    }
-
-    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-    {
-        throw new NotSupportedException();
     }
 }

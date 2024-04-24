@@ -3,6 +3,7 @@
              xmlns:local="using:Anime_Archive_Handler_GUI"
              xmlns:animeArchiveHandlerGui="clr-namespace:Anime_Archive_Handler_GUI"
              xmlns:conv="clr-namespace:Anime_Archive_Handler_GUI.Converters"
+             xmlns:sty="using:FluentAvalonia.Styling"
              x:Class="Anime_Archive_Handler_GUI.App"
              RequestedThemeVariant="Dark">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
@@ -31,6 +32,7 @@
     </Application.DataTemplates>
 
     <Application.Styles>
-        <FluentTheme />
+        <sty:FluentAvaloniaTheme PreferUserAccentColor="True"/>
+        
     </Application.Styles>
 </Application>

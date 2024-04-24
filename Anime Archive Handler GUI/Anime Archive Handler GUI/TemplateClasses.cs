@@ -1,6 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using Anime_Archive_Handler_GUI.Helpers;
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using JikanDotNet;
 
@@ -20,7 +23,7 @@ public class CarouselItem(Bitmap imagePath, Bitmap bgImagePath, string title, st
     public string Description { get; set; } = description;
 }
 
-public class AnimeCarousel(ObservableCollection<CarouselItem> items)
+public class AnimeCarousel(ObservableCollection<CarouselItem>? items)
 {
     public ObservableCollection<CarouselItem>? Items { get; set; } = items;
     
@@ -47,6 +50,29 @@ public class AnimeCarousel(ObservableCollection<CarouselItem> items)
             source.Previous();
         }
     }
+}
+
+public class AnimeDisplayItem(string animeImageUrl, string animeName, int subEpisodeCount, int dubEpisodeCount, Language subOrDub = default)
+{
+    public Bitmap AnimeImage { get; } = ImageHelper.LoadFromWeb(animeImageUrl);
+    public string AnimeName { get; } = animeName;
+    public int SubEpisodeCount { get; } = subEpisodeCount;
+    public int DubEpisodeCount { get; } = dubEpisodeCount;
+    public Language SubOrDub { get; } = subOrDub; //ToDo: add functionality for dub and sub
+    public LinearGradientBrush LinearGradientBrush { get; } = new()
+    {
+        StartPoint = new RelativePoint(0, 0, RelativeUnit.Relative),
+        EndPoint = new RelativePoint(0, 1, RelativeUnit.Relative),
+        GradientStops =
+        [
+            new GradientStop(Color.FromArgb(0, 0, 0, 0), 0), // Fully transparent at the top
+            new GradientStop(Color.FromArgb(0, 0, 0, 0), 0.6), // Fully transparent at the top
+            new GradientStop(Color.FromArgb(150, 32, 32, 32), 0.75),
+            new GradientStop(Color.FromArgb(225, 32, 32, 32), 0.85),
+            new GradientStop(Color.FromArgb(235, 32, 32, 32), 0.9),
+            new GradientStop(Color.FromArgb(255, 32, 32, 32), 0.98) // Replace with your border's background color, fully opaque at the bottom
+        ]
+    };
 }
 
 public abstract class Animetosho

@@ -25,4 +25,14 @@ public class CommonSettings
     internal static readonly ILiteCollection<NHentaiMetaData> NhentaiDb = Nh.GetCollection<NHentaiMetaData>("NHentaiMetaData");
     //private static readonly ILiteCollection<AnimeDto> AnimeDtoTestDb = Ts.GetCollection<AnimeDto>("AnimeDto"); // for testing purposes only
     
+    private static Language? _subOrDub;
+    public static Language? GetSubOrDub() { return _subOrDub;}
+    public static void SetSubOrDub(Language subOrDub) { _subOrDub = subOrDub;}
+    
+}
+
+public enum Language
+{
+    Sub,
+    Dub
 }
