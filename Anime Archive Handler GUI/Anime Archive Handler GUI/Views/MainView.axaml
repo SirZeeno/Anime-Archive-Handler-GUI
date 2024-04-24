@@ -180,7 +180,7 @@
                 </StackPanel>
                 <ScrollViewer Grid.Row="2" x:Name="DynamicScrollViewer" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                     <Grid Name="DynamicGrid" HorizontalAlignment="Center" VerticalAlignment="Top">
-                        <ItemsControl ItemsSource="{Binding DynamicAnimeItemGrid}">
+                        <ItemsControl ItemsSource="{Binding DynamicAnimeItemGrid}" Name="AnimeItemsControl">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate DataType="animeArchiveHandlerGui:AnimeDisplayItem">
                                     <Border Name="{Binding AnimeName}" CornerRadius="5" ClipToBounds="True" Margin="10" Background="#202020">
@@ -204,6 +204,12 @@
                                     </Border>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Grid ShowGridLines="True"></Grid>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            
                         </ItemsControl>
                         <!-- Initial content can go here -->
                     </Grid>

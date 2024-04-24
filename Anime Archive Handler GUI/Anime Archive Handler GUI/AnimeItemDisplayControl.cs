@@ -26,6 +26,7 @@ public class AnimeItemDisplayControl
             AnimeItemGridInstance.ColumnDefinitions.Add(columnDefinition);
             
             animeItems.Add(new AnimeDisplayItem("https://cdn.myanimelist.net/images/anime/4/19644l.jpg", "Cowboy Bebop", 12, 12, Language.Dub));
+            ConsoleExt.WriteLineWithPretext("added", ConsoleExt.OutputType.Info);
         }
         
         Dispatcher.UIThread.InvokeAsync(() => MainViewModel.DynamicAnimeItemGrid.AddRange(animeItems));
