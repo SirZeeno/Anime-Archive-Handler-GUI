@@ -1,11 +1,14 @@
-using Avalonia.Controls;
+using FluentAvalonia.UI.Windowing;
 
 namespace Anime_Archive_Handler_GUI.Views;
 
-public partial class MainWindow : Window
+public partial class MainWindow : AppWindow
 {
     public MainWindow()
     {
         InitializeComponent();
+
+        TitleBar.ExtendsContentIntoTitleBar = true;
+        TitleBar.TitleBarHitTestType = TitleBarHitTestType.Complex;
     }
 }

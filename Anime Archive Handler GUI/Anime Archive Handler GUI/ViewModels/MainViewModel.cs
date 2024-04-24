@@ -1,5 +1,5 @@
-﻿using System.Collections.ObjectModel;
-using System.Linq;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 
@@ -9,10 +9,10 @@ public class MainViewModel
 {
     public static ObservableCollection<CarouselItem>? AnimePreviewItems { get; set; }
     
-    public ObservableCollection<YourResultType> SearchResults { get; } = new ObservableCollection<YourResultType>();
+    public ObservableCollection<YourResultType> SearchResults { get; } = [];
     public bool IsPopupOpen { get; set; }
-    
-    public Panel Carousel { get; set; }
+
+    public static ObservableCollection<AnimeDisplayItem> DynamicAnimeItemGrid { get; set; } = [];
     
     public static int SelectedIndex { get; set; }
     
