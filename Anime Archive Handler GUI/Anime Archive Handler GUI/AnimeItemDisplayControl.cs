@@ -23,10 +23,10 @@ public class AnimeItemDisplayControl
             const int imageMaxHeight = 335;
             const int totalImageWidth = imageMaxWidth + paddingThickness * 2;
             var columnDefinition = new ColumnDefinition { Width = new GridLength(totalImageWidth, GridUnitType.Pixel) };
-            AnimeItemGridInstance.ColumnDefinitions.Add(columnDefinition);
+            //AnimeItemGridInstance.ColumnDefinitions.Add(columnDefinition);
             
             animeItems.Add(new AnimeDisplayItem("https://cdn.myanimelist.net/images/anime/4/19644l.jpg", "Cowboy Bebop", 12, 12, Language.Dub));
-            ConsoleExt.WriteLineWithPretext("added", ConsoleExt.OutputType.Info);
+            animeItems.Add(new AnimeDisplayItem("https://cdn.myanimelist.net/images/anime/7/20310l.jpg", "Trigun", 12, 12, Language.Dub));
         }
         
         Dispatcher.UIThread.InvokeAsync(() => MainViewModel.DynamicAnimeItemGrid.AddRange(animeItems));
