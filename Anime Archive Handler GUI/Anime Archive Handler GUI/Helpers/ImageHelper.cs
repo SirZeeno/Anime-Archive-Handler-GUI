@@ -46,6 +46,7 @@ public static class ImageHelper
         {
             httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("AvaloniaTest", "0.1"));
             var data = await httpClient.GetByteArrayAsync(uri);
+            ConsoleExt.WriteLineWithPretext("Got Image", ConsoleExt.OutputType.Info);
             return new Bitmap(new MemoryStream(data));
         }
         catch (HttpRequestException ex)
