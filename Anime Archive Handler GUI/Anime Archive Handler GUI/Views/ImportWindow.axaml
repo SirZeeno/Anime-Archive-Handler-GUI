@@ -1,0 +1,90 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ui="using:FluentAvalonia.UI.Controls"
+        xmlns:animeArchiveHandlerGui="clr-namespace:Anime_Archive_Handler_GUI"
+        xmlns:viewModels="clr-namespace:Anime_Archive_Handler_GUI.ViewModels"
+        xmlns:importWindow="clr-namespace:Anime_Archive_Handler_GUI.Views"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Anime_Archive_Handler_GUI.Views.ImportWindow"
+        x:DataType="viewModels:MainViewModel"
+        Title="ImportWindow">
+    
+    <Grid RowDefinitions="Auto,Auto,*">
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+            <TextBox Grid.Column="0" Watermark="Path to File(s) or Folder(s)" Name="TextBox">
+                
+            </TextBox>
+            <Button Grid.Column="1" Command="{Binding AddPathToQueue}" CommandParameter="{Binding ElementName=TextBox}" x:DataType="importWindow:ImportWindow">
+                <StackPanel Orientation="Horizontal">
+                    <ui:SymbolIcon Symbol="Add" FontSize="20" Foreground="White" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Add Path"/>
+                </StackPanel>
+            </Button>
+        </Grid>
+        
+        <!-- Toggle Buttons for the import and pathing settings -->
+        <Grid Grid.Row="1" ColumnDefinitions="*,*,Auto">
+            <StackPanel Grid.Column="0" Orientation="Vertical">
+                <CheckBox Content="Multiple Anime in one Folder" />
+                <CheckBox Content="Has Season Folders" />
+            </StackPanel>
+            <StackPanel Grid.Column="1">
+                <CheckBox Content="Is Ova" />
+                <CheckBox Content="Is Movie" />
+            </StackPanel>
+            <Border Grid.Column="1" BorderBrush="Black" BorderThickness="1" CornerRadius="2" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,5,0">
+                <StackPanel Orientation="Vertical">
+                    <CheckBox Content="Anime" Margin="5,0" />
+                    <CheckBox Content="Manga" Margin="5,0" />
+                    <CheckBox Content="Hentai" Margin="5,0" />
+                </StackPanel>
+            </Border>
+        </Grid>
+        
+        <Border Grid.Row="2" BorderBrush="Black" BorderThickness="1" Margin="10,20,10,10">
+            <ScrollViewer>
+                <ItemsControl ItemsSource="{Binding AnimeSearchItemResultGrid}" Name="AnimeItemsControl">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="animeArchiveHandlerGui:AnimeDisplayItem">
+                            <Button>
+                                <Border Name="{Binding AnimeName}" CornerRadius="5" ClipToBounds="True" Margin="10" Background="#202020">
+                                    <Grid RowDefinitions="Auto,Auto">
+                                        <Panel Grid.Row="0" Name="ImagePanel">
+                                            <Image MaxHeight="{Binding ImageMaxHeight}" MaxWidth="{Binding ImageMaxWidth}" MinHeight="{Binding ImageMaxHeight}" MinWidth="{Binding ImageMaxWidth}" Stretch="UniformToFill" Source="{Binding AnimeImage}"/>
+                                            <Border Background="{Binding LinearGradientBrush}" Height="{Binding ImageMaxHeight}" Width="{Binding ImageMaxWidth}"/>
+                                                
+                                            <StackPanel Name = "SubDubStackPanel" Background="Transparent" Height="40" Width="80" VerticalAlignment="Bottom" HorizontalAlignment="Center" Orientation="Horizontal">
+                                                <StackPanel Name="DubStackPanel" Background="#313131" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2,0,0,0" Orientation="Horizontal">
+                                                    <ui:SymbolIcon Symbol="Microphone" FontSize="20" Foreground="White" HorizontalAlignment="Center"/>
+                                                    <TextBlock Text="{Binding DubEpisodeCount}" Foreground="White" FontSize="16"/>
+                                                </StackPanel>
+                                                    
+                                                <StackPanel Name="SubStackPanel" Background="#313131" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2,0,0,0" Orientation="Horizontal">
+                                                    <ui:SymbolIcon Symbol="ClosedCaption" FontSize="20" Foreground="White" HorizontalAlignment="Center"/>
+                                                    <TextBlock Text="{Binding SubEpisodeCount}" Foreground="White" FontSize="16"/>
+                                                </StackPanel>
+                                                    
+                                                <StackPanel Name="OverallStackPanel" Background="#313131" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2,0,0,0" Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding OverallEpisodeCount}" Foreground="White" FontSize="16"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Panel>
+                                        <TextBlock Grid.Row="1" Text="{Binding AnimeName}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,10"/>
+                                    </Grid>
+                                </Border>
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                        
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Grid HorizontalAlignment="Center" VerticalAlignment="Top"></Grid>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</Window>

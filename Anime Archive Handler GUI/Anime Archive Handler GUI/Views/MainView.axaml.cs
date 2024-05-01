@@ -5,6 +5,7 @@ using Avalonia;
 using System.Linq;
 using Avalonia.Media;
 using System.Net.Http;
+using System.Threading;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
@@ -37,14 +38,15 @@ public partial class MainView : UserControl
     {
         InitializeComponent();
         MainViewModel.AnimePreviewItems = new ObservableCollection<CarouselItem>();
-        this.GetObservable(BoundsProperty).Subscribe(_ => AdjustGridLayout());
         DataContext = this; // Only for example purposes
         AnimeItemDisplayControl.MainViewInstance = this;
-        //AnimeItemDisplayControl.AnimeItemGridInstance = DynamicGrid;
-        AnimeItemDisplayControl.SetGridItems();
+        AnimeItemDisplayControl.AnimeItemsControlInstance = AnimeItemsControl;
+        AnimeItemDisplayControl.ScrollViewerInstance = DynamicScrollViewer;
+        AnimeItemDisplayControl.SetGridItems().OnCompleted(AdjustGridLayout);
+        this.GetObservable(BoundsProperty).Subscribe(_ => AdjustGridLayout());
         //AddColumnToAnimeList("https://cdn.myanimelist.net/images/anime/4/19644l.jpg", "Cowboy Bebop", 12, 12, Language.Dub, 20);
         //AddColumnToAnimeList("https://cdn.myanimelist.net/images/anime/7/20310l.jpg", "Trigun", 12, 12, Language.Dub, 20);
-        HeaderTabControl.SelectionChanged += HeaderTabControl_SelectionChanged;
+        AnimeCategoryTabControl.SelectionChanged += HeaderTabControl_SelectionChanged;
         AnimeTypeTabControl.SelectionChanged += AnimeTypeTabControl_SelectionChanged;
         HomeButton.Click += SetTabIndexToHome;
         Dispatcher.UIThread.InvokeAsync(InitializeAsync);
@@ -55,8 +57,8 @@ public partial class MainView : UserControl
 
     private void LoadHomePage()
     {
-        HeaderTabControl.SelectedIndex = 1;
-        HeaderTabControl.SelectedIndex = 0;
+        AnimeCategoryTabControl.SelectedIndex = 1;
+        AnimeCategoryTabControl.SelectedIndex = 0;
     }
 
 
@@ -141,69 +143,7 @@ public partial class MainView : UserControl
 
     private void AdjustGridLayout()
     {
-        // Make sure to use the correct total width for each image including padding
-        var availableWidth = DynamicScrollViewer.Bounds.Width;
-        // Calculate the number of columns based on available width and total width per image
-        int columns = Math.Max(1, (int)(availableWidth / (TotalImageWidth)));
-
-        // Calculate the required number of rows based on the total number of children and columns
-        if (AnimeItemsControl.ItemsPanelRoot is Grid testGrid)
-        {
-            int totalImages = AnimeItemsControl.ItemCount;
-            var rows = (totalImages + columns - 1) / columns; // Ceiling of division
-
-            UpdateGridDefinitions(columns, rows);
-        }
-        
-        RearrangeGridItems(columns);
-    }
-
-    private void UpdateGridDefinitions(int columns, int rows)
-    {
-        if (AnimeItemsControl.ItemsPanelRoot is not Grid testGrid) throw new ArgumentNullException(nameof(testGrid));
-        testGrid.ColumnDefinitions.Clear();
-        for (int col = 0; col < columns; col++)
-        {
-            testGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-        }
-
-        testGrid.RowDefinitions.Clear();
-        for (int row = 0; row < rows; row++)
-        {
-            testGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-        }
-    }
-    
-    private void RearrangeGridItems(int columns)
-    {
-        var textBlock = new TextBlock()
-        {
-            Name = "NoAnimeFoundTextBlock",
-            Text = "No anime found",
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center
-        };
-        
-        // Remove the TextBlock from the grid if it exists
-        if (AnimeItemsControl.ItemCount > 1)
-        {
-            var textBlockToRemove = AnimeItemsControl.Items.OfType<TextBlock>().Where(child => child.Name == "NoAnimeFoundTextBlock");
-            //DynamicGrid.Children.RemoveAll(textBlockToRemove);
-            //AnimeItemsControl.Items.Remove(textBlock); //need to fix this to remove from itemsource instead of items
-        }
-        
-        for (int i = 0; i < AnimeItemsControl.ItemCount; i++)
-        {
-            var child = AnimeItemsControl.ContainerFromIndex(i);
-            if (child == null) continue;
-            Grid.SetColumn(child, i % columns);
-            Grid.SetRow(child, i / columns);
-        }
-
-        // Add the "No anime found" TextBlock to the grid
-        if (AnimeItemsControl.ItemCount > 0) return;
-        ConsoleExt.WriteLineWithPretext("No anime found", ConsoleExt.OutputType.Info);
-        //AnimeItemsControl.ItemsSource = new List<TextBlock> { textBlock };
+        AnimeItemDisplayControl.AdjustGridLayout(AnimeItemsControl);
     }
 
     private void ChangeStatus(Language subOrDub, int subEpisodeCount, int dubEpisodeCount, string animeName)
@@ -325,9 +265,9 @@ public partial class MainView : UserControl
     private void HeaderTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         // Get the selected tab item
-        TabItem selectedTab = (TabItem)HeaderTabControl.SelectedItem;
+        TabItem selectedTab = (TabItem)AnimeCategoryTabControl.SelectedItem;
 
-        switch (HeaderTabControl.SelectedIndex)
+        switch (AnimeCategoryTabControl.SelectedIndex)
         {
             // Set the content of the ContentControl based on the selected tab
             case 0:
@@ -342,6 +282,7 @@ public partial class MainView : UserControl
             case 2:
                 break;
             case 3:
+                AnimeItemDisplayControl.SetGridItems().OnCompleted(AdjustGridLayout);
                 break;
             case 4:
                 break;
@@ -376,6 +317,31 @@ public partial class MainView : UserControl
 
     private void SetTabIndexToHome(object? sender, RoutedEventArgs e)
     {
-        HeaderTabControl.SelectedIndex = 0;
+        AnimeCategoryTabControl.SelectedIndex = 0;
+    }
+
+    public void HeaderButtonsClickHandler(object sender, RoutedEventArgs e)
+    {
+        var source = e.Source as Control;
+        switch (source?.Name)
+        {
+            case "ImportFoldersButton":
+                AnimeItemDisplayControl.UserAddAnimeToAnimeGrid();
+                break;
+            case "ImportFilesButton":
+                AnimeItemDisplayControl.UserAddAnimeEpisodeToAnimeGrid();
+                break;
+            case "ExportButton":
+                break;
+            case "PreferencesButton":
+                new ImportWindow().Show();
+                break;
+            case "HelpButton":
+                break;
+            case "CopyButton":
+                break;
+            case "PasteButton":
+                break;
+        }
     }
 }
