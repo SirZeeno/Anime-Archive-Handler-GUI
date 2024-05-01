@@ -1,9 +1,4 @@
-﻿using System;
-using System.ComponentModel;
-using System.Globalization;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Data.Converters;
+﻿using System.ComponentModel;
 
 namespace Anime_Archive_Handler_GUI.ViewModels;
 
