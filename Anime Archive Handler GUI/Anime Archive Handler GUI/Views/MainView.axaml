@@ -101,15 +101,45 @@
     <Grid Background="#191919" RowDefinitions="Auto,Auto,*,Auto">
 
         <Border Grid.Row="0" Height="32">
-            <TextBlock Text="{Binding Title, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" VerticalAlignment="Center" Margin="10 0"></TextBlock>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                <TextBlock Text="{Binding Title, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" VerticalAlignment="Center" Margin="10 0"></TextBlock>
+                <DropDownButton Content="Settings" FontWeight="Heavy" Height="20" FontSize="15" BorderThickness="1" BorderBrush="Black">
+                    <DropDownButton.Flyout>
+                        <MenuFlyout>
+                            <MenuItem Header="Preferences" Name="PreferencesButton" Click="HeaderButtonsClickHandler"/>
+                            <MenuItem Header="Help" Name="HelpButton" Click="HeaderButtonsClickHandler"/>
+                        </MenuFlyout>
+                    </DropDownButton.Flyout>
+                </DropDownButton>
+                <DropDownButton Content="File" FontWeight="Heavy" Height="20" FontSize="15" BorderThickness="1" BorderBrush="Black">
+                    <DropDownButton.Flyout>
+                        <MenuFlyout>
+                            <MenuItem Header="Import Anime">
+                                <MenuItem Header="Open Folder(s)" Name="ImportFoldersButton" Click="HeaderButtonsClickHandler"></MenuItem>
+                                <MenuItem Header="Open File(s)" Name="ImportFilesButton" Click="HeaderButtonsClickHandler"></MenuItem>
+                            </MenuItem>
+                        </MenuFlyout>
+                    </DropDownButton.Flyout>
+                </DropDownButton>
+                <DropDownButton Content="Edit" FontWeight="Heavy" Height="20" FontSize="15" BorderThickness="1" BorderBrush="Black">
+                    <DropDownButton.Flyout>
+                        <MenuFlyout>
+                            <MenuItem Header="Copy" Name="CopyButton" Click="HeaderButtonsClickHandler"/>
+                            <MenuItem Header="Paste" Name="PasteButton" Click="HeaderButtonsClickHandler"/>
+                        </MenuFlyout>
+                    </DropDownButton.Flyout>
+                </DropDownButton>
+            </StackPanel>
         </Border>
         <!-- Header -->
         <Border Grid.Row="1" MaxHeight="40" Background="Transparent" BoxShadow="0 0 10 5 #161616" Margin="0,0,0,10">
             <StackPanel Orientation="Horizontal">
                 <Button x:Name="HomeButton" Classes="transparentButton" Background="Transparent" BorderBrush="Transparent" Margin="10,0,0,0" Content="AHA" FontSize="20" FontWeight="Heavy" VerticalAlignment="Center"/>
+                
                 <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="5" Padding="2" Margin="10,0,0,0" Background="#141414">
                     <Grid>
                         <TextBox Classes="transparentTextbox" x:Name="SearchBox" VerticalAlignment="Center" Background="Transparent" BorderThickness="0" Margin="55,0,25,0" Width="200" Watermark="Search Anime.." KeyUp="SearchBox_KeyUp"/>
+                        
                         <Popup x:Name="SearchResultsPopup" PlacementTarget="{Binding ElementName=SearchBox}" Placement="Bottom" Focusable="False" IsOpen="{Binding IsPopupOpen}">
                             <Border Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="1">
                                 <ListBox x:Name="SearchResultsListBox" MaxHeight="200" Width="{Binding Width, ElementName=SearchBox}">
@@ -117,15 +147,18 @@
                                 </ListBox>
                             </Border>
                         </Popup>
+                        
                         <Button Classes="transparentIcon" Width="25" Height="25" HorizontalAlignment="Right" Margin="25,0,5,0" VerticalAlignment="Center" Background="Transparent">
                             <Image Source="/Assets/Magnifying-Glass-256.png" Width="20" Height="20"></Image> <!-- Search Button icon here -->
                         </Button>
+                        
                         <Button x:Name="FilterButton" Width="50" Height="25" HorizontalAlignment="Left" Margin="5,0,0,0" VerticalAlignment="Center" Padding="5, 0,5,0">
                             <TextBlock Text="Filter" HorizontalAlignment="Center" ClipToBounds="True" Opacity=".5"></TextBlock>
                         </Button>
                     </Grid>
                 </Border>
-                <TabStrip Name="HeaderTabControl" SelectedIndex="{Binding Source={StaticResource SharedViewModelInstance}, Path=SelectedAnimeHeaderMenuTabIndex}" HorizontalAlignment="Right">
+                
+                <TabStrip Name="AnimeCategoryTabControl" SelectedIndex="{Binding Source={StaticResource SharedViewModelInstance}, Path=SelectedAnimeHeaderMenuTabIndex}" HorizontalAlignment="Right">
                     <TabItem Header="Home" FontWeight="Heavy" Height="20" FontSize="15" IsVisible="False"></TabItem>
                     <TabItem Header="Genres" FontWeight="Heavy" Height="20" FontSize="15"></TabItem>
                     <TabItem Header="Types" FontWeight="Heavy" Height="20" FontSize="15"></TabItem>
@@ -146,7 +179,6 @@
                 <!-- Featured Section and Thumbnails Grid -->
                 <ContentControl Name="AnimePreviewContentControl" Grid.Row="0"></ContentControl>
 
-
                 <StackPanel Grid.Row="1" Orientation="Horizontal" x:Name="AnimeMenuButtonStackPanel">
                     <TabStrip Name="AnimeTypeTabControl" SelectedIndex="{Binding Source={StaticResource SharedViewModelInstance}, Path=SelectedAnimeTypeMenuTabIndex}" HorizontalAlignment="Right" FlowDirection="LeftToRight">
                         <TabItem Header="All" FontWeight="Heavy" Height="20" FontSize="15" BorderThickness="1" BorderBrush="Black"></TabItem>
@@ -156,38 +188,47 @@
                         <TabItem Header="Trending" FontWeight="Heavy" Height="20" FontSize="15" BorderThickness="1" BorderBrush="Black"></TabItem>
                     </TabStrip>
                 </StackPanel>
+                
                 <ScrollViewer Grid.Row="2" x:Name="DynamicScrollViewer" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                     <ItemsControl ItemsSource="{Binding DynamicAnimeItemGrid}" Name="AnimeItemsControl">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate DataType="animeArchiveHandlerGui:AnimeDisplayItem">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="animeArchiveHandlerGui:AnimeDisplayItem">
+                                <Button>
                                     <Border Name="{Binding AnimeName}" CornerRadius="5" ClipToBounds="True" Margin="10" Background="#202020">
                                         <Grid RowDefinitions="Auto,Auto">
                                             <Panel Grid.Row="0" Name="ImagePanel">
-                                                <Image MaxHeight="335" MaxWidth="225" MinHeight="335" MinWidth="225" Stretch="UniformToFill" Source="{Binding AnimeImage}"/>
-                                                <Border Background="{Binding LinearGradientBrush}" Height="335" Width="225"/>
+                                                <Image MaxHeight="{Binding ImageMaxHeight}" MaxWidth="{Binding ImageMaxWidth}" MinHeight="{Binding ImageMaxHeight}" MinWidth="{Binding ImageMaxWidth}" Stretch="UniformToFill" Source="{Binding AnimeImage}"/>
+                                                <Border Background="{Binding LinearGradientBrush}" Height="{Binding ImageMaxHeight}" Width="{Binding ImageMaxWidth}"/>
+                                                
                                                 <StackPanel Name = "SubDubStackPanel" Background="Transparent" Height="40" Width="80" VerticalAlignment="Bottom" HorizontalAlignment="Center" Orientation="Horizontal">
                                                     <StackPanel Name="DubStackPanel" Background="#313131" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2,0,0,0" Orientation="Horizontal">
                                                         <ui:SymbolIcon Symbol="Microphone" FontSize="20" Foreground="White" HorizontalAlignment="Center"/>
                                                         <TextBlock Text="{Binding DubEpisodeCount}" Foreground="White" FontSize="16"/>
                                                     </StackPanel>
+                                                    
                                                     <StackPanel Name="SubStackPanel" Background="#313131" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2,0,0,0" Orientation="Horizontal">
                                                         <ui:SymbolIcon Symbol="ClosedCaption" FontSize="20" Foreground="White" HorizontalAlignment="Center"/>
                                                         <TextBlock Text="{Binding SubEpisodeCount}" Foreground="White" FontSize="16"/>
+                                                    </StackPanel>
+                                                    
+                                                    <StackPanel Name="OverallStackPanel" Background="#313131" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2,0,0,0" Orientation="Horizontal">
+                                                        <TextBlock Text="{Binding OverallEpisodeCount}" Foreground="White" FontSize="16"/>
                                                     </StackPanel>
                                                 </StackPanel>
                                             </Panel>
                                             <TextBlock Grid.Row="1" Text="{Binding AnimeName}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,10"/>
                                         </Grid>
                                     </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <Grid HorizontalAlignment="Center" VerticalAlignment="Top"></Grid>
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            
-                        </ItemsControl>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                        
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <Grid HorizontalAlignment="Center" VerticalAlignment="Top"></Grid>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
                 </ScrollViewer>
             </Grid>
 

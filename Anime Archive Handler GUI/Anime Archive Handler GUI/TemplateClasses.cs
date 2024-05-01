@@ -1,10 +1,12 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using Anime_Archive_Handler_GUI.Helpers;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.Threading;
 using JikanDotNet;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -52,13 +54,22 @@ public class AnimeCarousel(ObservableCollection<CarouselItem>? items)
     }
 }
 
-public class AnimeDisplayItem(string animeImageUrl, string animeName, int subEpisodeCount, int dubEpisodeCount, Language subOrDub = default)
+public class AnimeDisplayItem(string animeImageUrl, string animeName, int subEpisodeCount, int dubEpisodeCount, int overallEpisodeCount, Language subOrDub = default, int paddingThickness = 10, int imageMaxWidth = 225, int imageMaxHeight = 335)
 {
-    public Bitmap AnimeImage { get; } = ImageHelper.LoadFromWeb(animeImageUrl);
+    // Main Information
+    public Bitmap? AnimeImage { get; } = ImageHelper.LoadFromWeb(animeImageUrl);
     public string AnimeName { get; } = animeName;
     public int SubEpisodeCount { get; } = subEpisodeCount;
     public int DubEpisodeCount { get; } = dubEpisodeCount;
+    public int OverallEpisodeCount { get; } = overallEpisodeCount;
+    
+    // Functional Settings
     public Language SubOrDub { get; } = subOrDub; //ToDo: add functionality for dub and sub
+    
+    // Cosmetic Setting
+    public int PaddingThickness { get; } = paddingThickness;
+    public int ImageMaxWidth { get; } = imageMaxWidth;
+    public int ImageMaxHeight { get; } = imageMaxHeight;
     public LinearGradientBrush LinearGradientBrush { get; } = new()
     {
         StartPoint = new RelativePoint(0, 0, RelativeUnit.Relative),
