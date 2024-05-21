@@ -22,6 +22,14 @@ public static class JsonFileUtility
         var updatedJsonText = JsonConvert.SerializeObject(root, Formatting.Indented);
         File.WriteAllText(filePath, updatedJsonText);
     }
+    
+    public static List<NeededDirectories> ReadNeededDirectories(string filePath)
+    {
+        var json = File.ReadAllText(filePath);
+        var neededDirectories = JsonConvert.DeserializeObject<List<NeededDirectories>>(json);
+
+        return neededDirectories ?? [];
+    }
 
     public static NHentaiMetaData? ReadMetaData(string filePath)
     {

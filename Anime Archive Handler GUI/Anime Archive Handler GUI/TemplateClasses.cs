@@ -86,6 +86,11 @@ public class AnimeDisplayItem(string animeImageUrl, string animeName, int subEpi
     };
 }
 
+public class TextDisplayItem(string text)
+{
+    public string text { get; } = text;
+}
+
 public abstract class Animetosho
 {
     public int? id { get; set; }

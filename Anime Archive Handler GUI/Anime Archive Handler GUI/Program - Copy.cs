@@ -3,11 +3,10 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Anime_Archive_Handler_GUI.Views;
 using FFMpegCore;
 using Spectre.Console;
 
-namespace Anime_Archive_Handler_GUI.Desktop;
+namespace Anime_Archive_Handler_GUI;
 
 using static InputStringHandler;
 using static DbHandler;
@@ -275,7 +274,7 @@ internal abstract partial class AnimeArchiveHandler
                                     }
                                 });
                         }
-                        catch (Exception ex)
+                        catch (Exception? ex)
                         {
                             ConsoleExt.WriteLineWithPretext($"Error moving file '{sourceFile}'", ConsoleExt.OutputType.Error, ex);
                             AnsiConsole.WriteException(ex, 

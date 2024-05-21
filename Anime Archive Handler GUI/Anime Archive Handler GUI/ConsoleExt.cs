@@ -13,7 +13,7 @@ public static class ConsoleExt
         Question
     }
 
-    public static int WriteLineWithPretext<T>(T output, OutputType outputType, Exception exception = null)
+    public static int WriteLineWithPretext<T>(T output, OutputType outputType, Exception? exception = null)
     {
         var length1 = CurrentTime();
         var length2 = DetermineOutputType(outputType);
@@ -29,16 +29,14 @@ public static class ConsoleExt
         {
             Console.WriteLine(output);
         }
-        /*
         if (exception != null)
         {
             FileHandler.ErrorLogger(output!.ToString()!, exception);
         }
-        */
         return length1 + length2;
     }
 
-    public static int WriteWithPretext<T>(T output, ConsoleExt.OutputType outputType, Exception? exception = null)
+    public static int WriteWithPretext<T>(T output, OutputType outputType, Exception? exception = null)
     {
         var length1 = CurrentTime();
         var length2 = DetermineOutputType(outputType);
@@ -54,16 +52,14 @@ public static class ConsoleExt
         {
             Console.Write(output);
         }
-        /*
         if (exception != null)
         {
             FileHandler.ErrorLogger(output!.ToString()!, exception);
         }
-        */
         return length1 + length2;
     }
 
-    private static int DetermineOutputType(ConsoleExt.OutputType outputType)
+    private static int DetermineOutputType(OutputType outputType)
     {
         return outputType switch
         {

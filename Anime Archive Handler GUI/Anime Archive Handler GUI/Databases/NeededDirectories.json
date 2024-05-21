@@ -1,5 +1,9 @@
 ﻿[
   {
+    "path": "./External Dependencies/Fetching Programs/Anime",
+    "enabled": true
+  },
+  {
     "path": "./External Dependencies/Fetching Programs/Manga",
     "enabled": true
   },

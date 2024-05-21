@@ -69,7 +69,7 @@ public class AnimeItemDisplayControl
         var topLevel = TopLevel.GetTopLevel(MainViewInstance);
 
         // Start async operation to open the dialog.
-        var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        var files = await topLevel!.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
             Title = "Open Anime File(s)",
             AllowMultiple = true
@@ -81,7 +81,7 @@ public class AnimeItemDisplayControl
         var topLevel = TopLevel.GetTopLevel(MainViewInstance);
 
         // Start async operation to open the dialog.
-        var files = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()
+        var files = await topLevel!.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()
         {
             Title = "Open Anime Folder(s)",
             AllowMultiple = true

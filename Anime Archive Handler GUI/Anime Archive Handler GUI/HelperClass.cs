@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
-namespace Anime_Archive_Handler_GUI.Desktop;
+namespace Anime_Archive_Handler_GUI;
 
 using static InputStringHandler;
 
@@ -153,8 +155,7 @@ public static class HelperClass
     //incomplete
     public static string ManualStringRemoval(string? userInputString, string inputString)
     {
-        var pattern =
-            @""; //this pattern needs to consist of the userInputString and any empty spaces that come before or after
+        var pattern = @""; //this pattern needs to consist of the userInputString and any empty spaces that come before or after
 
         var removedWord = Regex.Replace(inputString, pattern, "");
 
@@ -163,23 +164,36 @@ public static class HelperClass
         return removedWord.Trim();
     }
 
-    // Adds all the required folders that dont get created when building the program but that need to be there
+    // Adds all the required folders that don't get created when building the program but that need to be there
     public static void AddRequiredFolders()
     {
-        if (!Directory.Exists(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "Databases/Downloads")))
-        {
-            Directory.CreateDirectory(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "Databases/Downloads"));
-        }
+        var neededDirectories = JsonFileUtility.ReadNeededDirectories("./Databases/NeededDirectories.json");
 
-        if (Directory.Exists(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "Logs/Errors")))
+        foreach (var neededDirectory in neededDirectories.Where(neededDirectory => neededDirectory.enabled))
         {
-            Directory.CreateDirectory(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "Logs/Errors"));
+            Directory.CreateDirectory(neededDirectory.path);
         }
     }
-
-    // Todo: Implement this function to create a path friendly date time
-    public static void PathFriendlyDateTime()
+    
+    public static string PathFriendlyDateTime()
     {
+        DateTime dateTime = DateTime.Now;
+
+        var pattern1 = @"\.";
+        var pattern2 = @"[\/\\:;]";
+
+        var removedDots = Regex.Replace(dateTime.ToString(CultureInfo.CurrentCulture), pattern1, " ");
         
+        var removeSlashesAndColons  = Regex.Replace(removedDots, pattern2, "-");
+        
+        return removeSlashesAndColons;
+    }
+    
+    public static List<TResult> ExtractProperty<T, TResult>(List<T> items, Func<T, TResult> selector)
+    {
+        ArgumentNullException.ThrowIfNull(items);
+        ArgumentNullException.ThrowIfNull(selector);
+
+        return items.Select(selector).ToList();
     }
 }

@@ -29,7 +29,7 @@ public static class FileHandler
         return !FileIntegrityCheck([sourceFile, destinationFile]);
     }
     
-    //File integrity checks if all the files in a anime folder arent corrupted and returns false if the file is corrupt and is used to check if the downloaded anime is fully working
+    //File integrity checks if all the files in a anime folder aren't corrupted and returns false if the file is corrupt and is used to check if the downloaded anime is fully working
     // and if one of the filed in the anime stored structure is corrupted
     public static bool FileIntegrityCheck(IEnumerable<string> videoFilePaths)
     {
@@ -92,7 +92,7 @@ public static class FileHandler
             ConsoleExt.WriteLineWithPretext("File converted successfully.", ConsoleExt.OutputType.Info);
             return outputFilePath;
         }
-        catch (Exception e)
+        catch (Exception? e)
         {
             // Log or print exception details
             ConsoleExt.WriteLineWithPretext("Error converting file: ", ConsoleExt.OutputType.Error, e);
@@ -128,14 +128,14 @@ public static class FileHandler
         return BitConverter.ToString(hash).Replace("-", "").ToLower();
     }
     
-    // Checks the existence of a file, creates it if it doesnt exist
+    // Checks the existence of a file, creates it if it doesn't exist
     public static void CheckFileExistence(string fileToCheck)
     {
         if (!File.Exists(fileToCheck)) File.Create(fileToCheck);
     }
     
-    // need to start caching all those so it only has to read them from the cache and check if the exist and if they dont, search for them again
-    // returns the file path in the program folder and is used to find a file in the program directory when it isn't always gonna be in the same place
+    // need to start caching all those, so it only has to read them from the cache and check if the exist and if they don't, search for them again
+    // returns the file path in the program folder and is used to find a file in the program directory when it isn't always going to be in the same place
     public static string GetFileInProgramFolder(string fileNameWithExtension)
     {
         if (FileCache.TryGetValue(fileNameWithExtension, out var cachedPath) && File.Exists(cachedPath))
@@ -172,19 +172,19 @@ public static class FileHandler
     }
     
     //keeps a running log of all the errors that occured when the program was running and stores them in one file
-    //doesnt reuse the same file when the program is restarted
+    //doesn't reuse the same file when the program is restarted
     //has to keep a file directory record of the file when created when the first error occurs, and has to delete that record when the program is closed
     // could use a uid that gets generated new everytime the program gets started, but this uid needs to get associated with the log file
-    internal static void ErrorLogger(string errorInfo, Exception ex)
+    internal static void ErrorLogger(string errorInfo, Exception? ex)
     {
         if (_errorLogFile == null || File.Exists(_errorLogFile))
         {
-            var stream = File.Create(Path.Combine(GetDirectoryInProgramFolder("Errors"), $"Error Log {DateTime.Now:dd-mm-yyyy HH-mm-ss}.txt"));
+            var stream = File.Create(Path.Combine(GetDirectoryInProgramFolder("Errors"), $"Error Log {HelperClass.PathFriendlyDateTime()}.txt"));
             _errorLogFile = stream.Name;
             stream.Close();
         }
         // Log the error or handle it as needed
-        var errorMessage = $"Error, {errorInfo}: {ex.Message}";
+        var errorMessage = $"Error, {errorInfo}: {ex?.Message}";
         ConsoleExt.WriteLineWithPretext(errorMessage, ConsoleExt.OutputType.Error);
 
         // Write the error message to the log file
@@ -204,11 +204,11 @@ public static partial class SettingsManager
         var data = Parser.ReadFile(filePath);
         var match = MyRegex().Match(data[sectionName][keyName]);
 
-        // checks for ./ which means that its a directory so it will return a full directory, otherwise returns a unchanged string
+        // checks for ./ which means that it's a directory, so it will return a full directory, otherwise returns a unchanged string
         return match.Success ? GetDirectoryInProgramFolder(MyRegex().Replace(data[sectionName][keyName], "")) : data[sectionName][keyName];
     }
     
-    // have to rework this so it works with the cache json file instead of th ini file to cache things, and use the settings.ini for default values and error logging
+    // have to rework this, so it works with the cache json file instead of th ini file to cache things, and use the settings.ini for default values and error logging
     public static string GetSetting(string sectionName, string keyName)
     {
         string settings = CommonSettings.SettingsPath;

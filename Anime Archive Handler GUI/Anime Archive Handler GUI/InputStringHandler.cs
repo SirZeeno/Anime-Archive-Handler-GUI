@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using HarfBuzzSharp;
 using Humanizer;
 using static System.Text.RegularExpressions.Regex;
 
-namespace Anime_Archive_Handler_GUI.Desktop;
-using static AnimeArchiveHandler;
+namespace Anime_Archive_Handler_GUI;
+
 using static HelperClass;
 using static FileHandler;
 using static CommonSettings;

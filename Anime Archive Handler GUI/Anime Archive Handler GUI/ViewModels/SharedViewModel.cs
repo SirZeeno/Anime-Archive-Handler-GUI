@@ -2,7 +2,7 @@
 
 namespace Anime_Archive_Handler_GUI.ViewModels;
 
-public class SharedViewModel : INotifyPropertyChanged
+public sealed class SharedViewModel : INotifyPropertyChanged
 {
     private int _selectedAnimeHeaderMenuTabIndex;
     private int _selectedAnimeTypeMenuTabIndex;
@@ -31,7 +31,7 @@ public class SharedViewModel : INotifyPropertyChanged
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    protected virtual void OnPropertyChanged(string propertyName)
+    private void OnPropertyChanged(string propertyName)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }

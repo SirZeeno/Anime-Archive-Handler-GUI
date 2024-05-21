@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
 
-namespace Anime_Archive_Handler_GUI.Desktop;
+namespace Anime_Archive_Handler_GUI;
 
 using static Regex;
 using static FileHandler;
@@ -105,7 +105,7 @@ public static partial class WebScraper
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception? e)
             {
                 ConsoleExt.WriteLineWithPretext(e, ConsoleExt.OutputType.Error, e);
             
@@ -205,7 +205,7 @@ public static partial class WebScraper
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception? e)
             {
                 ConsoleExt.WriteLineWithPretext(e, ConsoleExt.OutputType.Error, e);
             
@@ -268,7 +268,7 @@ public static partial class WebScraper
                 }
             }
         }
-        catch (Exception e)
+        catch (Exception? e)
         {
             ConsoleExt.WriteLineWithPretext(e, ConsoleExt.OutputType.Error, e);
             

@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Anime_Archive_Handler_GUI.Interfaces;
 using Spectre.Console;
 
-namespace Anime_Archive_Handler_GUI.Desktop;
+namespace Anime_Archive_Handler_GUI;
 
-using Interfaces;
 using static InputStringHandler;
 using static DbHandler;
 using static FileHandler;

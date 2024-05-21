@@ -1,14 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Avalonia;
 using System.Linq;
 using Avalonia.Media;
-using System.Net.Http;
-using System.Threading;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Media.Imaging;
 using System.Threading.Tasks;
 using Avalonia.Input;
 using Avalonia.Layout;
@@ -19,17 +15,10 @@ using FluentAvalonia.UI.Controls;
 
 namespace Anime_Archive_Handler_GUI.Views;
 using static Helpers.DailyFeatured;
-using static Helpers.ImageHelper;
 using ViewModels;
 
 public partial class MainView : UserControl
 {
-    private const int PaddingThickness = 10;
-    private const int ImageMaxWidth = 225;
-    private const int ImageMaxHeight = 335;
-    private const int TotalImageWidth = ImageMaxWidth + PaddingThickness * 2; // Responsible for the column spacing that each square of the grid takes
-    private const int TotalImageHeight = ImageMaxHeight + PaddingThickness * 2; // Responsible for the row spacing that each square of the grid takes
-    private const int AnimeListViewColor = 32;
     private ObservableCollection<YourResultType> SearchResults { get; } = new ObservableCollection<YourResultType>();
     private Grid AnimeDynamicGrid;
 
@@ -44,12 +33,10 @@ public partial class MainView : UserControl
         AnimeItemDisplayControl.ScrollViewerInstance = DynamicScrollViewer;
         AnimeItemDisplayControl.SetGridItems().OnCompleted(AdjustGridLayout);
         this.GetObservable(BoundsProperty).Subscribe(_ => AdjustGridLayout());
-        //AddColumnToAnimeList("https://cdn.myanimelist.net/images/anime/4/19644l.jpg", "Cowboy Bebop", 12, 12, Language.Dub, 20);
-        //AddColumnToAnimeList("https://cdn.myanimelist.net/images/anime/7/20310l.jpg", "Trigun", 12, 12, Language.Dub, 20);
         AnimeCategoryTabControl.SelectionChanged += HeaderTabControl_SelectionChanged;
         AnimeTypeTabControl.SelectionChanged += AnimeTypeTabControl_SelectionChanged;
         HomeButton.Click += SetTabIndexToHome;
-        Dispatcher.UIThread.InvokeAsync(InitializeAsync);
+        Task.Run(InitializeAsync);
         LoadHomePage();
         AdjustGridLayout();
         ChangeStatus(Language.Sub, 12, 12, "Cowboy Bebop");
@@ -61,47 +48,15 @@ public partial class MainView : UserControl
         AnimeCategoryTabControl.SelectedIndex = 0;
     }
 
-
     private async Task InitializeAsync()
     {
         var featuredItems = await PickDailyFeatured();
-        Dispatcher.UIThread.InvokeAsync(() => MainViewModel.AnimePreviewItems.Add(featuredItems));
+        await Task.Run(() =>
+        {
+            if (MainViewModel.AnimePreviewItems != null) MainViewModel.AnimePreviewItems!.Add(featuredItems);
+        });
         //MainViewModel.AnimePreviewItems = new ObservableCollection<CarouselItem> { featuredItems };
         ConsoleExt.WriteLineWithPretext("Added Daily Featured", ConsoleExt.OutputType.Info);
-    }
-    
-    private async void LoadImageAsync(string imageUrl) // ToDo: solve the Object reference not set issue
-    {
-        try
-        {
-            using var client = new HttpClient();
-            // Download the image data
-            var response = await client.GetAsync(imageUrl);
-            response.EnsureSuccessStatusCode();
-
-            // Read the image data into a stream
-            await using var stream = await response.Content.ReadAsStreamAsync();
-            // Load the stream into a Bitmap
-            var bitmap = new Bitmap(stream);
-
-            // Set the Source of the Image control
-            this.FindControl<Image>("OnlineImage1")!.Source = bitmap;
-            this.FindControl<Image>("Featured1BgImg")!.Source = SkBitmapToAvaloniaBitmap(ApplyBlurEffect(ConvertToSkBitmap(bitmap)));
-            this.FindControl<Image>("Featured1Img")!.Source = bitmap;
-            this.FindControl<Image>("Featured2BgImg")!.Source = SkBitmapToAvaloniaBitmap(ApplyBlurEffect(ConvertToSkBitmap(bitmap)));
-            this.FindControl<Image>("Featured2Img")!.Source = bitmap;
-            this.FindControl<Image>("Featured3BgImg")!.Source = SkBitmapToAvaloniaBitmap(ApplyBlurEffect(ConvertToSkBitmap(bitmap)));
-            this.FindControl<Image>("Featured3Img")!.Source = bitmap;
-            this.FindControl<Image>("Featured4BgImg")!.Source = SkBitmapToAvaloniaBitmap(ApplyBlurEffect(ConvertToSkBitmap(bitmap)));
-            this.FindControl<Image>("Featured4Img")!.Source = bitmap;
-            this.FindControl<Image>("Featured5BgImg")!.Source = SkBitmapToAvaloniaBitmap(ApplyBlurEffect(ConvertToSkBitmap(bitmap)));
-            this.FindControl<Image>("Featured5Img")!.Source = bitmap;
-        }
-        catch (Exception ex)
-        {
-            // Handle exceptions
-            Console.WriteLine("Exception occurred while loading image: " + ex.Message);
-        }
     }
 
     private void SearchBox_KeyUp(object sender, KeyEventArgs e)
@@ -334,7 +289,7 @@ public partial class MainView : UserControl
             case "ExportButton":
                 break;
             case "PreferencesButton":
-                new ImportWindow().Show();
+                new ImportView {DataContext = new ImportViewModel()}.Show();
                 break;
             case "HelpButton":
                 break;

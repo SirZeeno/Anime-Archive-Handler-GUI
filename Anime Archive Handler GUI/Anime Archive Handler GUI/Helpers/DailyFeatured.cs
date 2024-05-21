@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Anime_Archive_Handler_GUI.Desktop;
 using JikanDotNet;
 
 namespace Anime_Archive_Handler_GUI.Helpers;

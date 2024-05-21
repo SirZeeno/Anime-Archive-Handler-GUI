@@ -3,9 +3,10 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Browser;
 using Avalonia.ReactiveUI;
-using Anime_Archive_Handler_GUI;
 
 [assembly: SupportedOSPlatform("browser")]
+
+namespace Anime_Archive_Handler_GUI.Browser;
 
 internal sealed partial class Program
 {

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using JikanDotNet;
 using JikanDotNet.Config;
 
-namespace Anime_Archive_Handler_GUI.Desktop;
+namespace Anime_Archive_Handler_GUI;
 
 using static CommonSettings;
 
@@ -59,7 +59,7 @@ public static class JikanHandler
             var animeResponse = await jikan.GetRecentAnimeRecommendationsAsync();
             return animeResponse.Data;
         }
-        catch (Exception ex)
+        catch (Exception? ex)
         {
             ConsoleExt.WriteLineWithPretext("Failed to get featured anime", ConsoleExt.OutputType.Error, ex);// Handle or log the exception as needed
             throw new Exception("Failed to get featured anime", ex);
