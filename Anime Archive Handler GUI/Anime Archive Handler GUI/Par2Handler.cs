@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 
-namespace Anime_Archive_Handler;
+namespace Anime_Archive_Handler_GUI;
 
 public static class Par2Handler
 {

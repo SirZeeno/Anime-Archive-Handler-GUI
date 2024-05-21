@@ -1,9 +1,8 @@
 ﻿// do namespace names or values matter???
 
 using System.IO;
-using Anime_Archive_Handler;
 
-namespace Anime_Archive_Handler_GUI.Desktop.Interfaces;
+namespace Anime_Archive_Handler_GUI.Interfaces;
 using static AnimeArchiveHandler;
 using static CommonSettings;
 

@@ -1,22 +1,20 @@
 ﻿using System.Collections.ObjectModel;
+using Avalonia.Controls;
 using Avalonia.Interactivity;
 
 namespace Anime_Archive_Handler_GUI.ViewModels;
 
-public class MainViewModel
+public class MainViewModel : ViewModelBase
 {
     public static ObservableCollection<CarouselItem>? AnimePreviewItems { get; set; }
 
     public static ObservableCollection<AnimeDisplayItem> DynamicAnimeItemGrid { get; set; } = [];
-    
-    public static ObservableCollection<AnimeDisplayItem> AnimeSearchItemResultGrid { get; set; } = [];
-    
+
     public ObservableCollection<YourResultType> SearchResults { get; } = [];
     public bool IsPopupOpen { get; set; }
-
-    
     public static int SelectedIndex { get; set; }
     
+
     private void SearchBox_LostFocus(object sender, RoutedEventArgs e)
     {
         // Close the popup when the TextBox loses focus
@@ -27,4 +25,5 @@ public class MainViewModel
 
 public class YourResultType
 {
+    
 }

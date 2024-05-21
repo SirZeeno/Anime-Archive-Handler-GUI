@@ -3,12 +3,11 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Anime_Archive_Handler;
 using CsvHelper;
 using CsvHelper.Configuration;
 using Newtonsoft.Json;
 
-namespace Anime_Archive_Handler_GUI.Desktop.Interfaces;
+namespace Anime_Archive_Handler_GUI.Interfaces;
 
 using static DbHandler;
 using static CommonSettings;
@@ -41,7 +40,7 @@ public class EditAnimetoshoDb : IEditingDatabase
                 var record = csv.GetRecord<Animetosho>();
                 AnimetoshoDb.Upsert(record!);
             }
-            catch (Exception ex)
+            catch (Exception? ex)
             {
                 ConsoleExt.WriteLineWithPretext("Processing Record Failed! ", ConsoleExt.OutputType.Error, ex);
             }
@@ -139,7 +138,7 @@ public class EditAnimeList : IEditingDatabase
                 ConsoleExt.WriteLineWithPretext("animeDto in while adding anime to Anime List is null!", ConsoleExt.OutputType.Error);
             }
         }
-        catch (Exception ex)
+        catch (Exception? ex)
         {
             ConsoleExt.WriteLineWithPretext("Anime Failed to be added to the Anime List!", ConsoleExt.OutputType.Error, ex);
         }

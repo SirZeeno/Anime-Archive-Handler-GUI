@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Anime_Archive_Handler_GUI.Interfaces;
 using FuzzySharp;
 using FuzzySharp.Extractor;
 using LiteDB;
 
-namespace Anime_Archive_Handler_GUI.Desktop;
+namespace Anime_Archive_Handler_GUI;
 using static CommonSettings;
-using static FileHandler;
-using Interfaces;
-
 
 public static class DbHandler
 {

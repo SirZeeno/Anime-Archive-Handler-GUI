@@ -10,6 +10,38 @@
              
     <Application.Resources>
         <conv:BitmapAssetValueConverter x:Key="BitmapConverter"></conv:BitmapAssetValueConverter>
+        
+        <SolidColorBrush x:Key="BackgroundColor" Color="#191919" />
+        
+        <!-- Text Colors -->
+        <SolidColorBrush x:Key="LightGreyTextColor" Color="#a2a2a2" />
+        <SolidColorBrush x:Key="DarkGreyTextColor" Color="#727272" />
+        <SolidColorBrush x:Key="WhiteTextColor" Color="#ececec" />
+        <SolidColorBrush x:Key="LightBlueTextColor" Color="#96b6d0" />
+        
+        <!-- Tab Selection Colors -->
+        <SolidColorBrush x:Key="TabSelectedColor" Color="#4c4c4c" />
+        <SolidColorBrush x:Key="TabNotSelectedColor" Color="#202020" />
+        
+        <!-- Sub/Dub Highlight Colors -->
+        <SolidColorBrush x:Key="SubOrDubLightHighlightColor" Color="#494949" />
+        <SolidColorBrush x:Key="SubOrDubDarkHighlightColor" Color="#343434" />
+        
+        <!-- Resolution Display Background Color -->
+        <SolidColorBrush x:Key="ResolutionBackgroundColor" Color="#ababab" />
+        
+        <!-- Drop Shadow Colors -->
+        <SolidColorBrush x:Key="DropShadowStartColor" Color="#151515" />
+        
+        <!-- List Display Checkers Pattern Colors -->
+        <SolidColorBrush x:Key="ListDisplayCheckersDark" Color="#1e1e1e" />
+        <SolidColorBrush x:Key="ListDisplayCheckersLight" Color="#202020" />
+        
+        <!-- Dropdown Selector Colors -->
+        <SolidColorBrush x:Key="DropdownCheckersDark" Color="#282828" />
+        <SolidColorBrush x:Key="DropdownCheckersLight" Color="#2d2d2d" />
+        <SolidColorBrush x:Key="DropdownSelected" Color="#242424" />
+        
     </Application.Resources>
     <Application.DataTemplates>
         <DataTemplate DataType="animeArchiveHandlerGui:CarouselItem">
