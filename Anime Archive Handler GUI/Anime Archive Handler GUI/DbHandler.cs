@@ -132,8 +132,11 @@ public static class DbHandler
         // Fetch potential matches from the database
         var potentialMatches = await Task.Run(() => FetchPotentialMatchesFromDatabaseAsync(normalizedTitle));
 
+        var titleEntryDbs = potentialMatches as TitleEntryDb[] ?? potentialMatches.ToArray();
+        var titles = titleEntryDbs.Select(x => x.Title).ToList();
+        
         // Use Process.ExtractTop() to get the best match
-        var matches = await Task.Run(() => Process.ExtractTop(normalizedTitle, potentialMatches.ToList()));
+        var matches = await Task.Run(() => Process.ExtractTop(normalizedTitle, titles));
 
         if (matches == null) return null;
         
@@ -142,8 +145,7 @@ public static class DbHandler
         foreach (var match in matches)
         {
             // Use Task.WhenAll to perform database queries concurrently
-            var titleEntryDbTask = TitleEntryListDb.Find(Query.EQ("Title", match.Value)).FirstOrDefault();
-            var titleEntryDb = titleEntryDbTask;
+            var titleEntryDb = titleEntryDbs.Select(x => x).FirstOrDefault(x => x.Title == match.Value);
 
             if (titleEntryDb == null) return null;
             var malId = titleEntryDb.MalId;
@@ -163,9 +165,9 @@ public static class DbHandler
         return title.ToLower().Trim();
     }
     
-    private static async Task<IEnumerable<string>> FetchPotentialMatchesFromDatabaseAsync(string normalizedTitle)
+    private static async Task<IEnumerable<TitleEntryDb>> FetchPotentialMatchesFromDatabaseAsync(string normalizedTitle)
     {
-        var potentialTitles = new HashSet<string>();
+        var potentialTitles = new HashSet<TitleEntryDb>();
         var characterSearchRange = int.Parse(SettingsManager.GetSetting("Execution Settings", "CharacterSearchRange"));
 
         // Fetch and filter TitleEntryDb from the database asynchronously
@@ -175,7 +177,7 @@ public static class DbHandler
         {
             if (MatchesFirstNCharacters(titleEntry.Title, normalizedTitle, characterSearchRange))
             {
-                potentialTitles.Add(titleEntry.Title);
+                potentialTitles.Add(titleEntry);
             }
         }
 
