@@ -61,7 +61,7 @@ public static class ImportHandler
         ConsoleExt.WriteLineWithPretext($"Added Path: '{importSettings.SelectedPath}'", ConsoleExt.OutputType.Info);
     }
     
-    public static async void ScanPath(ObservableCollection<ImportSettings> selectedPathDisplay, bool hasMultipleInOneFolder)
+    public static async void ScanPath(ObservableCollection<ImportSettings> selectedPathDisplay)
     {
         ConsoleExt.WriteLineWithPretext("Scanning Paths...", ConsoleExt.OutputType.Info);
         
@@ -87,7 +87,7 @@ public static class ImportHandler
             if (path == null) continue;
             DirectoryInfo directoryInfo = new DirectoryInfo(path);
 
-            if (hasMultipleInOneFolder)
+            if (textDisplayItem.HasMultipleInOneFolder)
             {
                 DirectoryInfo[] folders = Task.Run(() => directoryInfo.GetDirectories()).GetAwaiter().GetResult();
                 var folderCount = folders.Length;
@@ -106,13 +106,16 @@ public static class ImportHandler
                         return;
                     }
                     
+                    ObservableCollection<AnimeDisplayItem> foundAnimes = new() { };
+                    
                     // if found display anime display item in importer view to show the found anime
                     foreach (var animeSearchResult in animeSearchResults)
                     {
                         var titleEntries = animeSearchResult.Titles;
                         ConsoleExt.WriteLineWithPretext($"Found Anime: '{HelperClass.ExtractProperty(titleEntries.ToList(), item => item.Title)[1]}'", ConsoleExt.OutputType.Info);
-                        ImportViewModel.AnimeSearchItemResultGrid.Add(new AnimeImportDisplayItem(HelperClass.ExtractProperty(titleEntries.ToList(), item => item.Title)[1],[new AnimeDisplayItem(animeSearchResult.Images.JPG.LargeImageUrl, HelperClass.ExtractProperty(titleEntries.ToList(), item => item.Title)[1], 12,12,12, Language.Dub)]));
+                        foundAnimes.Add(new(animeSearchResult.Images.JPG.LargeImageUrl, HelperClass.ExtractProperty(titleEntries.ToList(), item => item.Title)[1], 12,12,12, Language.Dub));
                     }
+                    ImportViewModel.AnimeSearchItemResultGrid.Add(new AnimeImportDisplayItem(HelperClass.ExtractProperty(animeSearchResults.First().Titles.ToList(), item => item.Title)[1], foundAnimes));
                 }
                 ConsoleExt.WriteLineWithPretext("Done Scanning", ConsoleExt.OutputType.Info);
             }
