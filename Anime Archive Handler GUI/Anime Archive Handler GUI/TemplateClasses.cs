@@ -86,9 +86,27 @@ public class AnimeDisplayItem(string animeImageUrl, string animeName, int subEpi
     };
 }
 
-public class TextDisplayItem(string text)
+public class AnimeImportDisplayItem(string animeTitle, ObservableCollection<AnimeDisplayItem>? animeSearchResults)
 {
-    public string text { get; } = text;
+    public string AnimeTitle { get; set; } = animeTitle;
+    public ObservableCollection<AnimeDisplayItem>? AnimeSearchResults { get; set; } = animeSearchResults;
+}
+
+public class ImportSettings(string? selectedPath, bool hasMultipleInOneFolder, bool hasSeasonFolders, bool isOva, bool isMovie, ImportType importType)
+{
+    public string? SelectedPath { get; } = selectedPath;
+    public bool HasMultipleInOneFolder { get; } = hasMultipleInOneFolder;
+    public bool HasSeasonFolders { get; } = hasSeasonFolders;
+    public bool IsOva { get; } = isOva;
+    public bool IsMovie { get; } = isMovie;
+    public ImportType ImportType { get; } = importType;
+}
+
+public enum ImportType
+{
+    Anime,
+    Manga,
+    Hentai
 }
 
 public abstract class Animetosho

@@ -69,7 +69,7 @@ public static class AnimeListHandler
             //if nothing is there then its going to look them up in the database and let the user decide what to do depending on the result
             else
             {
-                var animeExistences = CheckAnimeExistence(GetAnimesWithTitle(animeName)?.First().MalId);
+                var animeExistences = CheckAnimeExistence(GetAnimesWithTitle(animeName).GetAwaiter().GetResult()?.First().MalId);
                 if (animeExistences)
                 {
                     if (!HelperClass.ManualInformationChecking(
@@ -99,11 +99,11 @@ public static class AnimeListHandler
     {
         if (HeadlessOperations)
         {
-            if (animeName != null) _anime?.Add(GetAnimesWithTitle(RemoveUnnecessaryNamePieces(animeName))!.First());
+            if (animeName != null) _anime?.Add(GetAnimesWithTitle(await RemoveUnnecessaryNamePieces(animeName)).GetAwaiter().GetResult()!.First());
         }
         else
         {
-            if (animeName != null) _anime?.AddRange(GetAnimesWithTitle(RemoveUnnecessaryNamePieces(animeName))!);
+            if (animeName != null) _anime?.AddRange(GetAnimesWithTitle(await RemoveUnnecessaryNamePieces(animeName)).GetAwaiter().GetResult()!);
         }
         
         if (_anime == null) return;
@@ -113,15 +113,15 @@ public static class AnimeListHandler
         }
     }
 
-    private static void RemoveAnime(string? animeName)
+    private static async void RemoveAnime(string? animeName)
     {
         if (HeadlessOperations)
         {
-            if (animeName != null) _anime?.Add(GetAnimesWithTitle(RemoveUnnecessaryNamePieces(animeName))!.First());
+            if (animeName != null) _anime?.Add(GetAnimesWithTitle(await RemoveUnnecessaryNamePieces(animeName)).GetAwaiter().GetResult()!.First());
         }
         else
         {
-            if (animeName != null) _anime?.AddRange(GetAnimesWithTitle(RemoveUnnecessaryNamePieces(animeName))!);
+            if (animeName != null) _anime?.AddRange(GetAnimesWithTitle(await RemoveUnnecessaryNamePieces(animeName)).GetAwaiter().GetResult()!);
         }
 
         if (_anime == null) return;

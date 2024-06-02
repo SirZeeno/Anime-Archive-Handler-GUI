@@ -2,14 +2,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:Anime_Archive_Handler_GUI"
              xmlns:animeArchiveHandlerGui="clr-namespace:Anime_Archive_Handler_GUI"
-             xmlns:conv="clr-namespace:Anime_Archive_Handler_GUI.Converters"
              xmlns:sty="using:FluentAvalonia.Styling"
              x:Class="Anime_Archive_Handler_GUI.App"
              RequestedThemeVariant="Dark">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
              
     <Application.Resources>
-        <conv:BitmapAssetValueConverter x:Key="BitmapConverter"></conv:BitmapAssetValueConverter>
         
         <SolidColorBrush x:Key="BackgroundColor" Color="#191919" />
         

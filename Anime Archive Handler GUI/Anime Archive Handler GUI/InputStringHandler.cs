@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using AnitomySharp;
 using Humanizer;
 using static System.Text.RegularExpressions.Regex;
+using static AnitomySharp.AnitomySharp;
 
 namespace Anime_Archive_Handler_GUI;
 
@@ -14,8 +17,19 @@ using static CommonSettings;
 
 public static partial class InputStringHandler
 {
+    internal static async Task<string> AnitomyInfoExtractor(string filename)
+    {
+        //AnitomySharp
+        List<Element> results = Parse(filename).ToList();
+        foreach (var result in results.Where(result => result.Category == Element.ElementCategory.ElementAnimeTitle))
+        {
+            return await RemoveUnnecessaryNamePieces(result.Value);
+        }
+        return string.Empty;
+    }
+    
     //removes all unnecessary pieces from the anime name
-    internal static string RemoveUnnecessaryNamePieces(string fileName)
+    internal static async Task<string> RemoveUnnecessaryNamePieces(string fileName)
     {
         var withoutBrackets = MyRegex6().Replace(fileName, string.Empty);
         var withoutUnderscore = MyRegex7().Replace(withoutBrackets, " ");
@@ -25,7 +39,6 @@ public static partial class InputStringHandler
         var withoutAfterSpaces = MyRegex11().Replace(withoutRomanNumerals, string.Empty); //removes everything after 2 spaces
 
         var output = withoutAfterSpaces.ApplyCase(LetterCasing.Title).TrimStart().TrimEnd();
-        ConsoleExt.WriteLineWithPretext(output, ConsoleExt.OutputType.Info);
         return output;
     }
     
@@ -33,7 +46,7 @@ public static partial class InputStringHandler
     {
         if (inputUrl == null)
         {
-            ConsoleExt.WriteLineWithPretext("Tried to extract Url but input was null!", ConsoleExt.OutputType.Error);
+            ConsoleExt.WriteLineWithPretext("Tried to extract Url but input string was null!", ConsoleExt.OutputType.Error);
             return string.Empty;
         }
 
@@ -71,10 +84,10 @@ public static partial class InputStringHandler
     //Checks if the Folder Name indicates if the anime has multiple parts
     internal static bool HasMultipleParts(string fileName)
     {
-        var match1 = MyRegex20().Match(fileName);
+        var partMatch = MyRegex20().Match(fileName);
         var match2 = MyRegex21().Match(fileName);
 
-        if (match1.Success || match2.Success) return true;
+        if (partMatch.Success || match2.Success) return true;
         ConsoleExt.WriteLineWithPretext("No Anime Season Part Found!", ConsoleExt.OutputType.Info);
         return false;
     }

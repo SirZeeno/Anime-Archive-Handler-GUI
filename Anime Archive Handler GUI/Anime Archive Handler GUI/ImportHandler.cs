@@ -13,13 +13,13 @@ public static class ImportHandler
 {
     public static ImportView ImportWindowInstance { get; set; } = null!;
     
-    public static async Task BrowseFolders()
+    public static async Task BrowseFolders(ImportSettings importSettings)
     {
         // Get top level from the current control. Alternatively, you can use Window reference instead.
         var topLevel = TopLevel.GetTopLevel(ImportWindowInstance);
         
         // Start async operation to open the dialog.
-        var files = await topLevel!.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+        var files = await topLevel!.StorageProvider.OpenFolderPickerAsync(new()
         {
             Title = "Open Anime Folder(s)",
             AllowMultiple = true
@@ -27,17 +27,17 @@ public static class ImportHandler
         
         foreach (var file in files)
         {
-            AddPathToQueue(file.Path.AbsolutePath, ImportViewModel.SelectedPathDisplay);
+            AddPathToQueue(new ImportSettings(file.Path.AbsolutePath, importSettings.HasMultipleInOneFolder, importSettings.HasSeasonFolders, importSettings.IsOva, importSettings.IsMovie, importSettings.ImportType), ImportViewModel.SelectedPathDisplay); //This is temp until I figure out how to handle this new situation
         }
     }
     
-    public static async Task BrowseFiles()
+    public static async Task BrowseFiles(ImportSettings importSettings)
     {
         // Get top level from the current control. Alternatively, you can use Window reference instead.
         var topLevel = TopLevel.GetTopLevel(ImportWindowInstance);
         
         // Start async operation to open the dialog.
-        var files = await topLevel!.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions()
+        var files = await topLevel!.StorageProvider.OpenFilePickerAsync(new()
         {
             Title = "Open Anime File(s)",
             AllowMultiple = true
@@ -45,7 +45,7 @@ public static class ImportHandler
         
         foreach (var file in files)
         {
-            AddPathToQueue(file.Path.AbsolutePath, ImportViewModel.SelectedPathDisplay);
+            AddPathToQueue(new ImportSettings(file.Path.AbsolutePath, importSettings.HasMultipleInOneFolder, importSettings.HasSeasonFolders, importSettings.IsOva, importSettings.IsMovie, importSettings.ImportType), ImportViewModel.SelectedPathDisplay);
         }
     }
 
@@ -54,21 +54,21 @@ public static class ImportHandler
         return File.Exists(inputPath);
     }
     
-    public static void AddPathToQueue(string? inputText, ObservableCollection<TextDisplayItem> selectedPathDisplay)
+    public static void AddPathToQueue(ImportSettings? importSettings, ObservableCollection<ImportSettings> selectedPathDisplay)
     {
-        if (!Path.Exists(inputText)) return;
-        selectedPathDisplay.Add(new TextDisplayItem(inputText));
-        ConsoleExt.WriteLineWithPretext($"Added Path: '{inputText}'", ConsoleExt.OutputType.Info);
+        if (!Path.Exists(importSettings?.SelectedPath)) return;
+        selectedPathDisplay.Add(importSettings);
+        ConsoleExt.WriteLineWithPretext($"Added Path: '{importSettings.SelectedPath}'", ConsoleExt.OutputType.Info);
     }
     
-    public static void ScanPath(ObservableCollection<TextDisplayItem> selectedPathDisplay, bool hasMultipleInOneFolder)
+    public static async void ScanPath(ObservableCollection<ImportSettings> selectedPathDisplay, bool hasMultipleInOneFolder)
     {
         ConsoleExt.WriteLineWithPretext("Scanning Paths...", ConsoleExt.OutputType.Info);
         
         foreach (var textDisplayItem in selectedPathDisplay)
         {
             
-            if (IsFile(textDisplayItem.text))
+            if (IsFile(textDisplayItem.SelectedPath))
             {
                 
                 ConsoleExt.WriteLineWithPretext("Done Scanning", ConsoleExt.OutputType.Info);
@@ -76,28 +76,29 @@ public static class ImportHandler
             }
             
             // Initial Checks
-            string path = textDisplayItem.text;
-            var charArray = textDisplayItem.text.ToCharArray();
-            if (charArray[^1] != '\\' || charArray[^1] != '/')
+            string? path = textDisplayItem.SelectedPath;
+            var charArray = textDisplayItem.SelectedPath?.ToCharArray();
+            if (charArray != null && (charArray[^1] != '\\' || charArray[^1] != '/'))
             {
                 path += "\\";
             }
             
             // Gets the folder information
+            if (path == null) continue;
             DirectoryInfo directoryInfo = new DirectoryInfo(path);
 
             if (hasMultipleInOneFolder)
             {
-                DirectoryInfo[] folders = directoryInfo.GetDirectories();
-                int folderCount = folders.Length;
+                DirectoryInfo[] folders = Task.Run(() => directoryInfo.GetDirectories()).GetAwaiter().GetResult();
+                var folderCount = folders.Length;
                 ConsoleExt.WriteLineWithPretext($"Found {folderCount} folders in '{path}'", ConsoleExt.OutputType.Info);
                 
                 foreach (var folder in folders)
                 {
-                    string animeName = InputStringHandler.RemoveUnnecessaryNamePieces(folder.Name);
+                    string animeName = await InputStringHandler.AnitomyInfoExtractor(folder.Name);
                     ConsoleExt.WriteLineWithPretext($"Anime Name Extracted: {animeName}", ConsoleExt.OutputType.Info);
                     
-                    var animeSearchResults = DbHandler.GetAnimesWithTitle(animeName);
+                    var animeSearchResults = await DbHandler.GetAnimesWithTitle(animeName);
                     
                     if (animeSearchResults == null)
                     {
@@ -109,14 +110,16 @@ public static class ImportHandler
                     foreach (var animeSearchResult in animeSearchResults)
                     {
                         var titleEntries = animeSearchResult.Titles;
-                        ConsoleExt.WriteLineWithPretext($"Found Anime: '{HelperClass.ExtractProperty(titleEntries.ToList(), item => item.Title)}'", ConsoleExt.OutputType.Info);
+                        ConsoleExt.WriteLineWithPretext($"Found Anime: '{HelperClass.ExtractProperty(titleEntries.ToList(), item => item.Title)[1]}'", ConsoleExt.OutputType.Info);
+                        ImportViewModel.AnimeSearchItemResultGrid.Add(new AnimeImportDisplayItem(HelperClass.ExtractProperty(titleEntries.ToList(), item => item.Title)[1],[new AnimeDisplayItem(animeSearchResult.Images.JPG.LargeImageUrl, HelperClass.ExtractProperty(titleEntries.ToList(), item => item.Title)[1], 12,12,12, Language.Dub)]));
                     }
                 }
+                ConsoleExt.WriteLineWithPretext("Done Scanning", ConsoleExt.OutputType.Info);
             }
             else
             {
                 // Gets files and folder information
-                FileInfo[] files = directoryInfo.GetFiles();
+                FileInfo[] files = Task.Run(() => directoryInfo.GetFiles()).GetAwaiter().GetResult();
             
                 // displays the name of the folder and number of files
                 int fileCount = files.Length;
@@ -124,13 +127,13 @@ public static class ImportHandler
                 ConsoleExt.WriteLineWithPretext($"Found {fileCount} files in '{path}'", ConsoleExt.OutputType.Info);
             
                 // Extract the folder name
-                string animeName = InputStringHandler.RemoveUnnecessaryNamePieces(directoryInfo.Name);
+                string animeName = await InputStringHandler.RemoveUnnecessaryNamePieces(directoryInfo.Name);
                 ConsoleExt.WriteLineWithPretext($"Anime Name Extracted: {animeName}", ConsoleExt.OutputType.Info);
 
                 // Search extracted folder name in database
-                var animeSearchResults = DbHandler.GetAnimesWithTitle(animeName);
+                var animeSearchResults = await DbHandler.GetAnimesWithTitle(animeName);
 
-                // if not found write waring message
+                // if not found, write waring message
                 if (animeSearchResults == null)
                 {
                     ConsoleExt.WriteLineWithPretext($"No Anime Has been Found by the name of {animeName}", ConsoleExt.OutputType.Warning);
@@ -148,5 +151,5 @@ public static class ImportHandler
         }
     }
     
-    // give user options to choose the right anime and import their selected anime into library folder
+    // give user options to choose the right anime and import their selected anime into the library folder
 }

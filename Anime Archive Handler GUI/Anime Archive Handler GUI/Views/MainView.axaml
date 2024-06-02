@@ -16,7 +16,7 @@
     </Design.DataContext>
     
     <UserControl.DataContext>
-        <vm:MainViewModel/>
+        <vm:MainViewModel />
     </UserControl.DataContext>
     
     <UserControl.Styles>
@@ -78,7 +78,6 @@
     </UserControl.Styles>
     
     <UserControl.Resources>
-        <vm:SharedViewModel x:Key="SharedViewModelInstance" x:DataType="vm:MainViewModel"/>
         <DataTemplate x:Key="HomePage" DataType="animeArchiveHandlerGui:AnimeCarousel">
             <Border BorderThickness="2" BorderBrush="#191919" CornerRadius="10" Margin="10" ClipToBounds="True" MaxHeight="335">
                 <Panel>
@@ -115,6 +114,7 @@
                     <DropDownButton.Flyout>
                         <MenuFlyout>
                             <MenuItem Header="Import Anime">
+                                <MenuItem Header="Import Wizard" Name="ImportWindowButton" Click="HeaderButtonsClickHandler"></MenuItem>
                                 <MenuItem Header="Open Folder(s)" Name="ImportFoldersButton" Click="HeaderButtonsClickHandler"></MenuItem>
                                 <MenuItem Header="Open File(s)" Name="ImportFilesButton" Click="HeaderButtonsClickHandler"></MenuItem>
                             </MenuItem>
@@ -158,7 +158,7 @@
                     </Grid>
                 </Border>
                 
-                <TabStrip Name="AnimeCategoryTabControl" SelectedIndex="{Binding Source={StaticResource SharedViewModelInstance}, Path=SelectedAnimeHeaderMenuTabIndex}" HorizontalAlignment="Right">
+                <TabStrip Name="AnimeCategoryTabControl" SelectedIndex="{Binding SelectedAnimeHeaderMenuTabIndex}" HorizontalAlignment="Right">
                     <TabItem Header="Home" FontWeight="Heavy" Height="20" FontSize="15" IsVisible="False"></TabItem>
                     <TabItem Header="Genres" FontWeight="Heavy" Height="20" FontSize="15"></TabItem>
                     <TabItem Header="Types" FontWeight="Heavy" Height="20" FontSize="15"></TabItem>
@@ -166,9 +166,10 @@
                     <TabItem Header="Added" FontWeight="Heavy" Height="20" FontSize="15"></TabItem>
                     <TabItem Header="Ongoing" FontWeight="Heavy" Height="20" FontSize="15"></TabItem>
                     <TabItem Header="Upcoming" FontWeight="Heavy" Height="20" FontSize="15"></TabItem>
+                    <TabItem Header="Watch List" FontWeight="Heavy" Height="20" FontSize="15"></TabItem>
                 </TabStrip>
                 
-                <TextBlock Text="{Binding Source={StaticResource SharedViewModelInstance}, Path=SelectedAnimeHeaderMenuTabIndex}"/>
+                <TextBlock Text="{Binding SelectedAnimeHeaderMenuTabIndex}" />
             </StackPanel>
         </Border>
         
@@ -179,7 +180,7 @@
                 <ContentControl Name="AnimePreviewContentControl" Grid.Row="0"></ContentControl>
 
                 <StackPanel Grid.Row="1" Orientation="Horizontal" x:Name="AnimeMenuButtonStackPanel">
-                    <TabStrip Name="AnimeTypeTabControl" SelectedIndex="{Binding Source={StaticResource SharedViewModelInstance}, Path=SelectedAnimeTypeMenuTabIndex}" HorizontalAlignment="Right" FlowDirection="LeftToRight">
+                    <TabStrip Name="AnimeTypeTabControl" HorizontalAlignment="Right" FlowDirection="LeftToRight">
                         <TabItem Header="All" FontWeight="Heavy" Height="20" FontSize="15" BorderThickness="1" BorderBrush="Black"></TabItem>
                         <TabItem Header="Sub" FontWeight="Heavy" Height="20" FontSize="15" BorderThickness="1" BorderBrush="Black"></TabItem>
                         <TabItem Header="Dub" FontWeight="Heavy" Height="20" FontSize="15" BorderThickness="1" BorderBrush="Black"></TabItem>
@@ -215,7 +216,7 @@
                                                     </StackPanel>
                                                 </StackPanel>
                                             </Panel>
-                                            <TextBlock Grid.Row="1" Text="{Binding AnimeName}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,10"/>
+                                            <TextBlock Grid.Row="1" Text="{Binding AnimeName}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,10" MaxWidth="{Binding ImageMaxWidth}" Height="40" MaxHeight="40" TextWrapping="Wrap" Padding="10,0"/>
                                         </Grid>
                                     </Border>
                                 </Button>

@@ -10,5 +10,6 @@ public partial class ImportView : Window
         InitializeComponent();
         
         ImportHandler.ImportWindowInstance = this;
+        ImportViewModel.AnimeItemsControlInstance = AnimeItemsControl;
     }
 }

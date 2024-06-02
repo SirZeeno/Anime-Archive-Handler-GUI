@@ -123,51 +123,75 @@ public static class DbHandler
     }
     */
     
-    public static IEnumerable<AnimeDto>? GetAnimesWithTitle(string title)
+    // TODO: Rewrite this method to use less task runs
+    public static async Task<IEnumerable<AnimeDto>?> GetAnimesWithTitle(string title)
     {
         var similarityPercentage = int.Parse(SettingsManager.GetSetting("Execution Settings", "SimilarityPercentage"));
         var normalizedTitle = NormalizeTitle(title);
 
-        // Fetch potential matches from the database 
-        var potentialMatches = FetchPotentialMatchesFromDatabase(normalizedTitle);
-
-        var enumerable = potentialMatches.ToList();
+        // Fetch potential matches from the database
+        var potentialMatches = await Task.Run(() => FetchPotentialMatchesFromDatabaseAsync(normalizedTitle));
 
         // Use Process.ExtractTop() to get the best match
-        var matches = Process.ExtractTop(normalizedTitle, enumerable);
+        var matches = await Task.Run(() => Process.ExtractTop(normalizedTitle, potentialMatches.ToList()));
 
-        var extractedResults = matches as ExtractedResult<string>[] ?? matches.ToArray();
-        if (extractedResults.Length == 0 || extractedResults.First().Score <= similarityPercentage) return null;
-        
-        // Use LiteDB's Query syntax to find the first matching record based on the title
-        var titleEntryDb = TitleEntryListDb.Find(Query.EQ("Title", extractedResults.First().Value));
+        ExtractedResult<string>? bestMatch = await Task.Run(() => matches.FirstOrDefault(match => match.Score > similarityPercentage));
+
+        if (bestMatch == null) return null;
+
+        // Use Task.WhenAll to perform database queries concurrently
+        var titleEntryDbTask = TitleEntryListDb.Find(Query.EQ("Title", bestMatch.Value)).FirstOrDefault();
+        var titleEntryDb = titleEntryDbTask;
 
         if (titleEntryDb == null) return null;
-        var malId = titleEntryDb.First().MalId;
-        return AnimeDb.Find(Query.EQ("MalId", malId));
+        var malId = titleEntryDb.MalId;
+        var animeDbTask = Task.Run(() => AnimeDb.Find(Query.EQ("MalId", malId)).ToList());
+
+        var animeDb = await animeDbTask;
+        return animeDb;
     }
+
+
 
     private static string NormalizeTitle(string title)
     {
         return title.ToLower().Trim();
     }
     
-    private static IEnumerable<string> FetchPotentialMatchesFromDatabase(string normalizedTitle)
+    private static async Task<IEnumerable<string>> FetchPotentialMatchesFromDatabaseAsync(string normalizedTitle)
     {
         var potentialTitles = new HashSet<string>();
         var characterSearchRange = int.Parse(SettingsManager.GetSetting("Execution Settings", "CharacterSearchRange"));
-    
-        // Fetch all potential TitleEntryDb from the database
-        var allTitleEntries = TitleEntryListDb.FindAll().ToHashSet();
 
-        // Filter titles based on the first number of characters
-        foreach (var titleEntry in from titleEntry in allTitleEntries where titleEntry.Title != null let firstNCharacters = titleEntry.Title[..Math.Min(characterSearchRange, titleEntry.Title.Length)] where firstNCharacters.ToCharArray().Any(normalizedTitle.Contains) select titleEntry)
+        // Fetch and filter TitleEntryDb from the database asynchronously
+        var filteredTitleEntries = await Task.Run(() =>TitleEntryListDb.Find(entry => entry.Title != null && entry.Title.Length >= characterSearchRange));
+
+        foreach (var titleEntry in filteredTitleEntries)
         {
-            potentialTitles.Add(titleEntry.Title);
+            if (MatchesFirstNCharacters(titleEntry.Title, normalizedTitle, characterSearchRange))
+            {
+                potentialTitles.Add(titleEntry.Title);
+            }
         }
 
         return potentialTitles;
     }
+
+    private static bool MatchesFirstNCharacters(string title, string normalizedTitle, int characterSearchRange)
+    {
+        int lengthToCheck = Math.Min(characterSearchRange, title.Length);
+        for (int i = 0; i < lengthToCheck; i++)
+        {
+            if (normalizedTitle.Contains(title[i]))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
         
     public static string GetAnimeTitleWithAnime(AnimeDto? anime)
     {
