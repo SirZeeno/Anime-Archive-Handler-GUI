@@ -27,10 +27,9 @@ public partial class MainView : UserControl
     {
         InitializeComponent();
         MainViewModel.AnimePreviewItems = new ObservableCollection<CarouselItem>();
-        DataContext = this; // Only for example purposes
+        DataContext = new MainViewModel(); // Only for example purposes
         AnimeItemDisplayControl.MainViewInstance = this;
         AnimeItemDisplayControl.AnimeItemsControlInstance = AnimeItemsControl;
-        AnimeItemDisplayControl.ScrollViewerInstance = DynamicScrollViewer;
         AnimeItemDisplayControl.SetGridItems().OnCompleted(AdjustGridLayout);
         this.GetObservable(BoundsProperty).Subscribe(_ => AdjustGridLayout());
         AnimeCategoryTabControl.SelectionChanged += HeaderTabControl_SelectionChanged;
@@ -235,6 +234,7 @@ public partial class MainView : UserControl
             case 1:
                 break;
             case 2:
+                ConsoleExt.WriteLineWithPretext("Tab 2 selected", ConsoleExt.OutputType.Info);
                 break;
             case 3:
                 AnimeItemDisplayControl.SetGridItems().OnCompleted(AdjustGridLayout);
@@ -280,6 +280,9 @@ public partial class MainView : UserControl
         var source = e.Source as Control;
         switch (source?.Name)
         {
+            case "ImportWindowButton":
+                new ImportView {DataContext = new ImportViewModel()}.Show();
+                break;
             case "ImportFoldersButton":
                 AnimeItemDisplayControl.UserAddAnimeToAnimeGrid();
                 break;
@@ -289,7 +292,7 @@ public partial class MainView : UserControl
             case "ExportButton":
                 break;
             case "PreferencesButton":
-                new ImportView {DataContext = new ImportViewModel()}.Show();
+                new SettingsView {DataContext = new SettingsViewModel()}.Show();
                 break;
             case "HelpButton":
                 break;

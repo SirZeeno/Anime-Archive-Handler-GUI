@@ -1,12 +1,19 @@
-﻿namespace Anime_Archive_Handler_GUI.Interfaces;
+﻿using System;
+
+namespace Anime_Archive_Handler_GUI.Interfaces;
 
 public interface IImportClassCreator
 {
+    void Scan();
     void Import();
 }
 
 public class AnimeImport : IImportClassCreator
 {
+    public void Scan()
+    {
+        
+    }
     public void Import()
     {
         
@@ -15,6 +22,10 @@ public class AnimeImport : IImportClassCreator
 
 public class MangaImport : IImportClassCreator
 {
+    public void Scan()
+    {
+        
+    }
     public void Import()
     {
         
@@ -23,37 +34,26 @@ public class MangaImport : IImportClassCreator
 
 public class HentaiImport : IImportClassCreator
 {
+    public void Scan()
+    {
+        
+    }
     public void Import()
     {
         
     }
 }
 
-public abstract class ImportFactory
+public class ImportFactory
 {
-    public abstract IImportClassCreator ImportClassCreator();
-}
-
-public class AnimeImportFactory : ImportFactory
-{
-    public override IImportClassCreator ImportClassCreator()
+    public IImportClassCreator ImportClassCreator(ImportSettings settings)
     {
-        return new AnimeImport();
-    }
-}
-
-public class MangaImportFactory : ImportFactory
-{
-    public override IImportClassCreator ImportClassCreator()
-    {
-        return new MangaImport();
-    }
-}
-
-public class HentaiImportFactory : ImportFactory
-{
-    public override IImportClassCreator ImportClassCreator()
-    {
-        return new HentaiImport();
+        return settings.ImportType switch
+        {
+            ImportType.Anime => new AnimeImport(),
+            ImportType.Manga => new MangaImport(),
+            ImportType.Hentai => new HentaiImport(),
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 }

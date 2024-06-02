@@ -6,7 +6,7 @@ using Anime_Archive_Handler_GUI.Views;
 
 namespace Anime_Archive_Handler_GUI;
 
-public partial class App : Application
+public class App : Application
 {
     public override void Initialize()
     {

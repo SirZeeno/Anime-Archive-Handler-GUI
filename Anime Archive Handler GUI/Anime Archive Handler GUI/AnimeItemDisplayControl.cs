@@ -18,7 +18,6 @@ public class AnimeItemDisplayControl
 {
     public static MainView MainViewInstance { get; set; } = null!;
     public static ItemsControl AnimeItemsControlInstance { get; set; } = null!;
-    public static ScrollViewer ScrollViewerInstance { get; set; } = null!;
     
     private const int PaddingThickness = 10;
     private const int ImageMaxWidth = 225;
@@ -91,7 +90,7 @@ public class AnimeItemDisplayControl
     public static void AdjustGridLayout(ItemsControl itemsControl)
     {
         // Make sure to use the correct total width for each image including padding
-        var availableWidth = ScrollViewerInstance.Bounds.Width;
+        var availableWidth = itemsControl.Bounds.Width;
         // Calculate the number of columns based on available width and total width per image
         int columns = Math.Max(1, (int)(availableWidth / (TotalImageWidth)));
 
