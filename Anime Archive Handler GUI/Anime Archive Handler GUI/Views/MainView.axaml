@@ -101,7 +101,7 @@
 
         <Border Grid.Row="0" Height="32">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                <TextBlock Text="{Binding Title, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" VerticalAlignment="Center" Margin="10 0"></TextBlock>
+                <TextBlock Text="{Binding Title, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" VerticalAlignment="Center" Margin="10 0" />
                 <DropDownButton Content="Settings" FontWeight="Heavy" Height="20" FontSize="15" BorderThickness="1" BorderBrush="Black">
                     <DropDownButton.Flyout>
                         <MenuFlyout>

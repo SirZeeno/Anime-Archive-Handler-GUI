@@ -1,9 +1,10 @@
 ﻿using Anime_Archive_Handler_GUI.ViewModels;
 using Avalonia.Controls;
+using FluentAvalonia.UI.Windowing;
 
 namespace Anime_Archive_Handler_GUI.Views;
 
-public partial class ImportView : Window
+public partial class ImportView : AppWindow
 {
     public ImportView()
     {
@@ -11,5 +12,7 @@ public partial class ImportView : Window
         
         ImportHandler.ImportWindowInstance = this;
         ImportViewModel.AnimeItemsControlInstance = AnimeItemsControl;
+        TitleBar.ExtendsContentIntoTitleBar = true;
+        TitleBar.TitleBarHitTestType = TitleBarHitTestType.Complex;
     }
 }

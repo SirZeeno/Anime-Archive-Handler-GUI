@@ -19,8 +19,9 @@
         <viewModels:ImportViewModel />
     </Design.DataContext>
     
-    <Grid RowDefinitions="Auto,Auto,Auto,Auto,*" Background="{StaticResource BackgroundColor}">
-        <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto,Auto,Auto">
+    <Grid RowDefinitions="32,Auto,Auto,Auto,Auto,*" Background="{StaticResource BackgroundColor}">
+        <TextBlock Grid.Row="0" Text="Import Wizard" VerticalAlignment="Center" Margin="10 0" />
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto,Auto,Auto,Auto">
             <TextBox Grid.Column="0" Watermark="Path to File(s) or Folder(s)" Text="{Binding PathTextBox}" />
             <Button Grid.Column="1" Command="{Binding BrowseFoldersCommand}">
                 <StackPanel Orientation="Horizontal">
@@ -49,7 +50,7 @@
         </Grid>
         
         <!-- For the Text Display of the selected paths -->
-        <Border Grid.Row="1" BorderBrush="Black" BorderThickness="1" Margin="0,5">
+        <Border Grid.Row="2" BorderBrush="Black" BorderThickness="1" Margin="0,5">
             <ItemsControl ItemsSource="{Binding SelectedPathDisplay}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="animeArchiveHandlerGui:ImportSettings">
@@ -82,12 +83,12 @@
             </ItemsControl>
         </Border>
         
-        <Border Grid.Row="2">
+        <Border Grid.Row="3">
             <TextBlock Text="Disclaimer, the Importer will only import the episodes and seasons of a selected anime folder, not the movies or Ova. Those will have to be selected manually for now." FontSize="10" Foreground="Red" />
         </Border>
         
         <!-- Toggle Buttons for the import and pathing settings -->
-        <Border Grid.Row="3" BorderBrush="Black" BorderThickness="1" Margin="0,10,0,0">
+        <Border Grid.Row="4" BorderBrush="Black" BorderThickness="1" Margin="0,10,0,0">
             <Grid ColumnDefinitions="*,*,Auto">
                 <StackPanel Grid.Column="0" Orientation="Vertical" Margin="5, 0">
                     <CheckBox Content="Multiple Anime in one Folder" IsChecked="{Binding HasMultipleAnimeInOneFolder}"/>
@@ -107,7 +108,7 @@
             </Grid>
         </Border>
         
-        <Border Grid.Row="4" BorderBrush="Black" BorderThickness="1" Margin="10,10,10,10">
+        <Border Grid.Row="5" BorderBrush="Black" BorderThickness="1" Margin="10,10,10,10">
             <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                 <ItemsControl ItemsSource="{Binding AnimeSearchItemResultGrid}" Name="AnimeItemsControl">
                     <ItemsControl.ItemTemplate>
@@ -118,8 +119,8 @@
                                     <ItemsControl ItemsSource="{Binding AnimeSearchResults}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate DataType="animeArchiveHandlerGui:AnimeDisplayItem">
-                                                <Panel>
-                                                    <Border CornerRadius="5" ClipToBounds="True" Background="#202020" Name="Border">
+                                                <Panel Margin="5,0">
+                                                    <Border CornerRadius="5" ClipToBounds="True" Background="#202020" Name="Border"> 
                                                         <Grid RowDefinitions="Auto,Auto">
                                                             <Panel Grid.Row="0" Name="ImagePanel">
                                                                 <Image MaxHeight="{Binding ImageMaxHeight}" MaxWidth="{Binding ImageMaxWidth}" MinHeight="{Binding ImageMaxHeight}" MinWidth="{Binding ImageMaxWidth}" Stretch="UniformToFill" Source="{Binding AnimeImage}"/>
@@ -144,7 +145,7 @@
                                                             <TextBlock Grid.Row="1" Text="{Binding AnimeName}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,10" MaxWidth="{Binding ImageMaxWidth}" Height="40" MaxHeight="40" TextWrapping="Wrap" Padding="10,0"/>
                                                         </Grid>
                                                     </Border>
-                                                    <RadioButton Name="{Binding AnimeName}" Margin="5,5" CornerRadius="5" ClipToBounds="True" Padding="0" GroupName="{Binding AnimeName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                                                    <RadioButton Name="{Binding AnimeName}" Margin="5,5" CornerRadius="5" ClipToBounds="True" Padding="0" GroupName="{Binding $parent[ItemsControl].((animeArchiveHandlerGui:AnimeImportDisplayItem)DataContext).AnimeTitle}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                                                 </Panel>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>

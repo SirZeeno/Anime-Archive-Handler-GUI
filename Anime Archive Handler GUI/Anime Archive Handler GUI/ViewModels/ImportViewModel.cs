@@ -72,7 +72,7 @@ public class ImportViewModel : ViewModelBase
         IObservable<bool> canExecuteAdd = this.WhenAnyValue(vm => vm.PathTextBox, (path) => !string.IsNullOrEmpty(path));
         IObservable<bool> canExecuteScan = this.WhenAnyValue(x => x.Items.Count).Select(count => count > 0);
         AddPathToQueueCommand = ReactiveCommand.Create<string?>(path => ImportHandler.AddPathToQueue(new ImportSettings(path, HasMultipleAnimeInOneFolder, HasSeasonFolders, IsOva, IsMovie, SelectedOption), SelectedPathDisplay), canExecuteAdd);
-        StartScanCommand = ReactiveCommand.Create(() => ImportHandler.ScanPath(SelectedPathDisplay, _hasMultipleInOneFolder), canExecuteScan);
+        StartScanCommand = ReactiveCommand.Create(() => ImportHandler.ScanPath(SelectedPathDisplay), canExecuteScan);
         BrowseFoldersCommand = ReactiveCommand.Create(() => ImportHandler.BrowseFolders(new ImportSettings(String.Empty, HasMultipleAnimeInOneFolder, HasSeasonFolders, IsOva, IsMovie, SelectedOption)));
         BrowseFilesCommand = ReactiveCommand.Create(() => ImportHandler.BrowseFiles(new ImportSettings(String.Empty, HasMultipleAnimeInOneFolder, HasSeasonFolders, IsOva, IsMovie, SelectedOption)));
     }

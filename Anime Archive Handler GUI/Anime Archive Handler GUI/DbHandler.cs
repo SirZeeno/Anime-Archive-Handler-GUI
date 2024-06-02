@@ -135,20 +135,25 @@ public static class DbHandler
         // Use Process.ExtractTop() to get the best match
         var matches = await Task.Run(() => Process.ExtractTop(normalizedTitle, potentialMatches.ToList()));
 
-        ExtractedResult<string>? bestMatch = await Task.Run(() => matches.FirstOrDefault(match => match.Score > similarityPercentage));
+        if (matches == null) return null;
+        
+        List<AnimeDto> animeDtos = new() { };
+        
+        foreach (var match in matches)
+        {
+            // Use Task.WhenAll to perform database queries concurrently
+            var titleEntryDbTask = TitleEntryListDb.Find(Query.EQ("Title", match.Value)).FirstOrDefault();
+            var titleEntryDb = titleEntryDbTask;
 
-        if (bestMatch == null) return null;
+            if (titleEntryDb == null) return null;
+            var malId = titleEntryDb.MalId;
+            var animeDbTask = Task.Run(() => AnimeDb.Find(Query.EQ("MalId", malId)).ToList());
 
-        // Use Task.WhenAll to perform database queries concurrently
-        var titleEntryDbTask = TitleEntryListDb.Find(Query.EQ("Title", bestMatch.Value)).FirstOrDefault();
-        var titleEntryDb = titleEntryDbTask;
-
-        if (titleEntryDb == null) return null;
-        var malId = titleEntryDb.MalId;
-        var animeDbTask = Task.Run(() => AnimeDb.Find(Query.EQ("MalId", malId)).ToList());
-
-        var animeDb = await animeDbTask;
-        return animeDb;
+            var animeDb = await animeDbTask;
+            animeDtos.Add(animeDb[0]);
+        }
+        
+        return animeDtos;
     }
 
 
