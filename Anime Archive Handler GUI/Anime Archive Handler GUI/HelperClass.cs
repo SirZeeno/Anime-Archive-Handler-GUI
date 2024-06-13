@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Windows.Input;
 
 namespace Anime_Archive_Handler_GUI;
 
@@ -196,4 +197,51 @@ public static class HelperClass
 
         return items.Select(selector).ToList();
     }
+    
+    public static int LevenshteinDistance(string s, string t)
+    {
+        int n = s.Length;
+        int m = t.Length;
+
+        // If one of the strings is empty
+        if (n == 0) return m;
+        if (m == 0) return n;
+
+        // Create two work vectors of integer distances
+        int[] v0 = new int[m + 1];
+        int[] v1 = new int[m + 1];
+
+        // Initialize v0 (the previous row of distances)
+        // this row is A[0][i]: edit distance for an empty s
+        // the distance is just the number of characters to delete from t
+        for (int i = 0; i <= m; i++)
+        {
+            v0[i] = i;
+        }
+
+        for (int i = 0; i < n; i++)
+        {
+            // Calculate v1 (current row distances) from the previous row v0
+
+            // First element of v1 is A[i+1][0]
+            //   edit distance is delete (i+1) chars from s to match empty t
+            v1[0] = i + 1;
+
+            // Use formula to fill in the rest of the row
+            for (int j = 0; j < m; j++)
+            {
+                int cost = (s[i] == t[j]) ? 0 : 1;
+                v1[j + 1] = Math.Min(v1[j] + 1, Math.Min(v0[j + 1] + 1, v0[j] + cost));
+            }
+
+            // Copy v1 (current row) to v0 (previous row) for next iteration
+            for (int j = 0; j <= m; j++)
+            {
+                v0[j] = v1[j];
+            }
+        }
+
+        return v1[m];
+    }
+
 }
