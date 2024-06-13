@@ -1,5 +1,4 @@
 ﻿using Anime_Archive_Handler_GUI.ViewModels;
-using Avalonia.Controls;
 using FluentAvalonia.UI.Windowing;
 
 namespace Anime_Archive_Handler_GUI.Views;
