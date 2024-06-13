@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
@@ -27,15 +28,13 @@ public class ImportViewModel : ViewModelBase
     public ICommand BrowseFoldersCommand { get; }
     public ICommand BrowseFilesCommand { get; }
     public ICommand AddPathToQueueCommand { get; }
-    public ICommand StartScanCommand { get; }
+    public ICommand StartScanCommand { get; set; }
+    public ReactiveCommand<ImportSettings, Unit> RemovePathFromQueueCommand { get; }
+    //public ICommand RemovePathFromQueueCommand(ImportSettings item) { get; } // need to figure out how i can pass the items itself to the command so its easier to remove it from the collection
     public ImportType SelectedOption
     {
         get => _selectedOption;
-        set
-        {
-            _selectedOption = value;
-            OnPropertyChanged();
-        }
+        set => this.RaiseAndSetIfChanged(ref _selectedOption, value);
     }
     
     public bool HasMultipleAnimeInOneFolder
@@ -65,6 +64,12 @@ public class ImportViewModel : ViewModelBase
         get => _inputPath;
         set => this.RaiseAndSetIfChanged(ref _inputPath, value);
     }
+    
+    void RemoveItem(ImportSettings item)
+    {
+        SelectedPathDisplay.Remove(item);
+        ConsoleExt.WriteLineWithPretext($"Removed Path: '{item.SelectedPath}'", ConsoleExt.OutputType.Info);
+    }
 
     public ImportViewModel()
     {
@@ -75,11 +80,6 @@ public class ImportViewModel : ViewModelBase
         StartScanCommand = ReactiveCommand.Create(() => ImportHandler.ScanPath(SelectedPathDisplay), canExecuteScan);
         BrowseFoldersCommand = ReactiveCommand.Create(() => ImportHandler.BrowseFolders(new ImportSettings(String.Empty, HasMultipleAnimeInOneFolder, HasSeasonFolders, IsOva, IsMovie, SelectedOption)));
         BrowseFilesCommand = ReactiveCommand.Create(() => ImportHandler.BrowseFiles(new ImportSettings(String.Empty, HasMultipleAnimeInOneFolder, HasSeasonFolders, IsOva, IsMovie, SelectedOption)));
-    }
-    
-    public event PropertyChangedEventHandler PropertyChanged;
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        RemovePathFromQueueCommand = ReactiveCommand.Create<ImportSettings>(RemoveItem); // no command is being set for some reason
     }
 }

@@ -109,6 +109,13 @@ public enum ImportType
     Hentai
 }
 
+public enum SearchEngine
+{
+    Custom,
+    Lucene,
+    Meilisearch
+}
+
 public abstract class Animetosho
 {
     public int? id { get; set; }

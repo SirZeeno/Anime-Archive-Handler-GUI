@@ -216,7 +216,7 @@
                                                     </StackPanel>
                                                 </StackPanel>
                                             </Panel>
-                                            <TextBlock Grid.Row="1" Text="{Binding AnimeName}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,10" MaxWidth="{Binding ImageMaxWidth}" Height="40" MaxHeight="40" TextWrapping="Wrap" Padding="10,0"/>
+                                            <TextBlock Grid.Row="1" Text="{Binding AnimeName}" Foreground="{StaticResource LightBlueTextColor}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,10" MaxWidth="{Binding ImageMaxWidth}" Height="40" MaxHeight="40" TextWrapping="Wrap" Padding="10,0"/>
                                         </Grid>
                                     </Border>
                                 </Button>
