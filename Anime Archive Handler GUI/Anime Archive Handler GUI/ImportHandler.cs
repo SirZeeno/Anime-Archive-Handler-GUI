@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,6 +7,7 @@ using Anime_Archive_Handler_GUI.ViewModels;
 using Anime_Archive_Handler_GUI.Views;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
+using Humanizer;
 
 namespace Anime_Archive_Handler_GUI;
 
@@ -100,22 +102,24 @@ public static class ImportHandler
                     
                     var animeSearchResults = await DbHandler.GetAnimesWithTitle(animeName);
                     
-                    if (animeSearchResults == null)
+                    if (!animeSearchResults.Any())
                     {
                         ConsoleExt.WriteLineWithPretext($"No Anime Has been Found by the name of {animeName}", ConsoleExt.OutputType.Warning);
-                        return;
+                        continue;
                     }
                     
                     ObservableCollection<AnimeDisplayItem> foundAnimes = new() { };
+                    string title;
                     
                     // if found display anime display item in importer view to show the found anime
                     foreach (var animeSearchResult in animeSearchResults)
                     {
                         var titleEntries = animeSearchResult.Titles;
-                        ConsoleExt.WriteLineWithPretext($"Found Anime: '{HelperClass.ExtractProperty(titleEntries.ToList(), item => item.Title)[1]}'", ConsoleExt.OutputType.Info);
-                        foundAnimes.Add(new(animeSearchResult.Images.JPG.LargeImageUrl, HelperClass.ExtractProperty(titleEntries.ToList(), item => item.Title)[1], 12,12,12, Language.Dub));
+                        title = (titleEntries.Where(x => x.Type.ToLower() == "english").Select(x => x.Title).FirstOrDefault() ?? titleEntries.Where(x => x.Type.ToLower() == "default").Select(x => x.Title).FirstOrDefault()) ?? string.Empty;
+                        ConsoleExt.WriteLineWithPretext($"Found Anime: '{title}'", ConsoleExt.OutputType.Info); //HelperClass.ExtractProperty(titleEntries.ToList(), item => item.Title)[1]
+                        foundAnimes.Add(new(animeSearchResult.Images.JPG.LargeImageUrl, title, 12,12,12, Language.Dub));
                     }
-                    ImportViewModel.AnimeSearchItemResultGrid.Add(new AnimeImportDisplayItem(HelperClass.ExtractProperty(animeSearchResults.First().Titles.ToList(), item => item.Title)[1], foundAnimes));
+                    ImportViewModel.AnimeSearchItemResultGrid.Add(new AnimeImportDisplayItem(animeName.ToUpperInvariant(), foundAnimes));
                 }
                 ConsoleExt.WriteLineWithPretext("Done Scanning", ConsoleExt.OutputType.Info);
             }

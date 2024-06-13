@@ -127,38 +127,57 @@ public static class DbHandler
     public static async Task<IEnumerable<AnimeDto>?> GetAnimesWithTitle(string title)
     {
         var similarityPercentage = int.Parse(SettingsManager.GetSetting("Execution Settings", "SimilarityPercentage"));
+        var similarityDistance = int.Parse(SettingsManager.GetSetting("Execution Settings", "SimilarityDistance"));
         var normalizedTitle = NormalizeTitle(title);
 
-        // Fetch potential matches from the database
-        var potentialMatches = await Task.Run(() => FetchPotentialMatchesFromDatabaseAsync(normalizedTitle));
+        // Fetch potential matches from the database asynchronously
+        var potentialMatches = await FetchPotentialMatchesFromDatabaseAsync(normalizedTitle);
 
         var titleEntryDbs = potentialMatches as TitleEntryDb[] ?? potentialMatches.ToArray();
-        var titles = titleEntryDbs.Select(x => x.Title).ToList();
-        
-        // Use Process.ExtractTop() to get the best match
-        var matches = await Task.Run(() => Process.ExtractTop(normalizedTitle, titles));
+        var titles = titleEntryDbs.Select(x => x.Title).ToList(); // Why does it return nothing if i use ToLower() here?
+    
+        // Use RankNames to get the best matches
+        var matches = RankNames(normalizedTitle, titles);
+        var extractedMatches = matches.Where(match => match.Item2 <= similarityDistance)
+            .Select(match => match.Item1)
+            .ToList();
+    
+        var fuzzyMatches = Process.ExtractTop(normalizedTitle, extractedMatches, cutoff: similarityPercentage, limit: 10).ToArray();
 
-        if (matches == null) return null;
-        
-        List<AnimeDto> animeDtos = new() { };
-        
-        foreach (var match in matches)
+        var animeDtos = new List<AnimeDto>();
+    
+        foreach (var match in fuzzyMatches)
         {
-            // Use Task.WhenAll to perform database queries concurrently
-            var titleEntryDb = titleEntryDbs.Select(x => x).FirstOrDefault(x => x.Title == match.Value);
+            // Concurrently perform database queries
+            var titleEntryDb = titleEntryDbs.FirstOrDefault(x => x.Title == match.Value);
 
-            if (titleEntryDb == null) return null;
+            if (titleEntryDb == null) continue;
+        
             var malId = titleEntryDb.MalId;
             var animeDbTask = Task.Run(() => AnimeDb.Find(Query.EQ("MalId", malId)).ToList());
 
             var animeDb = await animeDbTask;
-            animeDtos.Add(animeDb[0]);
+            if (animeDb.Any())
+            {
+                animeDtos.Add(animeDb.First());
+            }
         }
-        
+    
         return animeDtos;
     }
 
+    private static List<Tuple<string, int>> RankNames(string targetName, List<string> nameList)
+    {
+        List<Tuple<string, int>> rankedList = new List<Tuple<string, int>>();
 
+        foreach (var name in nameList)
+        {
+            int distance = HelperClass.LevenshteinDistance(targetName, name);
+            rankedList.Add(new Tuple<string, int>(name, distance));
+        }
+
+        return rankedList.OrderBy(t => t.Item2).ToList();
+    }
 
     private static string NormalizeTitle(string title)
     {
