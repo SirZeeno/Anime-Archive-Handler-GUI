@@ -16,7 +16,7 @@ using static FileHandler;
 
 public static class FileHandler
 {
-    internal static readonly string CacheFilePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "Settings/Cache.json");
+    internal static readonly string CacheFilePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "Settings/FilePathCache.json");
     private static readonly Dictionary<string, string> FileCache = JsonFileUtility.LoadCache(CacheFilePath);
     private static string? _errorLogFile;
     
@@ -208,28 +208,53 @@ public static partial class SettingsManager
         return match.Success ? GetDirectoryInProgramFolder(MyRegex().Replace(data[sectionName][keyName], "")) : data[sectionName][keyName];
     }
     
-    // have to rework this, so it works with the cache json file instead of th ini file to cache things, and use the settings.ini for default values and error logging
+    // Save a specified setting
+    public static void SaveSetting(string filePath, string sectionName, string keyName, string value)
+    {
+        string userSettings = JsonFileUtility.LoadCache(CacheFilePath)["UserSettings"];
+        var data = Parser.ReadFile(userSettings);
+        data[sectionName][keyName] = value;
+        Parser.WriteFile(filePath, data);
+    }
+    
+    // Takes a file name and a root path and returns its cached path or gets it in the root path folder if it isn't cached or not found
+    public static string GetPathSetting(string folderOrFileName, string rootPath)
+    {
+        if (JsonFileUtility.LoadCache(CacheFilePath).TryGetValue(folderOrFileName, out var cachedPath) && Path.Exists(cachedPath)) // checks if the input folderOrFileName is cached
+        {
+            return cachedPath;
+        }
+        if (Path.GetExtension(folderOrFileName) == "") // checks if the input folderOrFileName is a file
+        {
+            string[] directories = Directory.GetDirectories(rootPath, folderOrFileName, SearchOption.AllDirectories); // need to cache the path of the file in the file cache
+            if (directories.Length > 0)
+            {
+                return directories[0];
+            }
+        }
+        else // if the input folderOrFileName is a folder
+        {
+            string[] files = Directory.GetFiles(rootPath, folderOrFileName, SearchOption.AllDirectories);
+            if (files.Length > 0)
+            {
+                return files[0];
+            }
+        }
+
+        return String.Empty; // returns an empty string if the file or folder isn't found
+    }
+    
+    // Get a specified setting from either the user settings or the default settings
     public static string GetSetting(string sectionName, string keyName)
     {
         string settings = CommonSettings.SettingsPath;
-        string userSettings = JsonFileUtility.LoadCache(CacheFilePath)["UserSettings"];
+        string userSettings = GetFileInProgramFolder("UserSettings.ini");
 
-        // checks if the user has set a value in that settings and caches and returns it if they did
+        // checks if the user has set a value in that settings section and caches and returns it if they did
         string setting = GetValue(userSettings, sectionName, keyName);
         if (setting != "null")
         {
             return setting;
-        }
-
-        try
-        {
-            // checks if there is a cached value for that setting and returns it
-            setting = JsonFileUtility.LoadCache(CacheFilePath)[keyName];
-            if (setting != "null") return setting;
-        }
-        catch
-        {
-            // ignored
         }
         
         // checks if there is a default value for that setting and caches and returns it

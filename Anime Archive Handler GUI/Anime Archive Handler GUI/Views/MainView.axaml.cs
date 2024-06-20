@@ -6,6 +6,7 @@ using Avalonia.Media;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using System.Threading.Tasks;
+using Anime_Archive_Handler_GUI.Tests;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Threading;
@@ -295,8 +296,10 @@ public partial class MainView : UserControl
                 new SettingsView {DataContext = new SettingsViewModel()}.Show();
                 break;
             case "HelpButton":
+                TestStarter.StartTest();
                 break;
             case "CopyButton":
+                TestStarter.PortDatabase();
                 break;
             case "PasteButton":
                 break;

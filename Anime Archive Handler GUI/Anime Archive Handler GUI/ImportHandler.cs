@@ -117,7 +117,7 @@ public static class ImportHandler
                         var titleEntries = animeSearchResult.Titles;
                         title = (titleEntries.Where(x => x.Type.ToLower() == "english").Select(x => x.Title).FirstOrDefault() ?? titleEntries.Where(x => x.Type.ToLower() == "default").Select(x => x.Title).FirstOrDefault()) ?? string.Empty;
                         ConsoleExt.WriteLineWithPretext($"Found Anime: '{title}'", ConsoleExt.OutputType.Info); //HelperClass.ExtractProperty(titleEntries.ToList(), item => item.Title)[1]
-                        foundAnimes.Add(new(animeSearchResult.Images.JPG.LargeImageUrl, title, 12,12,12, Language.Dub));
+                        foundAnimes.Add(new(animeSearchResult.Images.Jpg.LargeImageUrl, title, 12,12,12, Language.Dub));
                     }
                     ImportViewModel.AnimeSearchItemResultGrid.Add(new AnimeImportDisplayItem(animeName.ToUpperInvariant(), foundAnimes));
                 }

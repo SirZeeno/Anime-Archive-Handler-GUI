@@ -1,6 +1,8 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
+using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml.Templates;
@@ -19,6 +21,9 @@ public class SettingsViewModel : ViewModelBase
     private static DataTemplate? _mediaTemplate;
     private static DataTemplate? _addonsTemplate;
     private static DataTemplate? _experimentalTemplate;
+    
+    public ReactiveCommand<object, Unit> SelectionChangedCommand { get; }
+    public ICommand SaveSettingsCommand { get; set; }
 
     public static DataTemplate? GeneralTemplate
     {
@@ -74,13 +79,13 @@ public class SettingsViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _selectedTabTemplate, value);
     }
     
-    public ReactiveCommand<object, Unit> SelectionChangedCommand { get; }
     
     public SettingsViewModel()
     {
         SearchEngine = SearchEngine.Custom;
         
         SelectionChangedCommand = ReactiveCommand.Create<object>(OnSelectionChanged);
+        SaveSettingsCommand = ReactiveCommand.Create(() => SettingsManager.SaveSetting(String.Empty, String.Empty, String.Empty, String.Empty)); // TODO: Replace with filePath, sectionName, keyName, value
         
         // To load the General Page 
         OnSelectionChanged(new object());
