@@ -1,12 +1,10 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 using Anime_Archive_Handler_GUI.Helpers;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
-using Avalonia.Threading;
 using JikanDotNet;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -116,6 +114,37 @@ public enum SearchEngine
     Meilisearch
 }
 
+public class Image
+{
+    public string Id { get; set; }
+    public string Name { get; set; }
+    public byte[] Data { get; set; }
+}
+
+public class ImageBase
+{
+    public string Id { get; set; }
+    public int MalId { get; set; }
+    public string Url { get; set; }
+    public Bitmap Image { get; set; }
+    public ImageType ImageType { get; set; }
+    public ImageSize ImageSize { get; set; }
+}
+
+public enum ImageType
+{
+    PNG,
+    JPG,
+    WebP
+}
+
+public enum ImageSize
+{
+    Small,
+    Medium,
+    Large
+}
+
 public abstract class Animetosho
 {
     public int? id { get; set; }
@@ -161,11 +190,6 @@ public abstract class Animetosho
     public string srcurltype { get; set; }
     public string srctitle { get; set; }
     public int? status { get; set; }
-}
-public class AnimeDto : Anime
-{
-    public int AnimeSeason { get; set; }
-    public int AnimePart { get; set; }
 }
 
 public class TitleEntryDb : TitleEntry

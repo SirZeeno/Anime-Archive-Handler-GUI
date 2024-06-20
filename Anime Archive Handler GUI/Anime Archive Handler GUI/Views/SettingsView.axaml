@@ -20,64 +20,64 @@
         <converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
         
         <DataTemplate x:Key="General">
-            <StackPanel Margin="5" >
-                <StackPanel Orientation="Horizontal">
-                    <StackPanel Orientation="Vertical" Margin="5,0">
-                        <TextBlock Text="Fetch Sources" Foreground="{StaticResource LightGreyTextColor}" FontWeight="ExtraBold" FontSize="15"/>
-                        <StackPanel Margin="0,10,0,0">
-                            <TextBlock Text="Anime" FontWeight="Medium" FontSize="15" Foreground="{StaticResource LightGreyTextColor}"/>
-                            <CheckBox Margin="20,0">
-                                <TextBlock Text="MAL" Foreground="{StaticResource DarkGreyTextColor}"/>
-                            </CheckBox>
-                            <CheckBox Margin="20,0">
-                                <TextBlock Text="Kitsu" Foreground="{StaticResource DarkGreyTextColor}"/>
-                            </CheckBox>
-                            <CheckBox Margin="20,0">
-                                <TextBlock Text="Anime-Planet" Foreground="{StaticResource DarkGreyTextColor}"/>
-                            </CheckBox>
-                            <CheckBox Margin="20,0">
-                                <TextBlock Text="AniList" Foreground="{StaticResource DarkGreyTextColor}"/>
-                            </CheckBox>
-                        </StackPanel>
-                        <StackPanel Margin="0,10,0,0" IsVisible="False">
-                            <TextBlock Text="Manga" FontWeight="Medium" FontSize="15" Foreground="{StaticResource LightGreyTextColor}"/>
-                            <CheckBox Margin="20,0">
-                                <TextBlock Text="Mangadex" Foreground="{StaticResource DarkGreyTextColor}"/>
-                            </CheckBox>
-                        </StackPanel>
-                        <StackPanel Margin="0,10,0,0" IsVisible="False">
-                            <TextBlock Text="Doujin" FontWeight="Medium" FontSize="15" Foreground="{StaticResource LightGreyTextColor}"/>
-                            <CheckBox Margin="20,0">
-                                <TextBlock Text="Nhentai" Foreground="{StaticResource DarkGreyTextColor}"/>
-                            </CheckBox>
-                        </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <StackPanel Orientation="Vertical" Margin="5,0">
+                    <TextBlock Text="Fetch Sources" Foreground="{StaticResource LightGreyTextColor}" FontWeight="ExtraBold" FontSize="15"/>
+                    <StackPanel Margin="0,10,0,0">
+                        <TextBlock Text="Anime" FontWeight="Medium" FontSize="15" Foreground="{StaticResource LightGreyTextColor}"/>
+                        <CheckBox Margin="20,0">
+                            <TextBlock Text="MAL" Foreground="{StaticResource DarkGreyTextColor}"/>
+                        </CheckBox>
+                        <CheckBox Margin="20,0">
+                            <TextBlock Text="Kitsu" Foreground="{StaticResource DarkGreyTextColor}"/>
+                        </CheckBox>
+                        <CheckBox Margin="20,0">
+                            <TextBlock Text="Anime-Planet" Foreground="{StaticResource DarkGreyTextColor}"/>
+                        </CheckBox>
+                        <CheckBox Margin="20,0">
+                            <TextBlock Text="AniList" Foreground="{StaticResource DarkGreyTextColor}"/>
+                        </CheckBox>
                     </StackPanel>
-                    <StackPanel Orientation="Vertical" Margin="5,0">
-                        <TextBlock Text="Search Options" Foreground="{StaticResource LightGreyTextColor}" FontWeight="ExtraBold" FontSize="15"/>
-                        <TextBlock Text="Similarity Percentage" Margin="0,10,0,0" Foreground="{StaticResource DarkGreyTextColor}"/>
-                        <Slider Minimum="0" Maximum="100" Width="133" HorizontalAlignment="Left" Background="{StaticResource DarkGreyTextColor}" />
-                        <TextBlock Text="Similarity Distance" Margin="0" Foreground="{StaticResource DarkGreyTextColor}"/>
-                        <Slider Minimum="0" Maximum="100" Width="133" HorizontalAlignment="Left" Background="{StaticResource DarkGreyTextColor}" />
-                        <TextBlock Text="Character Search Range" Margin="0" Foreground="{StaticResource DarkGreyTextColor}"/>
-                        <Slider Minimum="0" Maximum="50" Width="133" HorizontalAlignment="Left" Background="{StaticResource DarkGreyTextColor}" />
+                    <StackPanel Margin="0,10,0,0" IsVisible="False">
+                        <TextBlock Text="Manga" FontWeight="Medium" FontSize="15" Foreground="{StaticResource LightGreyTextColor}"/>
+                        <CheckBox Margin="20,0">
+                            <TextBlock Text="Mangadex" Foreground="{StaticResource DarkGreyTextColor}"/>
+                        </CheckBox>
                     </StackPanel>
-                    <StackPanel Orientation="Vertical" Margin="5,0">
-                        <TextBlock Text="Search Engine" />
-                        <RadioButton GroupName="Search Engine" IsChecked="{ReflectionBinding SearchEngine, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static animeArchiveHandlerGui:SearchEngine.Custom}}">
-                            <TextBlock Text="Custom" />
-                        </RadioButton>
-                        <RadioButton GroupName="Search Engine" IsChecked="{ReflectionBinding SearchEngine, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static animeArchiveHandlerGui:SearchEngine.Lucene}}">
-                            <TextBlock Text="Lucene" />
-                        </RadioButton>
-                        <RadioButton GroupName="Search Engine" IsChecked="{ReflectionBinding SearchEngine, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static animeArchiveHandlerGui:SearchEngine.Meilisearch}}">
-                            <TextBlock Text="Meilisearch" />
-                        </RadioButton>
+                    <StackPanel Margin="0,10,0,0" IsVisible="False">
+                        <TextBlock Text="Doujin" FontWeight="Medium" FontSize="15" Foreground="{StaticResource LightGreyTextColor}"/>
+                        <CheckBox Margin="20,0">
+                            <TextBlock Text="Nhentai" Foreground="{StaticResource DarkGreyTextColor}"/>
+                        </CheckBox>
                     </StackPanel>
+                </StackPanel>
+                <StackPanel Orientation="Vertical" Margin="5,0">
+                    <TextBlock Text="Search Options" Foreground="{StaticResource LightGreyTextColor}" FontWeight="ExtraBold" FontSize="15"/>
+                    <TextBlock Text="Similarity Percentage" Margin="0,10,0,0" Foreground="{StaticResource DarkGreyTextColor}"/>
+                    <Slider Minimum="0" Maximum="100" Width="133" HorizontalAlignment="Left" Background="{StaticResource DarkGreyTextColor}" />
+                    <TextBlock Text="Similarity Distance" Margin="0" Foreground="{StaticResource DarkGreyTextColor}"/>
+                    <Slider Minimum="0" Maximum="100" Width="133" HorizontalAlignment="Left" Background="{StaticResource DarkGreyTextColor}" />
+                    <TextBlock Text="Character Search Range" Margin="0" Foreground="{StaticResource DarkGreyTextColor}"/>
+                    <Slider Minimum="0" Maximum="50" Width="133" HorizontalAlignment="Left" Background="{StaticResource DarkGreyTextColor}" />
+                </StackPanel>
+                <StackPanel Orientation="Vertical" Margin="5,0">
+                    <TextBlock Text="Search Engine" />
+                    <RadioButton GroupName="Search Engine" IsChecked="{ReflectionBinding SearchEngine, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static animeArchiveHandlerGui:SearchEngine.Custom}}">
+                        <TextBlock Text="Custom" />
+                    </RadioButton>
+                    <RadioButton GroupName="Search Engine" IsChecked="{ReflectionBinding SearchEngine, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static animeArchiveHandlerGui:SearchEngine.Lucene}}">
+                        <TextBlock Text="Lucene" />
+                    </RadioButton>
+                    <RadioButton GroupName="Search Engine" IsChecked="{ReflectionBinding SearchEngine, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static animeArchiveHandlerGui:SearchEngine.Meilisearch}}">
+                        <TextBlock Text="Meilisearch" />
+                    </RadioButton>
                 </StackPanel>
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="Advanced">
-            <TextBlock Text="Advanced" />
+            <StackPanel>
+                
+            </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="Media">
             <TextBlock Text="Media" />
@@ -113,7 +113,7 @@
             </ContentControl>
         </Border>
         <Border Grid.Row="3">
-            <Button HorizontalAlignment="Center">
+            <Button HorizontalAlignment="Center" >
                 <TextBlock Text="Save" FontSize="11"/>
             </Button>
         </Border>
