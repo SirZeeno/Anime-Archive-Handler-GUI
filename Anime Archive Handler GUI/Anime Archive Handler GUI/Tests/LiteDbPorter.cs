@@ -19,11 +19,11 @@ public class LiteDbPorter
     {
         // Open source LiteDB
         using var sourceLiteDb = new LiteDatabase($"Filename={_sourceLiteDbPath};Connection=shared");
-        var sourceCollection = sourceLiteDb.GetCollection<AnimeDto>("images");
+        var sourceCollection = sourceLiteDb.GetCollection<AnimeDto>("Anime");
 
         // Open destination LiteDB
         using var destinationLiteDb = new LiteDatabase($"Filename={_destinationLiteDbPath};Connection=shared");
-        var destinationCollection = destinationLiteDb.GetCollection<AnimeDto>("images");
+        var destinationCollection = destinationLiteDb.GetCollection<AnimeDto>("Anime");
 
         // Get all images from source LiteDB
         var images = sourceCollection.FindAll().ToList();
