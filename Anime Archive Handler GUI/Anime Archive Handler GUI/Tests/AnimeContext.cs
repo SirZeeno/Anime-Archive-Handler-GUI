@@ -1,33 +1,49 @@
-﻿using Anime_Archive_Handler_GUI;
+﻿using System;
+using Anime_Archive_Handler_GUI;
 using Microsoft.EntityFrameworkCore;
 
 public class AnimeContext : DbContext
 {
     public DbSet<AnimeDto> Animes { get; set; }
-
+    public DbSet<MalUrlDto> MalUrls { get; set; }
+    public DbSet<AnimeProducer> AnimeProducers { get; set; }
+    public DbSet<AnimeLicensor> AnimeLicensors { get; set; }
+    public DbSet<AnimeStudio> AnimeStudios { get; set; }
+    public DbSet<AnimeGenre> AnimeGenres { get; set; }
+    public DbSet<AnimeExplicitGenre> AnimeExplicitGenres { get; set; }
+    public DbSet<AnimeTheme> AnimeThemes { get; set; }
+    public DbSet<AnimeDemographic> AnimeDemographics { get; set; }
+    public DbSet<AnimeBroadcastDto> Broadcasts { get; set; }
+    public DbSet<AnimeTrailerDto> Trailers { get; set; }
+    public DbSet<ImageDto> Images { get; set; }
+    public DbSet<ImagesSetDto> ImageSets { get; set; }
+    public DbSet<TitleEntryDto> Titles { get; set; }
+    public DbSet<TimePeriodDto> TimePeriods { get; set; }
+    
     private readonly string _dbPath;
 
-    public AnimeContext(string dbPath)
+    public AnimeContext()
     {
-        _dbPath = dbPath;
+        _dbPath = "F:\\Rider Projects\\Anime Archive Handler GUI\\Anime Archive Handler GUI\\Anime Archive Handler GUI\\Anime Archive Handler GUI\\Databases\\SQLite.db";
     }
-
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseSqlite($"Data Source={_dbPath}");
+        optionsBuilder.EnableSensitiveDataLogging(); // Enable sensitive data logging
+        optionsBuilder.LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<AnimeDto>().HasKey(a => a.MalId); // Configure primary key
-        
-        modelBuilder.Entity<AnimeBroadcastDto>().HasKey(b => b.Id); // Primary key for AnimeBroadcast
-        modelBuilder.Entity<AnimeTrailerDto>().HasKey(b => b.Id); // Primary key for AnimeTrailer
-        modelBuilder.Entity<ImageDto>().HasKey(b => b.Id); // Primary key for Image
-        modelBuilder.Entity<MalUrlDto>().HasKey(b => b.Id); // Primary key for Image
-        modelBuilder.Entity<TitleEntryDto>().HasKey(b => b.Id); // Primary key for Image
-        modelBuilder.Entity<ImagesSetDto>().HasKey(b => b.Id); // Primary key for Image
-        modelBuilder.Entity<TimePeriodDto>().HasKey(b => b.Id); // Primary key for Image
+        // Define entity relationships
+        modelBuilder.Entity<AnimeDto>().HasKey(a => a.MalId);
+        modelBuilder.Entity<AnimeBroadcastDto>().HasKey(b => b.Id);
+        modelBuilder.Entity<AnimeTrailerDto>().HasKey(t => t.Id);
+        modelBuilder.Entity<ImageDto>().HasKey(i => i.Id);
+        modelBuilder.Entity<MalUrlDto>().HasKey(m => m.Id);
+        modelBuilder.Entity<TitleEntryDto>().HasKey(t => t.Id);
+        modelBuilder.Entity<ImagesSetDto>().HasKey(ims => ims.Id);
+        modelBuilder.Entity<TimePeriodDto>().HasKey(tp => tp.Id);
 
         modelBuilder.Entity<AnimeDto>()
             .HasOne(a => a.Broadcast)
@@ -54,7 +70,6 @@ public class AnimeContext : DbContext
             .WithOne(tp => tp.Anime)
             .HasForeignKey<TimePeriodDto>(tp => tp.AnimeDtoId);
 
-        // Configure AnimeProducer relationship
         modelBuilder.Entity<AnimeProducer>()
             .HasKey(ap => new { ap.AnimeDtoId, ap.MalUrlId });
         modelBuilder.Entity<AnimeProducer>()
@@ -66,7 +81,6 @@ public class AnimeContext : DbContext
             .WithMany()
             .HasForeignKey(ap => ap.MalUrlId);
 
-        // Configure AnimeLicensor relationship
         modelBuilder.Entity<AnimeLicensor>()
             .HasKey(al => new { al.AnimeDtoId, al.MalUrlId });
         modelBuilder.Entity<AnimeLicensor>()
@@ -78,7 +92,6 @@ public class AnimeContext : DbContext
             .WithMany()
             .HasForeignKey(al => al.MalUrlId);
 
-        // Configure AnimeStudio relationship
         modelBuilder.Entity<AnimeStudio>()
             .HasKey(ans => new { ans.AnimeDtoId, ans.MalUrlId });
         modelBuilder.Entity<AnimeStudio>()
@@ -90,7 +103,6 @@ public class AnimeContext : DbContext
             .WithMany()
             .HasForeignKey(ans => ans.MalUrlId);
 
-        // Configure AnimeGenre relationship
         modelBuilder.Entity<AnimeGenre>()
             .HasKey(ag => new { ag.AnimeDtoId, ag.MalUrlId });
         modelBuilder.Entity<AnimeGenre>()
@@ -102,7 +114,6 @@ public class AnimeContext : DbContext
             .WithMany()
             .HasForeignKey(ag => ag.MalUrlId);
 
-        // Configure AnimeExplicitGenre relationship
         modelBuilder.Entity<AnimeExplicitGenre>()
             .HasKey(aeg => new { aeg.AnimeDtoId, aeg.MalUrlId });
         modelBuilder.Entity<AnimeExplicitGenre>()
@@ -114,7 +125,6 @@ public class AnimeContext : DbContext
             .WithMany()
             .HasForeignKey(aeg => aeg.MalUrlId);
 
-        // Configure AnimeTheme relationship
         modelBuilder.Entity<AnimeTheme>()
             .HasKey(at => new { at.AnimeDtoId, at.MalUrlId });
         modelBuilder.Entity<AnimeTheme>()
@@ -126,7 +136,6 @@ public class AnimeContext : DbContext
             .WithMany()
             .HasForeignKey(at => at.MalUrlId);
 
-        // Configure AnimeDemographic relationship
         modelBuilder.Entity<AnimeDemographic>()
             .HasKey(ad => new { ad.AnimeDtoId, ad.MalUrlId });
         modelBuilder.Entity<AnimeDemographic>()
@@ -153,7 +162,7 @@ public class AnimeContext : DbContext
 
         modelBuilder.Entity<ImageDto>()
             .Property(i => i.ParentId)
-            .IsRequired();
+            .IsRequired(false);
 
         modelBuilder.Entity<ImageDto>()
             .Property(i => i.ImagesSetJpgId)
@@ -168,14 +177,14 @@ public class AnimeContext : DbContext
             .IsRequired();
 
         modelBuilder.Entity<ImagesSetDto>()
-            .HasOne(ims => ims.Jpg)
+            .HasOne(ims => ims.JPG)
             .WithOne(i => i.ImagesSetJpg)
-            .HasForeignKey<ImagesSetDto>(ims => ims.JpgId);
+            .HasForeignKey<ImageDto>(i => i.ImagesSetJpgId);
 
         modelBuilder.Entity<ImagesSetDto>()
             .HasOne(ims => ims.WebP)
             .WithOne(i => i.ImagesSetWebP)
-            .HasForeignKey<ImagesSetDto>(ims => ims.WebPId);
+            .HasForeignKey<ImageDto>(i => i.ImagesSetWebPId);
 
         modelBuilder.Entity<TimePeriodDto>()
             .Property(tp => tp.AnimeDtoId)

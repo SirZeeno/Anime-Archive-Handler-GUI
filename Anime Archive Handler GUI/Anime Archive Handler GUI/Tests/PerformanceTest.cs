@@ -13,7 +13,7 @@ public class PerformanceTest
 
     public PerformanceTest(string sqlitePath, string litedbPath)
     {
-        _sqliteContext = new AnimeContext(sqlitePath);
+        _sqliteContext = new AnimeContext();
         _sqliteContext.Database.EnsureCreated();
 
         _liteDbStore = new LiteDbImageStore(litedbPath);
