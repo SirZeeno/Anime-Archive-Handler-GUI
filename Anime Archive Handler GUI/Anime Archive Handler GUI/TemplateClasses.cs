@@ -192,6 +192,12 @@ public abstract class Animetosho
     public int? status { get; set; }
 }
 
+public class AnimeDtodb : Anime
+{
+    public int AnimeSeason { get; set; }
+    public int AnimePart { get; set; }
+}
+
 public class TitleEntryDb : TitleEntry
 {
     public long? MalId { get; init; }

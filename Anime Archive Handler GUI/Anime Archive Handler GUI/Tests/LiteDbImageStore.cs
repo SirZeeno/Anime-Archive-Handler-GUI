@@ -10,7 +10,7 @@ public class LiteDbImageStore
     public LiteDbImageStore(string dbPath)
     {
         var db = new LiteDatabase($"Filename={dbPath};Connection=shared");
-        _collection = db.GetCollection<AnimeDto>("images");
+        _collection = db.GetCollection<AnimeDto>("Anime");
     }
 
     public void AddImage(AnimeDto image)

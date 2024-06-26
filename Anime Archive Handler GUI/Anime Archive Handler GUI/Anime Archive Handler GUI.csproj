@@ -35,9 +35,6 @@
         <None Include="Databases\TestDatabase.db">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="Databases\Litedb.db">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
         <None Update="External Dependencies\LiteDB.Studio.exe">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
