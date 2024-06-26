@@ -7,7 +7,6 @@ using static SettingsManager;
 public class CommonSettings
 {
     internal static readonly string SettingsPath = GoGetter();
-    internal static readonly string UserSettingsFile = GetFileInProgramFolder("UserSettings.ini"); // needs to initialize after the settings path
     public static readonly string AnimeOutputFolder = GetSetting("Output Paths", "AnimeOutputFolder");
     public static readonly bool HeadlessOperations = bool.Parse(GetSetting("Execution Settings", "HeadlessOperations"));
     
