@@ -49,31 +49,31 @@ public class AnimeContext : DbContext
         modelBuilder.Entity<AnimeDto>()
             .HasMany(a => a.Studios)
             .WithOne()
-            .HasForeignKey("ProducerAnimeId")
+            .HasForeignKey(a => a.AnimeId)
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<AnimeDto>()
             .HasMany(a => a.Genres)
             .WithOne()
-            .HasForeignKey("LicensorAnimeId")
+            .HasForeignKey(a => a.AnimeId)
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<AnimeDto>()
             .HasMany(a => a.ExplicitGenres)
             .WithOne()
-            .HasForeignKey("ExplicitGenreAnimeId")
+            .HasForeignKey(a => a.AnimeId)
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<AnimeDto>()
             .HasMany(a => a.Themes)
             .WithOne()
-            .HasForeignKey("ThemeAnimeId")
+            .HasForeignKey(a => a.AnimeId)
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<AnimeDto>()
             .HasMany(a => a.Demographics)
             .WithOne()
-            .HasForeignKey("ExplicitGenreAnimeId")
+            .HasForeignKey(a => a.AnimeId)
             .OnDelete(DeleteBehavior.SetNull);
         
         modelBuilder.Entity<AnimeDto>()

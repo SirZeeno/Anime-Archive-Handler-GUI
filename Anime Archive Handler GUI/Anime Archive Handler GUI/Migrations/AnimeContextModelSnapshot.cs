@@ -324,16 +324,7 @@ namespace Anime_Archive_Handler_GUI.Migrations
                 {
                     b.HasBaseType("MalUrlDto");
 
-                    b.Property<long?>("ExplicitGenreAnimeId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasIndex("ExplicitGenreAnimeId");
-
-                    b.ToTable("MalUrls", t =>
-                        {
-                            t.Property("ExplicitGenreAnimeId")
-                                .HasColumnName("DemographicsDto_ExplicitGenreAnimeId");
-                        });
+                    b.HasIndex("AnimeId");
 
                     b.HasDiscriminator().HasValue("DemographicsDto");
                 });
@@ -342,10 +333,7 @@ namespace Anime_Archive_Handler_GUI.Migrations
                 {
                     b.HasBaseType("MalUrlDto");
 
-                    b.Property<long?>("ExplicitGenreAnimeId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasIndex("ExplicitGenreAnimeId");
+                    b.HasIndex("AnimeId");
 
                     b.HasDiscriminator().HasValue("ExplicitGenresDto");
                 });
@@ -354,10 +342,7 @@ namespace Anime_Archive_Handler_GUI.Migrations
                 {
                     b.HasBaseType("MalUrlDto");
 
-                    b.Property<long?>("LicensorAnimeId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasIndex("LicensorAnimeId");
+                    b.HasIndex("AnimeId");
 
                     b.HasDiscriminator().HasValue("GenresDto");
                 });
@@ -384,10 +369,7 @@ namespace Anime_Archive_Handler_GUI.Migrations
                 {
                     b.HasBaseType("MalUrlDto");
 
-                    b.Property<long?>("ProducerAnimeId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasIndex("ProducerAnimeId");
+                    b.HasIndex("AnimeId");
 
                     b.HasDiscriminator().HasValue("StudiosDto");
                 });
@@ -396,10 +378,7 @@ namespace Anime_Archive_Handler_GUI.Migrations
                 {
                     b.HasBaseType("MalUrlDto");
 
-                    b.Property<long?>("ThemeAnimeId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasIndex("ThemeAnimeId");
+                    b.HasIndex("AnimeId");
 
                     b.HasDiscriminator().HasValue("ThemesDto");
                 });
@@ -502,15 +481,16 @@ namespace Anime_Archive_Handler_GUI.Migrations
                 {
                     b.HasOne("AnimeDto", null)
                         .WithMany("Demographics")
-                        .HasForeignKey("ExplicitGenreAnimeId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("AnimeId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("FK_MalUrls_Animes_AnimeId1");
                 });
 
             modelBuilder.Entity("ExplicitGenresDto", b =>
                 {
                     b.HasOne("AnimeDto", null)
                         .WithMany("ExplicitGenres")
-                        .HasForeignKey("ExplicitGenreAnimeId")
+                        .HasForeignKey("AnimeId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -518,7 +498,7 @@ namespace Anime_Archive_Handler_GUI.Migrations
                 {
                     b.HasOne("AnimeDto", null)
                         .WithMany("Genres")
-                        .HasForeignKey("LicensorAnimeId")
+                        .HasForeignKey("AnimeId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -542,7 +522,7 @@ namespace Anime_Archive_Handler_GUI.Migrations
                 {
                     b.HasOne("AnimeDto", null)
                         .WithMany("Studios")
-                        .HasForeignKey("ProducerAnimeId")
+                        .HasForeignKey("AnimeId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -550,7 +530,7 @@ namespace Anime_Archive_Handler_GUI.Migrations
                 {
                     b.HasOne("AnimeDto", null)
                         .WithMany("Themes")
-                        .HasForeignKey("ThemeAnimeId")
+                        .HasForeignKey("AnimeId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

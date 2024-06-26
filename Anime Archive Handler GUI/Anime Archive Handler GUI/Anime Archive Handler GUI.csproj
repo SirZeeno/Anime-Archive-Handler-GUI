@@ -36,7 +36,7 @@
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
         <None Update="External Dependencies\LiteDB.Studio.exe">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+          <CopyToOutputDirectory>Never</CopyToOutputDirectory>
         </None>
         <None Update="Databases\SQLite.db">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
