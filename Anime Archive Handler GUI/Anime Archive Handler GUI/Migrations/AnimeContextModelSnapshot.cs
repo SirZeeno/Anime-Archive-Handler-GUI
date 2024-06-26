@@ -18,73 +18,44 @@ namespace Anime_Archive_Handler_GUI.Migrations
 
             modelBuilder.Entity("AnimeBroadcastDto", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<long>("AnimeDtoId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Day")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("String")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Time")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Timezone")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AnimeDtoId")
-                        .IsUnique();
-
-                    b.ToTable("Broadcasts");
-                });
-
-            modelBuilder.Entity("AnimeDemographic", b =>
-                {
-                    b.Property<long>("AnimeDtoId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<long>("MalUrlId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("AnimeDtoId", "MalUrlId");
-
-                    b.HasIndex("MalUrlId");
-
-                    b.ToTable("AnimeDemographics");
+                    b.ToTable("AnimeBroadcasts");
                 });
 
             modelBuilder.Entity("AnimeDto", b =>
                 {
-                    b.Property<long>("MalId")
+                    b.Property<long?>("MalId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("Airing")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("AnimePart")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("AnimeSeason")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("Approved")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Background")
-                        .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("BroadcastId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Duration")
                         .IsRequired()
@@ -94,6 +65,12 @@ namespace Anime_Archive_Handler_GUI.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("Favorites")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ImagesId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long?>("MalUrlDtoId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("Members")
@@ -106,7 +83,6 @@ namespace Anime_Archive_Handler_GUI.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Rating")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<double?>("Score")
@@ -127,11 +103,18 @@ namespace Anime_Archive_Handler_GUI.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Synopsis")
-                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TitleEnglish")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TitleJapanese")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Type")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Url")
@@ -143,192 +126,91 @@ namespace Anime_Archive_Handler_GUI.Migrations
 
                     b.HasKey("MalId");
 
+                    b.HasIndex("BroadcastId");
+
+                    b.HasIndex("ImagesId");
+
+                    b.HasIndex("MalUrlDtoId");
+
                     b.ToTable("Animes");
-                });
-
-            modelBuilder.Entity("AnimeExplicitGenre", b =>
-                {
-                    b.Property<long>("AnimeDtoId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<long>("MalUrlId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("AnimeDtoId", "MalUrlId");
-
-                    b.HasIndex("MalUrlId");
-
-                    b.ToTable("AnimeExplicitGenres");
-                });
-
-            modelBuilder.Entity("AnimeGenre", b =>
-                {
-                    b.Property<long>("AnimeDtoId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<long>("MalUrlId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("AnimeDtoId", "MalUrlId");
-
-                    b.HasIndex("MalUrlId");
-
-                    b.ToTable("AnimeGenres");
-                });
-
-            modelBuilder.Entity("AnimeLicensor", b =>
-                {
-                    b.Property<long>("AnimeDtoId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<long>("MalUrlId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("AnimeDtoId", "MalUrlId");
-
-                    b.HasIndex("MalUrlId");
-
-                    b.ToTable("AnimeLicensors");
-                });
-
-            modelBuilder.Entity("AnimeProducer", b =>
-                {
-                    b.Property<long>("AnimeDtoId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<long>("MalUrlId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("AnimeDtoId", "MalUrlId");
-
-                    b.HasIndex("MalUrlId");
-
-                    b.ToTable("AnimeProducers");
-                });
-
-            modelBuilder.Entity("AnimeStudio", b =>
-                {
-                    b.Property<long>("AnimeDtoId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<long>("MalUrlId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("AnimeDtoId", "MalUrlId");
-
-                    b.HasIndex("MalUrlId");
-
-                    b.ToTable("AnimeStudios");
-                });
-
-            modelBuilder.Entity("AnimeTheme", b =>
-                {
-                    b.Property<long>("AnimeDtoId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<long>("MalUrlId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("AnimeDtoId", "MalUrlId");
-
-                    b.HasIndex("MalUrlId");
-
-                    b.ToTable("AnimeThemes");
                 });
 
             modelBuilder.Entity("AnimeTrailerDto", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<long>("AnimeDtoId")
+                    b.Property<long>("AnimeId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("EmbedUrl")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("ImageId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Url")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("YoutubeId")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AnimeDtoId")
+                    b.HasIndex("AnimeId")
                         .IsUnique();
 
-                    b.ToTable("Trailers");
+                    b.HasIndex("ImageId");
+
+                    b.ToTable("AnimeTrailers");
                 });
 
             modelBuilder.Entity("ImageDto", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("ImageUrl")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<long?>("ImagesSetJpgId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<long?>("ImagesSetWebPId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("LargeImageUrl")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("MaximumImageUrl")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("MediumImageUrl")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<long?>("ParentId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("SmallImageUrl")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ImagesSetJpgId")
-                        .IsUnique();
-
-                    b.HasIndex("ImagesSetWebPId")
-                        .IsUnique();
-
-                    b.HasIndex("ParentId")
-                        .IsUnique();
-
-                    b.ToTable("Images");
+                    b.ToTable("ImageDto");
                 });
 
             modelBuilder.Entity("ImagesSetDto", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<long>("AnimeDtoId")
+                    b.Property<int>("JPGId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("WebPId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AnimeDtoId")
-                        .IsUnique();
+                    b.HasIndex("JPGId");
 
-                    b.ToTable("ImageSets");
+                    b.HasIndex("WebPId");
+
+                    b.ToTable("ImagesSets");
                 });
 
             modelBuilder.Entity("MalUrlDto", b =>
@@ -337,38 +219,49 @@ namespace Anime_Archive_Handler_GUI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<long>("AnimeDtoId")
+                    b.Property<long?>("AnimeId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<long>("MalId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Type")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Url")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AnimeDtoId");
-
                     b.ToTable("MalUrls");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("MalUrlDto");
+
+                    b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("TimePeriod", b =>
+                {
+                    b.Property<DateTime?>("From")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("To")
+                        .HasColumnType("TEXT");
+
+                    b.ToTable("TimePeriod");
                 });
 
             modelBuilder.Entity("TimePeriodDto", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<long>("AnimeDtoId")
+                    b.Property<long>("AnimeId")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime?>("From")
@@ -379,23 +272,22 @@ namespace Anime_Archive_Handler_GUI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AnimeDtoId")
+                    b.HasIndex("AnimeId")
                         .IsUnique();
 
-                    b.ToTable("TimePeriods");
+                    b.ToTable("TimePeriodDto");
                 });
 
             modelBuilder.Entity("TitleEntryDto", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<long>("AnimeDtoId")
+                    b.Property<long>("AnimeId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Type")
@@ -404,218 +296,180 @@ namespace Anime_Archive_Handler_GUI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AnimeDtoId");
+                    b.HasIndex("AnimeId");
 
-                    b.ToTable("Titles");
+                    b.ToTable("TitleEntries");
                 });
 
-            modelBuilder.Entity("AnimeBroadcastDto", b =>
+            modelBuilder.Entity("TitleSynonymDto", b =>
                 {
-                    b.HasOne("AnimeDto", "Anime")
-                        .WithOne("Broadcast")
-                        .HasForeignKey("AnimeBroadcastDto", "AnimeDtoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
 
-                    b.Navigation("Anime");
+                    b.Property<long>("AnimeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Synonym")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnimeId");
+
+                    b.ToTable("TitleSynonyms");
                 });
 
-            modelBuilder.Entity("AnimeDemographic", b =>
+            modelBuilder.Entity("DemographicsDto", b =>
                 {
-                    b.HasOne("AnimeDto", "Anime")
-                        .WithMany("Demographics")
-                        .HasForeignKey("AnimeDtoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasBaseType("MalUrlDto");
 
-                    b.HasOne("MalUrlDto", "Demographic")
+                    b.Property<long?>("ExplicitGenreAnimeId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasIndex("ExplicitGenreAnimeId");
+
+                    b.ToTable("MalUrls", t =>
+                        {
+                            t.Property("ExplicitGenreAnimeId")
+                                .HasColumnName("DemographicsDto_ExplicitGenreAnimeId");
+                        });
+
+                    b.HasDiscriminator().HasValue("DemographicsDto");
+                });
+
+            modelBuilder.Entity("ExplicitGenresDto", b =>
+                {
+                    b.HasBaseType("MalUrlDto");
+
+                    b.Property<long?>("ExplicitGenreAnimeId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasIndex("ExplicitGenreAnimeId");
+
+                    b.HasDiscriminator().HasValue("ExplicitGenresDto");
+                });
+
+            modelBuilder.Entity("GenresDto", b =>
+                {
+                    b.HasBaseType("MalUrlDto");
+
+                    b.Property<long?>("LicensorAnimeId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasIndex("LicensorAnimeId");
+
+                    b.HasDiscriminator().HasValue("GenresDto");
+                });
+
+            modelBuilder.Entity("LicensorsDto", b =>
+                {
+                    b.HasBaseType("MalUrlDto");
+
+                    b.HasIndex("AnimeId");
+
+                    b.HasDiscriminator().HasValue("LicensorsDto");
+                });
+
+            modelBuilder.Entity("ProducersDto", b =>
+                {
+                    b.HasBaseType("MalUrlDto");
+
+                    b.HasIndex("AnimeId");
+
+                    b.HasDiscriminator().HasValue("ProducersDto");
+                });
+
+            modelBuilder.Entity("StudiosDto", b =>
+                {
+                    b.HasBaseType("MalUrlDto");
+
+                    b.Property<long?>("ProducerAnimeId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasIndex("ProducerAnimeId");
+
+                    b.HasDiscriminator().HasValue("StudiosDto");
+                });
+
+            modelBuilder.Entity("ThemesDto", b =>
+                {
+                    b.HasBaseType("MalUrlDto");
+
+                    b.Property<long?>("ThemeAnimeId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasIndex("ThemeAnimeId");
+
+                    b.HasDiscriminator().HasValue("ThemesDto");
+                });
+
+            modelBuilder.Entity("AnimeDto", b =>
+                {
+                    b.HasOne("AnimeBroadcastDto", "Broadcast")
                         .WithMany()
-                        .HasForeignKey("MalUrlId")
+                        .HasForeignKey("BroadcastId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Anime");
-
-                    b.Navigation("Demographic");
-                });
-
-            modelBuilder.Entity("AnimeExplicitGenre", b =>
-                {
-                    b.HasOne("AnimeDto", "Anime")
-                        .WithMany("ExplicitGenres")
-                        .HasForeignKey("AnimeDtoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MalUrlDto", "ExplicitGenre")
+                    b.HasOne("ImagesSetDto", "Images")
                         .WithMany()
-                        .HasForeignKey("MalUrlId")
+                        .HasForeignKey("ImagesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Anime");
+                    b.HasOne("MalUrlDto", null)
+                        .WithMany("Anime")
+                        .HasForeignKey("MalUrlDtoId");
 
-                    b.Navigation("ExplicitGenre");
-                });
+                    b.Navigation("Broadcast");
 
-            modelBuilder.Entity("AnimeGenre", b =>
-                {
-                    b.HasOne("AnimeDto", "Anime")
-                        .WithMany("Genres")
-                        .HasForeignKey("AnimeDtoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MalUrlDto", "Genre")
-                        .WithMany()
-                        .HasForeignKey("MalUrlId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Anime");
-
-                    b.Navigation("Genre");
-                });
-
-            modelBuilder.Entity("AnimeLicensor", b =>
-                {
-                    b.HasOne("AnimeDto", "Anime")
-                        .WithMany("Licensors")
-                        .HasForeignKey("AnimeDtoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MalUrlDto", "Licensor")
-                        .WithMany()
-                        .HasForeignKey("MalUrlId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Anime");
-
-                    b.Navigation("Licensor");
-                });
-
-            modelBuilder.Entity("AnimeProducer", b =>
-                {
-                    b.HasOne("AnimeDto", "Anime")
-                        .WithMany("Producers")
-                        .HasForeignKey("AnimeDtoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MalUrlDto", "Producer")
-                        .WithMany()
-                        .HasForeignKey("MalUrlId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Anime");
-
-                    b.Navigation("Producer");
-                });
-
-            modelBuilder.Entity("AnimeStudio", b =>
-                {
-                    b.HasOne("AnimeDto", "Anime")
-                        .WithMany("Studios")
-                        .HasForeignKey("AnimeDtoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MalUrlDto", "Studio")
-                        .WithMany()
-                        .HasForeignKey("MalUrlId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Anime");
-
-                    b.Navigation("Studio");
-                });
-
-            modelBuilder.Entity("AnimeTheme", b =>
-                {
-                    b.HasOne("AnimeDto", "Anime")
-                        .WithMany("Themes")
-                        .HasForeignKey("AnimeDtoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MalUrlDto", "Theme")
-                        .WithMany()
-                        .HasForeignKey("MalUrlId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Anime");
-
-                    b.Navigation("Theme");
+                    b.Navigation("Images");
                 });
 
             modelBuilder.Entity("AnimeTrailerDto", b =>
                 {
                     b.HasOne("AnimeDto", "Anime")
                         .WithOne("Trailer")
-                        .HasForeignKey("AnimeTrailerDto", "AnimeDtoId")
+                        .HasForeignKey("AnimeTrailerDto", "AnimeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ImageDto", "Image")
+                        .WithMany()
+                        .HasForeignKey("ImageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Anime");
-                });
 
-            modelBuilder.Entity("ImageDto", b =>
-                {
-                    b.HasOne("ImagesSetDto", "ImagesSetJpg")
-                        .WithOne("JPG")
-                        .HasForeignKey("ImageDto", "ImagesSetJpgId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ImagesSetDto", "ImagesSetWebP")
-                        .WithOne("WebP")
-                        .HasForeignKey("ImageDto", "ImagesSetWebPId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("AnimeTrailerDto", "AnimeTrailer")
-                        .WithOne("Image")
-                        .HasForeignKey("ImageDto", "ParentId");
-
-                    b.Navigation("AnimeTrailer");
-
-                    b.Navigation("ImagesSetJpg");
-
-                    b.Navigation("ImagesSetWebP");
+                    b.Navigation("Image");
                 });
 
             modelBuilder.Entity("ImagesSetDto", b =>
                 {
-                    b.HasOne("AnimeDto", "Anime")
-                        .WithOne("Images")
-                        .HasForeignKey("ImagesSetDto", "AnimeDtoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Anime");
-                });
-
-            modelBuilder.Entity("MalUrlDto", b =>
-                {
-                    b.HasOne("AnimeDto", "Anime")
+                    b.HasOne("ImageDto", "JPG")
                         .WithMany()
-                        .HasForeignKey("AnimeDtoId")
+                        .HasForeignKey("JPGId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Anime");
+                    b.HasOne("ImageDto", "WebP")
+                        .WithMany()
+                        .HasForeignKey("WebPId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("JPG");
+
+                    b.Navigation("WebP");
                 });
 
             modelBuilder.Entity("TimePeriodDto", b =>
                 {
                     b.HasOne("AnimeDto", "Anime")
                         .WithOne("Aired")
-                        .HasForeignKey("TimePeriodDto", "AnimeDtoId")
+                        .HasForeignKey("TimePeriodDto", "AnimeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -626,11 +480,78 @@ namespace Anime_Archive_Handler_GUI.Migrations
                 {
                     b.HasOne("AnimeDto", "Anime")
                         .WithMany("Titles")
-                        .HasForeignKey("AnimeDtoId")
+                        .HasForeignKey("AnimeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Anime");
+                });
+
+            modelBuilder.Entity("TitleSynonymDto", b =>
+                {
+                    b.HasOne("AnimeDto", "Anime")
+                        .WithMany("TitleSynonyms")
+                        .HasForeignKey("AnimeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Anime");
+                });
+
+            modelBuilder.Entity("DemographicsDto", b =>
+                {
+                    b.HasOne("AnimeDto", null)
+                        .WithMany("Demographics")
+                        .HasForeignKey("ExplicitGenreAnimeId")
+                        .OnDelete(DeleteBehavior.SetNull);
+                });
+
+            modelBuilder.Entity("ExplicitGenresDto", b =>
+                {
+                    b.HasOne("AnimeDto", null)
+                        .WithMany("ExplicitGenres")
+                        .HasForeignKey("ExplicitGenreAnimeId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("GenresDto", b =>
+                {
+                    b.HasOne("AnimeDto", null)
+                        .WithMany("Genres")
+                        .HasForeignKey("LicensorAnimeId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("LicensorsDto", b =>
+                {
+                    b.HasOne("AnimeDto", null)
+                        .WithMany("Licensors")
+                        .HasForeignKey("AnimeId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("ProducersDto", b =>
+                {
+                    b.HasOne("AnimeDto", null)
+                        .WithMany("Producers")
+                        .HasForeignKey("AnimeId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("StudiosDto", b =>
+                {
+                    b.HasOne("AnimeDto", null)
+                        .WithMany("Studios")
+                        .HasForeignKey("ProducerAnimeId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("ThemesDto", b =>
+                {
+                    b.HasOne("AnimeDto", null)
+                        .WithMany("Themes")
+                        .HasForeignKey("ThemeAnimeId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("AnimeDto", b =>
@@ -638,17 +559,11 @@ namespace Anime_Archive_Handler_GUI.Migrations
                     b.Navigation("Aired")
                         .IsRequired();
 
-                    b.Navigation("Broadcast")
-                        .IsRequired();
-
                     b.Navigation("Demographics");
 
                     b.Navigation("ExplicitGenres");
 
                     b.Navigation("Genres");
-
-                    b.Navigation("Images")
-                        .IsRequired();
 
                     b.Navigation("Licensors");
 
@@ -658,25 +573,17 @@ namespace Anime_Archive_Handler_GUI.Migrations
 
                     b.Navigation("Themes");
 
+                    b.Navigation("TitleSynonyms");
+
                     b.Navigation("Titles");
 
                     b.Navigation("Trailer")
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("AnimeTrailerDto", b =>
+            modelBuilder.Entity("MalUrlDto", b =>
                 {
-                    b.Navigation("Image")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ImagesSetDto", b =>
-                {
-                    b.Navigation("JPG")
-                        .IsRequired();
-
-                    b.Navigation("WebP")
-                        .IsRequired();
+                    b.Navigation("Anime");
                 });
 #pragma warning restore 612, 618
         }

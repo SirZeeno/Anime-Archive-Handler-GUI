@@ -17,20 +17,15 @@ public class LiteDbPorter
 
     public void CopyLiteDbToLiteDb()
     {
-        // Open source LiteDB
-        using var sourceLiteDb = new LiteDatabase($"Filename={_sourceLiteDbPath};Connection=shared");
-        var sourceCollection = sourceLiteDb.GetCollection<AnimeDto>("Anime");
-
         // Open destination LiteDB
         using var destinationLiteDb = new LiteDatabase($"Filename={_destinationLiteDbPath};Connection=shared");
         var destinationCollection = destinationLiteDb.GetCollection<AnimeDto>("Anime");
-
-        // Get all images from source LiteDB
-        var images = sourceCollection.FindAll().ToList();
+        
+        var animes = LiteDBReader.ReadAnimes().Select(x => new AnimeService(new AnimeMapper()).GetAnimeDto(x)).ToList();
 
         // Add images to destination LiteDB
-        destinationCollection.InsertBulk(images);
+        destinationCollection.InsertBulk(animes);
         
-        Console.WriteLine($"Successfully copied {images.Count} images from source LiteDB to destination LiteDB.");
+        Console.WriteLine($"Successfully copied {animes.Count} images from source LiteDB to destination LiteDB.");
     }
 }

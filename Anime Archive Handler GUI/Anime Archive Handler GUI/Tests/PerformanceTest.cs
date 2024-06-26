@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace Anime_Archive_Handler_GUI.Tests;
@@ -19,34 +20,27 @@ public class PerformanceTest
         _liteDbStore = new LiteDbImageStore(litedbPath);
     }
 
-    private AnimeDto GetAnimeById(int malId)
+    private AnimeDto? GetAnimeById(long malId)
     {
-        return _sqliteContext.Animes.FirstOrDefault(anime => anime.MalId == malId) ?? throw new InvalidOperationException();
+        using var _sqliteContext2 = new AnimeContext();
+        _sqliteContext2.Database.EnsureCreated();
+        return _sqliteContext2.Animes.Find(malId);
     }
 
     public void RunTest()
     {
         // SQLite test
         var sqliteWatch = Stopwatch.StartNew();
-        var sqliteImage = _sqliteContext.Animes.Find(17829);
+        var sqliteImage = GetAnimeById(29503);
         sqliteWatch.Stop();
+        Console.WriteLine(sqliteImage.MalId);
         Console.WriteLine($"SQLite Read Time: {sqliteWatch.ElapsedMilliseconds} ms");
-
-        sqliteWatch.Restart();
-        _sqliteContext.Animes.Remove(GetAnimeById(17829));
-        _sqliteContext.SaveChanges();
-        sqliteWatch.Stop();
-        Console.WriteLine($"SQLite Delete Time: {sqliteWatch.ElapsedMilliseconds} ms");
 
         // LiteDB test
         var litedbWatch = Stopwatch.StartNew();
-        var liteDbImage = _liteDbStore.GetImage(17829);
+        var liteDbImage = _liteDbStore.GetImage(29503);
         litedbWatch.Stop();
+        Console.WriteLine(liteDbImage.MalId);
         Console.WriteLine($"LiteDB Read Time: {litedbWatch.ElapsedMilliseconds} ms");
-        
-        litedbWatch.Restart();
-        _liteDbStore.DeleteImage(_liteDbStore.GetAnimebyId(17829).MalId);
-        litedbWatch.Stop();
-        Console.WriteLine($"LiteDB Delete Time: {litedbWatch.ElapsedMilliseconds} ms");
     }
 }
