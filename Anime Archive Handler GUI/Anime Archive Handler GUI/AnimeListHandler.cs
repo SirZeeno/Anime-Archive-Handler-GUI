@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Anime_Archive_Handler_GUI.Database_Handeling;
 using Anime_Archive_Handler_GUI.Interfaces;
 using Spectre.Console;
 
 namespace Anime_Archive_Handler_GUI;
 
 using static InputStringHandler;
-using static DbHandler;
+using static LiteDbHandler;
 using static FileHandler;
 using static SettingsManager;
 using static CommonSettings;

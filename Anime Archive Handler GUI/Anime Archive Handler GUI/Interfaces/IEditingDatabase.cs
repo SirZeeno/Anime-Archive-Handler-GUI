@@ -3,13 +3,14 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Anime_Archive_Handler_GUI.Database_Handeling;
 using CsvHelper;
 using CsvHelper.Configuration;
 using Newtonsoft.Json;
 
 namespace Anime_Archive_Handler_GUI.Interfaces;
 
-using static DbHandler;
+using static LiteDbHandler;
 using static CommonSettings;
 
 public interface IEditingDatabase

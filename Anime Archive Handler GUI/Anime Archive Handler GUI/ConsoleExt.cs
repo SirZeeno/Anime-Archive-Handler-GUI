@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Anime_Archive_Handler_GUI;
 
@@ -17,13 +19,9 @@ public static class ConsoleExt
     {
         var length1 = CurrentTime();
         var length2 = DetermineOutputType(outputType);
-        if (output is List<T> list)
+        if (output is IEnumerable enumerable && !(output is string))
         {
-            Console.WriteLine(string.Join(", ", list));
-        }
-        if (output is T[] array)
-        {
-            Console.WriteLine(string.Join(", ", array));
+            Console.WriteLine(string.Join(", ", enumerable.Cast<object>()));
         }
         else
         {
@@ -40,13 +38,9 @@ public static class ConsoleExt
     {
         var length1 = CurrentTime();
         var length2 = DetermineOutputType(outputType);
-        if (output is List<T> list)
+        if (output is IEnumerable enumerable && !(output is string))
         {
-            Console.WriteLine(string.Join(", ", list));
-        }
-        if (output is T[] array)
-        {
-            Console.Write(string.Join(", ", array));
+            Console.WriteLine(string.Join(", ", enumerable.Cast<object>()));
         }
         else
         {

@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Anime_Archive_Handler_GUI.Helpers;
 using Avalonia;
@@ -207,6 +208,11 @@ public class NeededDirectories
 {
     public string path { get; set; }
     public bool enabled { get; set; }
+}
+
+public class VerbList
+{
+    public List<string> verbs { get; set; }
 }
 
 public class NHentaiMetaData
