@@ -30,6 +30,13 @@ public static class JsonFileUtility
 
         return neededDirectories ?? [];
     }
+    
+    public static List<string> GetVerbsList(string filePath)
+    {
+        var json = File.ReadAllText(filePath);
+        var verbList = JsonSerializer.Deserialize<VerbList>(json);
+        return verbList?.verbs ?? new List<string>();
+    }
 
     public static NHentaiMetaData? ReadMetaData(string filePath)
     {

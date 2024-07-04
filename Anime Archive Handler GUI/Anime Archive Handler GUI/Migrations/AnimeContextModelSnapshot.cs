@@ -301,6 +301,21 @@ namespace Anime_Archive_Handler_GUI.Migrations
                     b.ToTable("TitleEntries");
                 });
 
+            modelBuilder.Entity("TitleFtsDto", b =>
+                {
+                    b.Property<long>("AnimeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.ToTable("Titles_fts", (string)null);
+                });
+
             modelBuilder.Entity("TitleSynonymDto", b =>
                 {
                     b.Property<int>("Id")

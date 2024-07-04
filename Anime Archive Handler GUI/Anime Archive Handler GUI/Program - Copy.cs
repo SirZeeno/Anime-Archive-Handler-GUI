@@ -3,13 +3,14 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Anime_Archive_Handler_GUI.Database_Handeling;
 using FFMpegCore;
 using Spectre.Console;
 
 namespace Anime_Archive_Handler_GUI;
 
 using static InputStringHandler;
-using static DbHandler;
+using static LiteDbHandler;
 using static HelperClass;
 using static FileHandler;
 using static SettingsManager;

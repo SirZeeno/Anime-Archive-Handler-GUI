@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Anime_Archive_Handler_GUI.Database_Handeling;
 using Anime_Archive_Handler_GUI.ViewModels;
 using Anime_Archive_Handler_GUI.Views;
 using Avalonia.Controls;
@@ -100,7 +101,7 @@ public static class ImportHandler
                     string animeName = await InputStringHandler.AnitomyInfoExtractor(folder.Name);
                     ConsoleExt.WriteLineWithPretext($"Anime Name Extracted: {animeName}", ConsoleExt.OutputType.Info);
                     
-                    var animeSearchResults = await DbHandler.GetAnimesWithTitle(animeName);
+                    var animeSearchResults = await LiteDbHandler.GetAnimesWithTitle(animeName);
                     
                     if (!animeSearchResults.Any())
                     {
@@ -138,7 +139,7 @@ public static class ImportHandler
                 ConsoleExt.WriteLineWithPretext($"Anime Name Extracted: {animeName}", ConsoleExt.OutputType.Info);
 
                 // Search extracted folder name in database
-                var animeSearchResults = await DbHandler.GetAnimesWithTitle(animeName);
+                var animeSearchResults = await LiteDbHandler.GetAnimesWithTitle(animeName);
 
                 // if not found, write waring message
                 if (animeSearchResults == null)

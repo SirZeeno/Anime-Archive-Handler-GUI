@@ -96,6 +96,13 @@ public class TitleEntryDto
     public AnimeDto Anime { get; set; }
 }
 
+public class TitleFtsDto
+{
+    public string Type { get; set; }
+    public string? Title { get; set; }
+    public long AnimeId { get; set; } // Foreign key
+}
+
 public class AnimeTrailerDto
 {
     [Key]
