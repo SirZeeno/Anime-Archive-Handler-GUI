@@ -445,13 +445,13 @@ namespace Anime_Archive_Handler_GUI.Migrations
                     b.HasOne("ImageDto", "JPG")
                         .WithMany()
                         .HasForeignKey("JPGId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ImageDto", "WebP")
                         .WithMany()
                         .HasForeignKey("WebPId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("JPG");
