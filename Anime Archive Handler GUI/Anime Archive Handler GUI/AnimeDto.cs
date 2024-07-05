@@ -119,7 +119,11 @@ public class ImagesSetDto
 {
     [Key]
     public int Id { get; set; } // Add a key to this class as EF requires one
+    
+    public int JPGId { get; set; }
     public ImageDto JPG { get; set; }
+    
+    public int WebPId { get; set; }
     public ImageDto WebP { get; set; }
 }
 

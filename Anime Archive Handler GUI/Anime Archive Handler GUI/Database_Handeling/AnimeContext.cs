@@ -25,8 +25,8 @@ public class AnimeContext : DbContext
 
     public AnimeContext()
     {
-        _dbPath = FileHandler.GetFileInProgramFolder("SQLiteTest.db");
-        //_dbPath = "F:\Rider Projects\Anime Archive Handler GUI\Anime Archive Handler GUI\Anime Archive Handler GUI\Anime Archive Handler GUI\Databases\SQLiteTest.db"; // Absolute path to the database file
+        //_dbPath = FileHandler.GetFileInProgramFolder("SQLiteTest.db");
+        _dbPath = "F:\\Rider Projects\\Anime Archive Handler GUI\\Anime Archive Handler GUI\\Anime Archive Handler GUI\\Anime Archive Handler GUI\\Databases\\SQLiteTest.db"; // Absolute path to the database file
     }
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -97,6 +97,23 @@ public class AnimeContext : DbContext
             .HasMany(a => a.TitleSynonyms)
             .WithOne(ts => ts.Anime)
             .HasForeignKey(ts => ts.AnimeId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<ImagesSetDto>()
+            .HasOne(isd => isd.JPG)
+            .WithMany()
+            .HasForeignKey(isd => isd.JPGId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<ImagesSetDto>()
+            .HasOne(isd => isd.WebP)
+            .WithMany()
+            .HasForeignKey(isd => isd.WebPId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<AnimeDto>()
+            .HasOne(a => a.Images)
+            .WithMany()
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<TimePeriod>().HasNoKey();

@@ -101,7 +101,7 @@ public static class ImportHandler
                     string animeName = await InputStringHandler.AnitomyInfoExtractor(folder.Name);
                     ConsoleExt.WriteLineWithPretext($"Anime Name Extracted: {animeName}", ConsoleExt.OutputType.Info);
                     
-                    var animeSearchResults = await LiteDbHandler.GetAnimesWithTitle(animeName);
+                    var animeSearchResults = SqlDbHandler.GetAnimeByTitle(animeName);
                     
                     if (!animeSearchResults.Any())
                     {
@@ -115,10 +115,10 @@ public static class ImportHandler
                     // if found display anime display item in importer view to show the found anime
                     foreach (var animeSearchResult in animeSearchResults)
                     {
-                        var titleEntries = animeSearchResult.Titles;
+                        var titleEntries = SqlDbHandler.GetAnimeTitlesById(animeSearchResult.MalId);
                         title = (titleEntries.Where(x => x.Type.ToLower() == "english").Select(x => x.Title).FirstOrDefault() ?? titleEntries.Where(x => x.Type.ToLower() == "default").Select(x => x.Title).FirstOrDefault()) ?? string.Empty;
                         ConsoleExt.WriteLineWithPretext($"Found Anime: '{title}'", ConsoleExt.OutputType.Info); //HelperClass.ExtractProperty(titleEntries.ToList(), item => item.Title)[1]
-                        foundAnimes.Add(new(animeSearchResult.Images.JPG.ImageUrl, title, 12,12,12, Language.Dub));
+                        foundAnimes.Add(new(SqlDbHandler.GetAnimeImagesById(animeSearchResult.MalId).JPG.ImageUrl, title, 12,12,12, Language.Dub));
                     }
                     ImportViewModel.AnimeSearchItemResultGrid.Add(new AnimeImportDisplayItem(animeName.ToUpperInvariant(), foundAnimes));
                 }
