@@ -10,7 +10,6 @@ public static class SqlDbHandler
     public static ICollection<TitleEntryDto> GetAnimeTitlesById(long? malId)
     {
         using var sqliteContext = new AnimeContext();
-        sqliteContext.Database.EnsureCreated();
         var anime = sqliteContext.Animes.Find(malId);
         sqliteContext.Entry(anime).Collection("Titles").Load();
         return anime.Titles;
@@ -19,20 +18,51 @@ public static class SqlDbHandler
     public static ImagesSetDto GetAnimeImagesById(long? malId)
     {
         using var sqliteContext = new AnimeContext();
-        sqliteContext.Database.EnsureCreated(); // need to find another way to initialize this and make that public for the entire project to use
         var anime = sqliteContext.Animes.Include(a => a.Images)
             .ThenInclude(i => i.JPG)
             .Include(a => a.Images)
             .ThenInclude(i => i.WebP)
-            .FirstOrDefault(a => a.MalId == malId);;
+            .FirstOrDefault(a => a.MalId == malId);
         return anime.Images;
+    }
+    
+    public static Dictionary<long?, ImagesSetDto> GetAnimeImagesByIds(List<long?> malIds)
+    {
+        using var sqliteContext = new AnimeContext();
+    
+        var animes = sqliteContext.Animes
+            .Include(a => a.Images)
+            .ThenInclude(i => i.JPG)
+            .Include(a => a.Images)
+            .ThenInclude(i => i.WebP)
+            .Where(a => malIds.Contains(a.MalId))
+            .ToList();
+    
+        return animes.ToDictionary(a => a.MalId, a => a.Images);
+    }
+    
+    public static Dictionary<long?, ICollection<TitleEntryDto>> GetAnimeTitlesByIds(List<long?> malIds)
+    {
+        using var sqliteContext = new AnimeContext();
+    
+        var animes = sqliteContext.Animes
+            .Include(a => a.Titles)
+            .Where(a => malIds.Contains(a.MalId))
+            .ToList();
+    
+        return animes.ToDictionary(a => a.MalId, a => a.Titles);
+    }
+    
+    public static Dictionary<long?, AnimeDto> GetAnimesByIds(List<long?> malIds)
+    {
+        using var sqliteContext = new AnimeContext();
+        return sqliteContext.Animes.Where(a => malIds.Contains(a.MalId)).ToDictionary(a => a.MalId, a => a);
     }
     
     // Gets a specific anime by id
     public static AnimeDto? GetAnimeById(long malId)
     {
         using var sqliteContext = new AnimeContext();
-        sqliteContext.Database.EnsureCreated();
         return sqliteContext.Animes.Find(malId);
     }
     
@@ -55,10 +85,9 @@ public static class SqlDbHandler
         sqliteContext.TitlesFts.FromSqlRaw("INSERT INTO Titles_fts (AnimeId, Title, Type) SELECT AnimeId, Title, Type FROM TitleEntries;");
     }
     
-    public static List<TitleFtsDto> SearchTitles(string searchText) // run through different methods to search for the title
+    public static List<TitleFtsDto> SearchTitles(string searchText) // runs through different methods to search for the title
     {
         using var sqliteContext = new AnimeContext();
-        sqliteContext.Database.EnsureCreated();
         List<TitleFtsDto> matchingTitles = new List<TitleFtsDto>();
         string safeSearchText = searchText.Replace("'", "\"\"");
         if (safeSearchText.Contains(",") || safeSearchText.Contains("-") || safeSearchText.Contains(".")) safeSearchText = "\"" + safeSearchText + "\"";
@@ -94,13 +123,12 @@ public static class SqlDbHandler
     public static List<AnimeDto> GetAnimeByTitle(string animeTitle)
     {
         using var sqliteContext = new AnimeContext();
-        sqliteContext.Database.EnsureCreated();
-        List<AnimeDto> foundAnimes = new List<AnimeDto>();
         var titles = SearchTitles(animeTitle);
+        List<long?> malIds = new List<long?>();
         foreach (var title in titles)
         {
-            foundAnimes.Add(GetAnimeById(title.AnimeId));
+            malIds.Add(title.AnimeId);
         }
-        return foundAnimes;
+        return GetAnimesByIds(malIds).Values.ToList();
     }
 }

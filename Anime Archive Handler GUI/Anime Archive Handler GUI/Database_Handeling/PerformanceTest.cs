@@ -1,23 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using Anime_Archive_Handler_GUI.Database_Handeling;
-using Microsoft.EntityFrameworkCore;
 
-
-namespace Anime_Archive_Handler_GUI.Tests;
+namespace Anime_Archive_Handler_GUI.Database_Handeling;
 
 public class PerformanceTest
 {
-    private readonly AnimeContext _sqliteContext;
     private readonly LiteDbImageStore _liteDbStore;
 
     public PerformanceTest(string sqlitePath, string litedbPath)
     {
-        _sqliteContext = new AnimeContext();
-        _sqliteContext.Database.EnsureCreated();
+        var sqliteContext = new AnimeContext();
+        sqliteContext.Database.EnsureCreated();
 
         _liteDbStore = new LiteDbImageStore(litedbPath);
     }

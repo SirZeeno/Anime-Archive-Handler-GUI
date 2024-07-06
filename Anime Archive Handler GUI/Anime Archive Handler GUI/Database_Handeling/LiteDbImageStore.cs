@@ -1,7 +1,6 @@
 ﻿using LiteDB;
-using System.IO;
 
-namespace Anime_Archive_Handler_GUI.Tests;
+namespace Anime_Archive_Handler_GUI.Database_Handeling;
 
 public class LiteDbImageStore
 {
