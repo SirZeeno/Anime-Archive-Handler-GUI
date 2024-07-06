@@ -206,8 +206,8 @@ public class TitleEntryDb : TitleEntry
     
 public class NeededDirectories
 {
-    public string path { get; set; }
-    public bool enabled { get; set; }
+    public string path { get; }
+    public bool enabled { get; }
 }
 
 public class VerbList

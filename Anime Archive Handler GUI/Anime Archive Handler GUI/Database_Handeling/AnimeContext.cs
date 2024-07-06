@@ -1,6 +1,7 @@
 ﻿using System;
-using Anime_Archive_Handler_GUI;
 using Microsoft.EntityFrameworkCore;
+
+namespace Anime_Archive_Handler_GUI.Database_Handeling;
 
 public class AnimeContext : DbContext
 {

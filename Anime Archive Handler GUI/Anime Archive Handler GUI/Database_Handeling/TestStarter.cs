@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 
-namespace Anime_Archive_Handler_GUI.Tests;
+namespace Anime_Archive_Handler_GUI.Database_Handeling;
 
-public class TestStarter
+public static class TestStarter
 {
     public static void StartTest()
     {

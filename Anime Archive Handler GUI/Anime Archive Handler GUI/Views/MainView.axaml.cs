@@ -6,7 +6,7 @@ using Avalonia.Media;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using System.Threading.Tasks;
-using Anime_Archive_Handler_GUI.Tests;
+using Anime_Archive_Handler_GUI.Database_Handeling;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Threading;
@@ -20,7 +20,7 @@ using ViewModels;
 
 public partial class MainView : UserControl
 {
-    private ObservableCollection<YourResultType> SearchResults { get; } = new ObservableCollection<YourResultType>();
+    private ObservableCollection<YourResultType> SearchResults { get; } = new();
     private Grid AnimeDynamicGrid;
 
 

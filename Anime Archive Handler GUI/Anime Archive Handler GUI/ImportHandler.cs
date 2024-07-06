@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -111,14 +112,25 @@ public static class ImportHandler
                     
                     ObservableCollection<AnimeDisplayItem> foundAnimes = new() { };
                     string title;
+
+                    List<long?> animeIds = new();
+
+                    foreach (var searchResult in animeSearchResults)
+                    {
+                        animeIds.Add(searchResult.MalId);
+                    }
+
+                    Dictionary<long?, ImagesSetDto> animeImages = SqlDbHandler.GetAnimeImagesByIds(animeIds);
+                    Dictionary<long?, ICollection<TitleEntryDto>> animeTitles = SqlDbHandler.GetAnimeTitlesByIds(animeIds);
                     
                     // if found display anime display item in importer view to show the found anime
                     foreach (var animeSearchResult in animeSearchResults)
                     {
-                        var titleEntries = SqlDbHandler.GetAnimeTitlesById(animeSearchResult.MalId);
+                        animeTitles.TryGetValue(animeSearchResult.MalId, out var titleEntries);
                         title = (titleEntries.Where(x => x.Type.ToLower() == "english").Select(x => x.Title).FirstOrDefault() ?? titleEntries.Where(x => x.Type.ToLower() == "default").Select(x => x.Title).FirstOrDefault()) ?? string.Empty;
                         ConsoleExt.WriteLineWithPretext($"Found Anime: '{title}'", ConsoleExt.OutputType.Info); //HelperClass.ExtractProperty(titleEntries.ToList(), item => item.Title)[1]
-                        foundAnimes.Add(new(SqlDbHandler.GetAnimeImagesById(animeSearchResult.MalId).JPG.ImageUrl, title, 12,12,12, Language.Dub));
+                        animeImages.TryGetValue(animeSearchResult.MalId, out var imagesSet);
+                        foundAnimes.Add(new(imagesSet.JPG.ImageUrl, title, 12,12,12, Language.Dub));
                     }
                     ImportViewModel.AnimeSearchItemResultGrid.Add(new AnimeImportDisplayItem(animeName.ToUpperInvariant(), foundAnimes));
                 }
