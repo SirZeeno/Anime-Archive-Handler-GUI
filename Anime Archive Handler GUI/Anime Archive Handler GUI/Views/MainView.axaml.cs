@@ -2,18 +2,17 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using System.Threading.Tasks;
+using System.Timers;
 using Anime_Archive_Handler_GUI.Database_Handeling;
 using Avalonia.Input;
-using Avalonia.Layout;
 using Avalonia.Threading;
 using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Media.Imaging;
-using Avalonia.VisualTree;
 using DynamicData;
-using FluentAvalonia.Core;
 
 namespace Anime_Archive_Handler_GUI.Views;
 using static Helpers.DailyFeatured;
@@ -22,7 +21,10 @@ using ViewModels;
 public partial class MainView : UserControl
 {
     private ObservableCollection<YourResultType> SearchResults { get; } = new();
-    private Grid AnimeDynamicGrid;
+    private Grid _animeDynamicGrid;
+    
+    private static List<long?> _buffer = [];
+    private static readonly Timer Timer = new(500);
 
 
     public MainView()
@@ -36,6 +38,9 @@ public partial class MainView : UserControl
         //this.GetObservable(BoundsProperty).Subscribe(_ => AdjustGridLayout());
         AnimeCategoryTabControl.SelectionChanged += HeaderTabControl_SelectionChanged;
         AnimeTypeTabControl.SelectionChanged += AnimeTypeTabControl_SelectionChanged;
+        MainViewModel.AnimesToGetImagesFor.CollectionChanged += OnCollectionChanged;
+        Timer.Elapsed += AnimesToGetImagesForOnCollectionChanged;
+        Timer.AutoReset = false; // Timer should not automatically reset, we will reset it manually
         HomeButton.Click += SetTabIndexToHome;
         Task.Run(InitializeAsync);
         LoadHomePage();
@@ -306,5 +311,80 @@ public partial class MainView : UserControl
                 
                 break;
         }
+    }
+
+    private void AnimeItemsControl_OnElementPrepared(object? sender, ItemsRepeaterElementPreparedEventArgs e)
+    {
+        if (e.Element is Button { DataContext: AnimeDisplayItem animeDisplayItem })
+        {
+            MainViewModel.AnimesToGetImagesFor.Add(animeDisplayItem.AnimeId);
+        }
+    }
+
+    private void AnimeItemsControl_OnElementClearing(object? sender, ItemsRepeaterElementClearingEventArgs e)
+    {
+        if (e.Element is Button { DataContext: AnimeDisplayItem animeDisplayItem })
+        {
+            MainViewModel.AnimesToGetImagesFor.Remove(animeDisplayItem.AnimeId);
+        }
+    }
+    
+    private static void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+    {
+        if (e.Action == NotifyCollectionChangedAction.Add)
+        {
+            // Add new items to the buffer
+            _buffer.AddRange(e.NewItems.OfType<long?>());
+
+            // Restart the timer
+            Timer.Stop();
+            Timer.Start();
+        }
+    }
+
+    async void AnimesToGetImagesForOnCollectionChanged(object? sender, ElapsedEventArgs elapsedEventArgs)
+    {
+        // Process the buffered items in bulk
+        if (_buffer.Count > 0)
+        {
+            List<long?> itemsThatNeedImages = [.._buffer];
+            _buffer.Clear();
+
+            // Process itemsThatNeedImages as needed
+            ConsoleExt.WriteLineWithPretext(itemsThatNeedImages.Count, ConsoleExt.OutputType.Info);
+            var result = await SqlDbHandler.GetAnimeBitmapImagesByIds(itemsThatNeedImages);
+            
+            foreach (var item in MainViewModel.DynamicAnimeItemGrid)
+            {
+                if (!result.TryGetValue(item.AnimeId, out var imagesSet)) continue;
+                if (imagesSet.JPG.ImageBitmap != null)
+                {
+                    item.AnimeImage ??= new Bitmap(new MemoryStream(imagesSet.JPG.ImageBitmap));
+                }
+            }
+        }
+
+        /*
+        if (newItems == null) return;
+        foreach (var newItem in newItems)
+        {
+            if (newItem.AnimeImage == null)
+            {
+                itemsThatNeedImages.Add(newItem.AnimeId);
+                ConsoleExt.WriteLineWithPretext("Added Item", ConsoleExt.OutputType.Info);
+            }
+        }
+
+        var result = await SqlDbHandler.GetAnimeBitmapImagesByIds(itemsThatNeedImages);
+
+        foreach (var item in newItems)
+        {
+            if (result.TryGetValue(item.AnimeId, out var imagesSet))
+            {
+                item.AnimeImage = new Bitmap(new MemoryStream(imagesSet.JPG.ImageBitmap));
+                ConsoleExt.WriteLineWithPretext("Added Image", ConsoleExt.OutputType.Info);
+            }
+        }
+        */
     }
 }

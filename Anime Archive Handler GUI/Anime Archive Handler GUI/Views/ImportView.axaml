@@ -127,7 +127,7 @@
                                                         <Border CornerRadius="5" ClipToBounds="True" Background="#202020" Name="Border"> 
                                                             <Grid RowDefinitions="Auto,Auto">
                                                                 <Panel Grid.Row="0" Name="ImagePanel">
-                                                                    <Image MaxHeight="{CompiledBinding ImageMaxHeight}" MaxWidth="{CompiledBinding ImageMaxWidth}" MinHeight="{CompiledBinding ImageMaxHeight}" MinWidth="{CompiledBinding ImageMaxWidth}" Stretch="UniformToFill" Source="{CompiledBinding AnimeImage^}"/>
+                                                                    <Image MaxHeight="{CompiledBinding ImageMaxHeight}" MaxWidth="{CompiledBinding ImageMaxWidth}" MinHeight="{CompiledBinding ImageMaxHeight}" MinWidth="{CompiledBinding ImageMaxWidth}" Stretch="UniformToFill" Source="{CompiledBinding AnimeImage}"/>
                                                                     <Border Background="{CompiledBinding LinearGradientBrush}" Height="{CompiledBinding ImageMaxHeight}" Width="{CompiledBinding ImageMaxWidth}"/>
                                                 
                                                                     <StackPanel Name = "SubDubStackPanel" Background="Transparent" Height="40" Width="80" VerticalAlignment="Bottom" HorizontalAlignment="Center" Orientation="Horizontal">
