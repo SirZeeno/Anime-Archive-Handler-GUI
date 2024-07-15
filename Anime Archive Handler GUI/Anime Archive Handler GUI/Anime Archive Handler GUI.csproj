@@ -38,9 +38,6 @@
         <None Update="External Dependencies\LiteDB.Studio.exe">
           <CopyToOutputDirectory>Never</CopyToOutputDirectory>
         </None>
-        <None Update="Databases\SQLiteTest.db">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
         <None Update="Databases\Dictionary.json">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
@@ -48,6 +45,9 @@
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
         <None Update="Databases\ExclusionWords.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Databases\SQLiteTest.db">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>
