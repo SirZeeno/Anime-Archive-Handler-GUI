@@ -1,5 +1,6 @@
 ﻿using System;
 using Avalonia;
+using Avalonia.Logging;
 using Avalonia.ReactiveUI;
 
 namespace Anime_Archive_Handler_GUI.Desktop;
@@ -18,7 +19,7 @@ public static class Program
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .WithInterFont()
-            .LogToTrace()
+            .LogToTrace(LogEventLevel.Debug)
             .UseReactiveUI()
             .With(new Win32PlatformOptions
             {

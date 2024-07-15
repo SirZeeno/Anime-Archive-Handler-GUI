@@ -3,6 +3,7 @@ using System;
 using Anime_Archive_Handler_GUI.Database_Handeling;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Anime_Archive_Handler_GUI.Migrations
 {
     [DbContext(typeof(AnimeContext))]
-    partial class AnimeContextModelSnapshot : ModelSnapshot
+    [Migration("20240712141215_RelationChange35")]
+    partial class RelationChange35
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.20");

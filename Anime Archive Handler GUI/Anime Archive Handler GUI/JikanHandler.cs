@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Anime_Archive_Handler_GUI.Database_Handeling;
 using JikanDotNet;
 using JikanDotNet.Config;
 
@@ -12,16 +13,19 @@ using static CommonSettings;
 public static class JikanHandler
 {
     private static int _id = 1;
-    private static Anime? _anime;
+    private static AnimeDto? _anime;
     private static int _consecutiveNulls;
 
     //need to look into making the json database update every so often
     //need to look into hosting my own jikan API server
     //need to work on getting getAnimeRelations to work so i can link all relational animes together
 
-    public static async Task Start()
+    public static async Task StartSearch(int startId = 1, int maxSearchRange = 0)
     {
         var rateLimiter = new RateLimiter(40, 60000);
+        _id = startId == 1 ? _id : startId;
+        var context = SqlDbHandler.Context;
+        int insertedCount = 0;
 
         while (true)
         {
@@ -29,11 +33,11 @@ public static class JikanHandler
             {
                 //need to check if the specific malId is not contained in the database, if it is, it will skip it, if it isn't but there is a null on the line,
                 //it will overwrite it, if there is no null and it actually doesnt exist it will add it, if it exists but some of the information changed it will overwrite it
-
                 _anime = await GetAnime(_id);
                 if (_anime != null)
                 {
-                    AnimeDb.Upsert(RemapToAnimeDto(_anime));
+                    context.Animes.Add(_anime);
+                    insertedCount++;
                 }
                 _id++;
                 if (_anime == null)
@@ -41,6 +45,7 @@ public static class JikanHandler
                 else
                     _consecutiveNulls = 0;
                 if (_consecutiveNulls <= 500) break;
+                if (insertedCount == maxSearchRange) break;
             }
             else
             {
@@ -66,13 +71,28 @@ public static class JikanHandler
             return null; // or return an empty collection as a fallback
         }
     }
+    
+    internal static async Task<ICollection<RelatedEntry>?> GetRelatedAsync(int id)
+    {
+        IJikan jikan = new Jikan(new JikanClientConfiguration { SuppressException = true });
+        try
+        {
+            PaginatedJikanResponse<ICollection<RelatedEntry>> relatedAnimeResponseString = await jikan.GetAnimeRelationsAsync(id); //need to integrate that into the system to get all related animes
+            return relatedAnimeResponseString.Data;
+        }
+        catch (Exception? ex)
+        {
+            ConsoleExt.WriteLineWithPretext("Failed to get related anime", ConsoleExt.OutputType.Error, ex);// Handle or log the exception as needed
+            throw new Exception("Failed to get related anime", ex);
+            return null; // or return an empty collection as a fallback
+        }
+    }
 
-    private static async Task<Anime?> GetAnime(int id)
+    private static async Task<AnimeDto?> GetAnime(int id)
     {
         ConsoleExt.WriteWithPretext("Getting Anime with ID: " + _id, ConsoleExt.OutputType.Info);
         IJikan jikan = new Jikan(new JikanClientConfiguration { SuppressException = true });
         BaseJikanResponse<Anime> animeResponseString = await jikan.GetAnimeAsync(id);
-        PaginatedJikanResponse<ICollection<RelatedEntry>> relatedAnimeResponseString = await jikan.GetAnimeRelationsAsync(id); //need to integrate that into the system to get all related animes
         
         if (animeResponseString != null)
         {
@@ -109,7 +129,7 @@ public static class JikanHandler
 
             Console.WriteLine();
             //await Task.Delay(1000);
-            return anime;
+            return RemapToAnimeDto(anime);
         }
 
         Console.Write(", Anime not found!");

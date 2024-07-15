@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using Avalonia.Controls;
 using Avalonia.Interactivity;
+using FluentAvalonia.Core;
 using ReactiveUI;
 
 namespace Anime_Archive_Handler_GUI.ViewModels;
@@ -11,8 +11,10 @@ public class MainViewModel : ViewModelBase
     public static ObservableCollection<CarouselItem>? AnimePreviewItems { get; set; }
 
     public static ObservableCollection<AnimeDisplayItem> DynamicAnimeItemGrid { get; set; } = [];
-
+    
     public ObservableCollection<YourResultType> SearchResults { get; } = [];
+    
+    public ObservableCollection<AnimeImageSetBitmap> AnimeImageSetBitmaps { get; } = [];
     public bool IsPopupOpen { get; set; }
     public static int SelectedIndex { get; set; }
     

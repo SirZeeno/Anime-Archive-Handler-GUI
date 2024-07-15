@@ -4,8 +4,10 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
 using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SkiaSharp;
 
 namespace Anime_Archive_Handler_GUI.Helpers;
@@ -37,6 +39,33 @@ public static class ImageHelper
     {
         return new Bitmap(filePath);
     }
+    
+    public static async Task<byte[]?> LoadBytesFromWebTask(string? resourcePath)
+    {
+        if (resourcePath == null) return null;
+        var uri = new Uri(resourcePath);
+        using var httpClient = new HttpClient();
+        try
+        {
+            httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("AvaloniaTest", "0.1"));
+            var data = await httpClient.GetByteArrayAsync(uri);
+            ConsoleExt.WriteLineWithPretext("Got image", ConsoleExt.OutputType.Info);
+            return data;
+        }
+        catch (HttpRequestException ex)
+        {
+            Console.WriteLine($"An error occurred while downloading image '{uri}' : {ex.Message}");
+            return null;
+        }
+    }
+    
+    public static Bitmap? BitmapFromByteArray(byte[] data)
+    {
+        var bitmap = new Bitmap(new MemoryStream(data));
+        return bitmap.PixelSize == new PixelSize(225, 335)
+            ? bitmap
+            : bitmap.CreateScaledBitmap(new PixelSize(225, 335));
+    }
 
     public static async Task<Bitmap?> LoadFromWebTask(string resourcePath)
     {
@@ -46,7 +75,10 @@ public static class ImageHelper
         {
             httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("AvaloniaTest", "0.1"));
             var data = await httpClient.GetByteArrayAsync(uri);
-            return new Bitmap(new MemoryStream(data));
+            Bitmap bitmap = new Bitmap(new MemoryStream(data));
+            return bitmap.PixelSize == new PixelSize(225, 335)
+                ? bitmap
+                : bitmap.CreateScaledBitmap(new PixelSize(225, 335));
         }
         catch (HttpRequestException ex)
         {

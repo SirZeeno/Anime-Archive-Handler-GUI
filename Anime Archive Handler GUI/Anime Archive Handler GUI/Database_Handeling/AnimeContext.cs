@@ -1,4 +1,5 @@
 ﻿using System;
+using Avalonia.Media.Imaging;
 using Microsoft.EntityFrameworkCore;
 
 namespace Anime_Archive_Handler_GUI.Database_Handeling;
@@ -19,8 +20,8 @@ public class AnimeContext : DbContext
     public DbSet<ExplicitGenresDto> ExplicitGenres { get; set; }
     public DbSet<ThemesDto> Themes { get; set; }
     public DbSet<DemographicsDto> Demographics { get; set; }
-    
     public DbSet<TitleFtsDto> TitlesFts { get; set; }
+    public DbSet<AnimeImageSetBitmap> ImageBitmaps { get; set; }
     
     private readonly string _dbPath;
 
@@ -116,6 +117,18 @@ public class AnimeContext : DbContext
             .HasOne(a => a.Images)
             .WithMany()
             .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<AnimeImageSetBitmap>()
+            .HasOne(isb => isb.JPG)
+            .WithMany()
+            .HasForeignKey(isb => isb.JPGId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        modelBuilder.Entity<AnimeImageSetBitmap>()
+            .HasOne(isb => isb.WebP)
+            .WithMany()
+            .HasForeignKey(isb => isb.WebPId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<TimePeriod>().HasNoKey();
         modelBuilder.Entity<TitleFtsDto>().HasNoKey().ToTable("Titles_fts");

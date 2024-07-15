@@ -8,6 +8,7 @@ using Anime_Archive_Handler_GUI.Database_Handeling;
 using Anime_Archive_Handler_GUI.ViewModels;
 using Anime_Archive_Handler_GUI.Views;
 using Avalonia.Controls;
+using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
 using Humanizer;
 
@@ -67,6 +68,7 @@ public static class ImportHandler
     
     public static async void ScanPath(ObservableCollection<ImportSettings> selectedPathDisplay)
     {
+        ImportViewModel.AnimeSearchItemResultGrid.Clear();
         ConsoleExt.WriteLineWithPretext("Scanning Paths...", ConsoleExt.OutputType.Info);
         
         foreach (var textDisplayItem in selectedPathDisplay)
@@ -119,8 +121,7 @@ public static class ImportHandler
                     {
                         animeIds.Add(searchResult.MalId);
                     }
-
-                    Dictionary<long?, ImagesSetDto> animeImages = SqlDbHandler.GetAnimeImagesByIds(animeIds);
+                    
                     Dictionary<long?, ICollection<TitleEntryDto>> animeTitles = SqlDbHandler.GetAnimeTitlesByIds(animeIds);
                     
                     // if found display anime display item in importer view to show the found anime
@@ -129,8 +130,7 @@ public static class ImportHandler
                         animeTitles.TryGetValue(animeSearchResult.MalId, out var titleEntries);
                         title = (titleEntries.Where(x => x.Type.ToLower() == "english").Select(x => x.Title).FirstOrDefault() ?? titleEntries.Where(x => x.Type.ToLower() == "default").Select(x => x.Title).FirstOrDefault()) ?? string.Empty;
                         ConsoleExt.WriteLineWithPretext($"Found Anime: '{title}'", ConsoleExt.OutputType.Info); //HelperClass.ExtractProperty(titleEntries.ToList(), item => item.Title)[1]
-                        animeImages.TryGetValue(animeSearchResult.MalId, out var imagesSet);
-                        foundAnimes.Add(new(imagesSet.JPG.ImageUrl, title, 12,12,12, Language.Dub));
+                        foundAnimes.Add(new(animeSearchResult.MalId, title, 12,12,12, Language.Dub));
                     }
                     ImportViewModel.AnimeSearchItemResultGrid.Add(new AnimeImportDisplayItem(animeName.ToUpperInvariant(), foundAnimes));
                 }
@@ -151,10 +151,10 @@ public static class ImportHandler
                 ConsoleExt.WriteLineWithPretext($"Anime Name Extracted: {animeName}", ConsoleExt.OutputType.Info);
 
                 // Search extracted folder name in database
-                var animeSearchResults = await LiteDbHandler.GetAnimesWithTitle(animeName);
+                var animeSearchResults = SqlDbHandler.GetAnimeByTitle(animeName);
 
                 // if not found, write waring message
-                if (animeSearchResults == null)
+                if (animeSearchResults.Count == 0)
                 {
                     ConsoleExt.WriteLineWithPretext($"No Anime Has been Found by the name of {animeName}", ConsoleExt.OutputType.Warning);
                     return;
