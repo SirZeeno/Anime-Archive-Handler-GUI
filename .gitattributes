@@ -1,3 +1,4 @@
 .db filter=lfs diff=lfs merge=lfs -text
 /Anime[[:space:]]Archive[[:space:]]Handler[[:space:]]GUI/Anime[[:space:]]Archive[[:space:]]Handler[[:space:]]GUI.Desktop/Assets/Database/DataBase.db filter=lfs diff=lfs merge=lfs -text
 /Anime[[:space:]]Archive[[:space:]]Handler[[:space:]]GUI/Anime[[:space:]]Archive[[:space:]]Handler[[:space:]]GUI/Databases/DataBase.db filter=lfs diff=lfs merge=lfs -text
+/Anime[[:space:]]Archive[[:space:]]Handler[[:space:]]GUI/Anime[[:space:]]Archive[[:space:]]Handler[[:space:]]GUI/Databases/SQLite.db filter=lfs diff=lfs merge=lfs -text
