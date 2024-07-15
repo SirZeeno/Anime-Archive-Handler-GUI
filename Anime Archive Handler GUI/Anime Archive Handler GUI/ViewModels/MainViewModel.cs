@@ -14,7 +14,7 @@ public class MainViewModel : ViewModelBase
     
     public ObservableCollection<YourResultType> SearchResults { get; } = [];
     
-    public ObservableCollection<AnimeImageSetBitmap> AnimeImageSetBitmaps { get; } = [];
+    public static ObservableCollection<long?> AnimesToGetImagesFor { get; } = [];
     public bool IsPopupOpen { get; set; }
     public static int SelectedIndex { get; set; }
     

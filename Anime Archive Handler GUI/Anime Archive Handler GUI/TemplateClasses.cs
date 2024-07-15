@@ -11,6 +11,7 @@ using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using JikanDotNet;
+using ReactiveUI;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
@@ -57,10 +58,15 @@ public class AnimeCarousel(ObservableCollection<CarouselItem>? items)
     }
 }
 
-public class AnimeDisplayItem(long? animeId, string animeName, int subEpisodeCount, int dubEpisodeCount, int overallEpisodeCount, Language subOrDub = default, int paddingThickness = 10, int imageMaxWidth = 225, int imageMaxHeight = 335)
+public class AnimeDisplayItem(long? animeId, string animeName, int subEpisodeCount, int dubEpisodeCount, int overallEpisodeCount, Language subOrDub = default, int paddingThickness = 10, int imageMaxWidth = 225, int imageMaxHeight = 335) : ViewModelBase
 {
     // Main Information
-    public Task<Bitmap?> AnimeImage => LoadThumbnailAsync(); // TODO: change this to load not one by one
+    private Bitmap? ImageToLoad;
+    public Bitmap? AnimeImage
+    {
+        get => ImageToLoad;
+        set => this.RaiseAndSetIfChanged(ref ImageToLoad, value);
+    } // TODO: change this to not load one by one
     public string AnimeName { get; } = animeName;
     public int SubEpisodeCount { get; } = subEpisodeCount;
     public int DubEpisodeCount { get; } = dubEpisodeCount;
@@ -89,7 +95,7 @@ public class AnimeDisplayItem(long? animeId, string animeName, int subEpisodeCou
     };
 
     // Virtualization of the image property
-    private long? AnimeId { get; } = animeId;
+    public long? AnimeId { get; } = animeId;
 
     private Task<Bitmap?> LoadThumbnailAsync()
     {

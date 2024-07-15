@@ -55,11 +55,10 @@ public static class SqlDbHandler
 
         await Task.Factory.StartNew(() =>
         {
-            animes = sqliteContext.ImageBitmaps
-                .Include(a => a.JPG)
-                .Include(a => a.WebP)
-                .Where(a => malIds.Contains(a.MalId))
-                .ToList();
+            animes = Enumerable.ToList(sqliteContext.ImageBitmaps
+                    .Include(a => a.JPG)
+                    .Include(a => a.WebP)
+                    .Where(a => malIds.Contains(a.MalId)));
         });
         return animes.ToDictionary(a => a.MalId, a => a);
     }
