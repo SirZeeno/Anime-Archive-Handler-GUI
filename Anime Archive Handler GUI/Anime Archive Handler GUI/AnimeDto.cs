@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Avalonia.Media.Imaging;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace Anime_Archive_Handler_GUI;
@@ -195,4 +197,28 @@ public class TimePeriodDto
     public DateTime? To { get; set; }
     public long AnimeId { get; set; } // Foreign key
     public AnimeDto Anime { get; set; }
+}
+
+public class AnimeImageSetBitmap()
+{
+    [Key]
+    public long? MalId { get; set; } // Primary Key
+    public int JPGId { get; set; }
+    public AnimeImageBitmap? JPG { get; set; }
+    public int WebPId { get; set; }
+    public AnimeImageBitmap? WebP { get; set; }
+}
+
+public class AnimeImageBitmap()
+{
+    [Key]
+    public int Id { get; set; } // Primary Key
+    public byte[]? ImageBitmap { get; set; }
+    public byte[]? SmallImageBitmap { get; set; }
+    public byte[]? MediumImageBitmap { get; set; }
+    public byte[]? LargeImageBitmap { get; set; }
+    public byte[]? MaximumImageBitmap { get; set; }
+    
+    public long? AnimeImageSetBitmapId { get; set; } // Foreign key
+    public AnimeImageSetBitmap AnimeImageSetBitmap { get; set; }
 }

@@ -70,7 +70,7 @@ public static class AnimeListHandler
             //if nothing is there then its going to look them up in the database and let the user decide what to do depending on the result
             else
             {
-                var animeExistences = CheckAnimeExistence(GetAnimesWithTitle(animeName).GetAwaiter().GetResult()?.First().MalId);
+                var animeExistences = CheckAnimeExistence(SqlDbHandler.GetAnimeByTitle(animeName).First().MalId);
                 if (animeExistences)
                 {
                     if (!HelperClass.ManualInformationChecking(
@@ -100,11 +100,11 @@ public static class AnimeListHandler
     {
         if (HeadlessOperations)
         {
-            if (animeName != null) _anime?.Add(GetAnimesWithTitle(await RemoveUnnecessaryNamePieces(animeName)).GetAwaiter().GetResult()!.First());
+            if (animeName != null) _anime?.Add(SqlDbHandler.GetAnimeByTitle(await RemoveUnnecessaryNamePieces(animeName)).First());
         }
         else
         {
-            if (animeName != null) _anime?.AddRange(GetAnimesWithTitle(await RemoveUnnecessaryNamePieces(animeName)).GetAwaiter().GetResult()!);
+            if (animeName != null) _anime?.AddRange(SqlDbHandler.GetAnimeByTitle(await RemoveUnnecessaryNamePieces(animeName)));
         }
         
         if (_anime == null) return;
@@ -118,11 +118,11 @@ public static class AnimeListHandler
     {
         if (HeadlessOperations)
         {
-            if (animeName != null) _anime?.Add(GetAnimesWithTitle(await RemoveUnnecessaryNamePieces(animeName)).GetAwaiter().GetResult()!.First());
+            if (animeName != null) _anime?.Add(SqlDbHandler.GetAnimeByTitle(await RemoveUnnecessaryNamePieces(animeName)).First());
         }
         else
         {
-            if (animeName != null) _anime?.AddRange(GetAnimesWithTitle(await RemoveUnnecessaryNamePieces(animeName)).GetAwaiter().GetResult()!);
+            if (animeName != null) _anime?.AddRange(SqlDbHandler.GetAnimeByTitle(await RemoveUnnecessaryNamePieces(animeName)));
         }
 
         if (_anime == null) return;

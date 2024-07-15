@@ -1,11 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Anime_Archive_Handler_GUI.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Anime_Archive_Handler_GUI.Database_Handeling;
 
 public static class SqlDbHandler
 {
+    public static readonly AnimeContext Context = new AnimeContext();
+    
     // Gets all anime titles of a specific anime by id
     public static ICollection<TitleEntryDto> GetAnimeTitlesById(long? malId)
     {
@@ -25,20 +29,39 @@ public static class SqlDbHandler
             .FirstOrDefault(a => a.MalId == malId);
         return anime.Images;
     }
-    
-    public static Dictionary<long?, ImagesSetDto> GetAnimeImagesByIds(List<long?> malIds)
+
+    private static async Task<Dictionary<long?, ImagesSetDto>> GetAnimeImagesByIds(List<long?> malIds)
     {
-        using var sqliteContext = new AnimeContext();
-    
-        var animes = sqliteContext.Animes
-            .Include(a => a.Images)
-            .ThenInclude(i => i.JPG)
-            .Include(a => a.Images)
-            .ThenInclude(i => i.WebP)
-            .Where(a => malIds.Contains(a.MalId))
-            .ToList();
-    
+        await using var sqliteContext = new AnimeContext();
+
+        var animes = new List<AnimeDto>();
+        await Task.Factory.StartNew(() =>
+        {
+            animes = sqliteContext.Animes
+                .Include(a => a.Images)
+                .ThenInclude(i => i.JPG)
+                .Include(a => a.Images)
+                .ThenInclude(i => i.WebP)
+                .Where(a => malIds.Contains(a.MalId))
+                .ToList();
+        });
         return animes.ToDictionary(a => a.MalId, a => a.Images);
+    }
+    
+    public static async Task<Dictionary<long?, AnimeImageSetBitmap>> GetAnimeBitmapImagesByIds(List<long?> malIds)
+    {
+        await using var sqliteContext = new AnimeContext();
+        var animes = new List<AnimeImageSetBitmap>();
+
+        await Task.Factory.StartNew(() =>
+        {
+            animes = sqliteContext.ImageBitmaps
+                .Include(a => a.JPG)
+                .Include(a => a.WebP)
+                .Where(a => malIds.Contains(a.MalId))
+                .ToList();
+        });
+        return animes.ToDictionary(a => a.MalId, a => a);
     }
     
     public static Dictionary<long?, ICollection<TitleEntryDto>> GetAnimeTitlesByIds(List<long?> malIds)
@@ -55,45 +78,87 @@ public static class SqlDbHandler
     
     public static Dictionary<long?, AnimeDto> GetAnimesByIds(List<long?> malIds)
     {
-        using var sqliteContext = new AnimeContext();
-        return sqliteContext.Animes.Where(a => malIds.Contains(a.MalId)).ToDictionary(a => a.MalId, a => a);
+        return Context.Animes.Where(a => malIds.Contains(a.MalId)).ToDictionary(a => a.MalId, a => a);
     }
     
     // Gets a specific anime by id
     public static AnimeDto? GetAnimeById(long malId)
     {
-        using var sqliteContext = new AnimeContext();
-        return sqliteContext.Animes.Find(malId);
+        return Context.Animes.Find(malId);
+    }
+
+    public static void ProcessAllImages()
+    {
+        int animeCount = Context.Animes.Count();
+        List<long?> malIds = Enumerable.Range(1, animeCount).ToList().ConvertAll(i => (long?) i);
+        var images = GetAnimeImagesByIds(malIds).GetAwaiter().GetResult();
+        ConsoleExt.WriteLineWithPretext("Got all images", ConsoleExt.OutputType.Info);
+        List<AnimeImageSetBitmap> animeImageSetBitmaps = new List<AnimeImageSetBitmap>();
+        foreach (var image in images) // not sure if this is the best way to do this
+        {
+            ConsoleExt.WriteLineWithPretext("Processing images for malId: " + image.Key, ConsoleExt.OutputType.Info);
+            
+            // JPG
+            var jpg = image.Value.JPG;
+            var webp = image.Value.WebP;
+            var jpgAnimeImageBitmap = new AnimeImageBitmap
+            {
+                ImageBitmap = Task.Run(() => ImageHelper.LoadBytesFromWebTask(jpg.ImageUrl)).GetAwaiter().GetResult(),
+                SmallImageBitmap = Task.Run(() => ImageHelper.LoadBytesFromWebTask(jpg.SmallImageUrl)).GetAwaiter().GetResult(),
+                MediumImageBitmap = Task.Run(() => ImageHelper.LoadBytesFromWebTask(jpg.MediumImageUrl)).GetAwaiter().GetResult(),
+                LargeImageBitmap = Task.Run(() => ImageHelper.LoadBytesFromWebTask(jpg.LargeImageUrl)).GetAwaiter().GetResult(),
+                MaximumImageBitmap = Task.Run(() => ImageHelper.LoadBytesFromWebTask(jpg.MaximumImageUrl)).GetAwaiter().GetResult()
+            };
+            var webpAnimeImageBitmap = new AnimeImageBitmap
+            {
+                ImageBitmap = Task.Run(() => ImageHelper.LoadBytesFromWebTask(webp.ImageUrl)).GetAwaiter().GetResult(),
+                SmallImageBitmap = Task.Run(() => ImageHelper.LoadBytesFromWebTask(webp.SmallImageUrl)).GetAwaiter().GetResult(),
+                MediumImageBitmap = Task.Run(() => ImageHelper.LoadBytesFromWebTask(webp.MediumImageUrl)).GetAwaiter().GetResult(),
+                LargeImageBitmap = Task.Run(() => ImageHelper.LoadBytesFromWebTask(webp.LargeImageUrl)).GetAwaiter().GetResult(),
+                MaximumImageBitmap = Task.Run(() => ImageHelper.LoadBytesFromWebTask(webp.MaximumImageUrl)).GetAwaiter().GetResult()
+            };
+            animeImageSetBitmaps.Add(new AnimeImageSetBitmap
+            {
+                MalId = image.Key, 
+                JPG = jpgAnimeImageBitmap, 
+                WebP = webpAnimeImageBitmap
+            });
+        }
+        Context.ImageBitmaps.AddRange(animeImageSetBitmaps);
+        Context.SaveChanges();
+        ConsoleExt.WriteLineWithPretext("Processed all images", ConsoleExt.OutputType.Info);
     }
     
     // Get all anime similar titles by title
     public static List<TitleEntryDto> GetAnimeTitlesByTitle(string animeTitle)
     {
-        using var sqliteContext = new AnimeContext();
-        sqliteContext.Database.EnsureCreated();
-        var anime = sqliteContext.TitleEntries.Where(a => EF.Functions.Like(a.Title, $"%{animeTitle}%") || a.Title.ToLower() == animeTitle.ToLower()).ToList();
+        Context.Database.EnsureCreated();
+        var anime = Context.TitleEntries.Where(a => EF.Functions.Like(a.Title, $"%{animeTitle}%") || a.Title.ToLower() == animeTitle.ToLower()).ToList();
         return anime;
-    }  
+    }
+    
+    public static IQueryable<AnimeDto> GetAnimesByCount(int count)
+    {
+        return Context.Animes.Take(count);
+    }
     
     // Updates the fts table from the title entries
     public static void UpdateTitleFts()
     {
-        using var sqliteContext = new AnimeContext();
-        sqliteContext.Database.EnsureCreated();
-        sqliteContext.TitlesFts.FromSqlRaw("drop table Titles_fts;");
-        sqliteContext.TitlesFts.FromSqlRaw("CREATE VIRTUAL TABLE Titles_fts USING fts5(AnimeId UNINDEXED, Title, Type UNINDEXED);");
-        sqliteContext.TitlesFts.FromSqlRaw("INSERT INTO Titles_fts (AnimeId, Title, Type) SELECT AnimeId, Title, Type FROM TitleEntries;");
+        Context.Database.EnsureCreated();
+        Context.TitlesFts.FromSqlRaw("drop table Titles_fts;");
+        Context.TitlesFts.FromSqlRaw("CREATE VIRTUAL TABLE Titles_fts USING fts5(AnimeId UNINDEXED, Title, Type UNINDEXED);");
+        Context.TitlesFts.FromSqlRaw("INSERT INTO Titles_fts (AnimeId, Title, Type) SELECT AnimeId, Title, Type FROM TitleEntries;");
     }
     
     public static List<TitleFtsDto> SearchTitles(string searchText) // runs through different methods to search for the title
     {
-        using var sqliteContext = new AnimeContext();
         List<TitleFtsDto> matchingTitles = new List<TitleFtsDto>();
         string safeSearchText = searchText.Replace("'", "\"\"");
         if (safeSearchText.Contains(",") || safeSearchText.Contains("-") || safeSearchText.Contains(".")) safeSearchText = "\"" + safeSearchText + "\"";
         
         // Conventional Search
-        var conventionalSearch = sqliteContext.TitlesFts.FromSqlRaw($"SELECT * FROM Titles_fts WHERE Title MATCH '{safeSearchText}';").ToList();
+        var conventionalSearch = Context.TitlesFts.FromSqlRaw($"SELECT * FROM Titles_fts WHERE Title MATCH '{safeSearchText}';").ToList();
         if (conventionalSearch.Count > 0) return conventionalSearch;
         
         // Filtered Split Search
@@ -103,7 +168,7 @@ public static class SqlDbHandler
         foreach (var split in splitTextver1)
         {
             if (exclusionWords.Where(x => x == split.Trim().ToLower()).Any()) continue;
-            var anime = sqliteContext.TitlesFts.FromSqlRaw($"SELECT * FROM Titles_fts WHERE Title MATCH '{split}*';").ToList();
+            var anime = Context.TitlesFts.FromSqlRaw($"SELECT * FROM Titles_fts WHERE Title MATCH '{split}*';").ToList();
             matchingTitles.AddRange(anime);
         }
         if (matchingTitles.Count > 0) return matchingTitles;
@@ -114,7 +179,7 @@ public static class SqlDbHandler
         foreach (var split in splitTextver2)
         {
             ConsoleExt.WriteLineWithPretext(split, ConsoleExt.OutputType.Info);
-            var anime = sqliteContext.TitlesFts.FromSqlRaw($"SELECT * FROM Titles_fts WHERE Title MATCH '{split}*';").ToList(); // if it's the last string in the split, it will not add * at the end or add * before the last string
+            var anime = Context.TitlesFts.FromSqlRaw($"SELECT * FROM Titles_fts WHERE Title MATCH '{split}*';").ToList(); // if it's the last string in the split, it will not add * at the end or add * before the last string
             matchingTitles.AddRange(anime);
         }
         return matchingTitles;
@@ -122,7 +187,6 @@ public static class SqlDbHandler
     
     public static List<AnimeDto> GetAnimeByTitle(string animeTitle)
     {
-        using var sqliteContext = new AnimeContext();
         var titles = SearchTitles(animeTitle);
         List<long?> malIds = new List<long?>();
         foreach (var title in titles)
@@ -130,5 +194,16 @@ public static class SqlDbHandler
             malIds.Add(title.AnimeId);
         }
         return GetAnimesByIds(malIds).Values.ToList();
+    }
+
+    private static long? GetLastMalId()
+    {
+        return Context.Animes.Max(a => a.MalId);
+    }
+
+    public static async void GetLatestAnimes()
+    {
+        long? lastMalId = GetLastMalId();
+        await JikanHandler.StartSearch((int)lastMalId, 1000);
     }
 }

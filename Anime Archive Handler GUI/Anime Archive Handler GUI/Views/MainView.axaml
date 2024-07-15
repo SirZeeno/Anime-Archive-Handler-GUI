@@ -81,16 +81,21 @@
         <DataTemplate x:Key="HomePage" DataType="animeArchiveHandlerGui:AnimeCarousel">
             <Border BorderThickness="2" BorderBrush="#191919" CornerRadius="10" Margin="10" ClipToBounds="True" MaxHeight="335">
                 <Panel>
-                    <Carousel x:Name="Slides" ItemsSource="{Binding Items}">
+                    <Carousel x:Name="Slides" ItemsSource="{CompiledBinding Items}">
                         <Carousel.PageTransition>
                             <CompositePageTransition>
                                 <PageSlide Duration="0:00:00.250" Orientation="Horizontal" />
                             </CompositePageTransition>
                         </Carousel.PageTransition>
+                        <Carousel.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingCarouselPanel />
+                            </ItemsPanelTemplate>
+                        </Carousel.ItemsPanel>
                     </Carousel>
                     <Panel Margin="10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="80">
-                        <Button Classes="transparentButton" Command="{Binding Previous}" CommandParameter="{Binding ElementName=Slides}" Background="Transparent" FontWeight="Bold" FontSize="30">&lt;</Button>
-                        <Button Classes="transparentButton" Command="{Binding Next}" CommandParameter="{Binding ElementName=Slides}" Background="Transparent" FontWeight="Bold" FontSize="30" HorizontalAlignment="Right">&gt;</Button>
+                        <Button Classes="transparentButton" Command="{CompiledBinding Previous}" CommandParameter="{CompiledBinding ElementName=Slides}" Background="Transparent" FontWeight="Bold" FontSize="30">&lt;</Button>
+                        <Button Classes="transparentButton" Command="{CompiledBinding Next}" CommandParameter="{CompiledBinding ElementName=Slides}" Background="Transparent" FontWeight="Bold" FontSize="30" HorizontalAlignment="Right">&gt;</Button>
                     </Panel>
                 </Panel>
             </Border>
@@ -101,7 +106,7 @@
 
         <Border Grid.Row="0" Height="32">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                <TextBlock Text="{Binding Title, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" VerticalAlignment="Center" Margin="10 0" />
+                <TextBlock Text="{CompiledBinding Title, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" VerticalAlignment="Center" Margin="10 0" />
                 <DropDownButton Content="Settings" FontWeight="Heavy" Height="20" FontSize="15" BorderThickness="1" BorderBrush="Black">
                     <DropDownButton.Flyout>
                         <MenuFlyout>
@@ -140,9 +145,9 @@
                     <Grid>
                         <TextBox Classes="transparentTextbox" x:Name="SearchBox" VerticalAlignment="Center" Background="Transparent" BorderThickness="0" Margin="55,0,25,0" Width="200" Watermark="Search Anime.." KeyUp="SearchBox_KeyUp"/>
                         
-                        <Popup x:Name="SearchResultsPopup" PlacementTarget="{Binding ElementName=SearchBox}" Placement="Bottom" Focusable="False" IsOpen="{Binding IsPopupOpen}">
+                        <Popup x:Name="SearchResultsPopup" PlacementTarget="{CompiledBinding ElementName=SearchBox}" Placement="Bottom" Focusable="False" IsOpen="{CompiledBinding IsPopupOpen}">
                             <Border Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="1">
-                                <ListBox x:Name="SearchResultsListBox" MaxHeight="200" Width="{Binding Width, ElementName=SearchBox}">
+                                <ListBox x:Name="SearchResultsListBox" MaxHeight="200" Width="{CompiledBinding Width, ElementName=SearchBox}">
                                     <!-- Bind to the search results here -->
                                 </ListBox>
                             </Border>
@@ -158,7 +163,7 @@
                     </Grid>
                 </Border>
                 
-                <TabStrip Name="AnimeCategoryTabControl" SelectedIndex="{Binding SelectedAnimeHeaderMenuTabIndex}" HorizontalAlignment="Right">
+                <TabStrip Name="AnimeCategoryTabControl" SelectedIndex="{CompiledBinding SelectedAnimeHeaderMenuTabIndex}" HorizontalAlignment="Right">
                     <TabItem Header="Home" FontWeight="Heavy" Height="20" FontSize="15" IsVisible="False"></TabItem>
                     <TabItem Header="Genres" FontWeight="Heavy" Height="20" FontSize="15"></TabItem>
                     <TabItem Header="Types" FontWeight="Heavy" Height="20" FontSize="15"></TabItem>
@@ -169,7 +174,7 @@
                     <TabItem Header="Watch List" FontWeight="Heavy" Height="20" FontSize="15"></TabItem>
                 </TabStrip>
                 
-                <TextBlock Text="{Binding SelectedAnimeHeaderMenuTabIndex}" />
+                <TextBlock Text="{CompiledBinding SelectedAnimeHeaderMenuTabIndex}" />
             </StackPanel>
         </Border>
         
@@ -177,58 +182,56 @@
         <Grid Grid.Row="2" Background="#191919" ColumnDefinitions="*,250">
             <Grid Grid.Column="0" RowDefinitions="Auto,40,*">
                 <!-- Featured Section and Thumbnails Grid -->
-                <ContentControl Name="AnimePreviewContentControl" Grid.Row="0"></ContentControl>
+                <ContentControl Name="AnimePreviewContentControl" Grid.Row="0" />
 
                 <StackPanel Grid.Row="1" Orientation="Horizontal" x:Name="AnimeMenuButtonStackPanel">
                     <TabStrip Name="AnimeTypeTabControl" HorizontalAlignment="Right" FlowDirection="LeftToRight">
-                        <TabItem Header="All" FontWeight="Heavy" Height="20" FontSize="15" BorderThickness="1" BorderBrush="Black"></TabItem>
-                        <TabItem Header="Sub" FontWeight="Heavy" Height="20" FontSize="15" BorderThickness="1" BorderBrush="Black"></TabItem>
-                        <TabItem Header="Dub" FontWeight="Heavy" Height="20" FontSize="15" BorderThickness="1" BorderBrush="Black"></TabItem>
-                        <TabItem Header="Chinese" FontWeight="Heavy" Height="20" FontSize="15" BorderThickness="1" BorderBrush="Black"></TabItem>
-                        <TabItem Header="Trending" FontWeight="Heavy" Height="20" FontSize="15" BorderThickness="1" BorderBrush="Black"></TabItem>
+                        <TabItem Header="All" FontWeight="Heavy" Height="20" FontSize="15" BorderThickness="1" BorderBrush="Black" />
+                        <TabItem Header="Sub" FontWeight="Heavy" Height="20" FontSize="15" BorderThickness="1" BorderBrush="Black" />
+                        <TabItem Header="Dub" FontWeight="Heavy" Height="20" FontSize="15" BorderThickness="1" BorderBrush="Black" />
+                        <TabItem Header="Chinese" FontWeight="Heavy" Height="20" FontSize="15" BorderThickness="1" BorderBrush="Black" />
+                        <TabItem Header="Trending" FontWeight="Heavy" Height="20" FontSize="15" BorderThickness="1" BorderBrush="Black" />
                     </TabStrip>
                 </StackPanel>
                 
                 <ScrollViewer Grid.Row="2" x:Name="DynamicScrollViewer" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                    <ItemsControl ItemsSource="{Binding DynamicAnimeItemGrid}" Name="AnimeItemsControl">
-                        <ItemsControl.ItemTemplate>
+                    <ItemsRepeater ItemsSource="{CompiledBinding DynamicAnimeItemGrid}" Name="AnimeItemsControl">
+                        <ItemsRepeater.ItemTemplate>
                             <DataTemplate DataType="animeArchiveHandlerGui:AnimeDisplayItem">
-                                <Button Name="{Binding AnimeName}" Margin="10" CornerRadius="5" ClipToBounds="True" Padding="0">
+                                <Button Margin="10" CornerRadius="5" ClipToBounds="True" Padding="0">
                                     <Border CornerRadius="5" ClipToBounds="True" Background="#202020">
                                         <Grid RowDefinitions="Auto,Auto">
                                             <Panel Grid.Row="0" Name="ImagePanel">
-                                                <Image MaxHeight="{Binding ImageMaxHeight}" MaxWidth="{Binding ImageMaxWidth}" MinHeight="{Binding ImageMaxHeight}" MinWidth="{Binding ImageMaxWidth}" Stretch="UniformToFill" Source="{Binding AnimeImage}"/>
-                                                <Border Background="{Binding LinearGradientBrush}" Height="{Binding ImageMaxHeight}" Width="{Binding ImageMaxWidth}"/>
+                                                <Image MaxHeight="{CompiledBinding ImageMaxHeight}" MaxWidth="{CompiledBinding ImageMaxWidth}" MinHeight="{CompiledBinding ImageMaxHeight}" MinWidth="{CompiledBinding ImageMaxWidth}" Stretch="UniformToFill" Source="{CompiledBinding AnimeImage^}"/>
+                                                <Border Background="{CompiledBinding LinearGradientBrush}" Height="{CompiledBinding ImageMaxHeight}" Width="{CompiledBinding ImageMaxWidth}"/>
                                                 
                                                 <StackPanel Name = "SubDubStackPanel" Background="Transparent" Height="40" Width="80" VerticalAlignment="Bottom" HorizontalAlignment="Center" Orientation="Horizontal">
                                                     <StackPanel Name="DubStackPanel" Background="#313131" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2,0,0,0" Orientation="Horizontal">
                                                         <ui:SymbolIcon Symbol="Microphone" FontSize="20" Foreground="White" HorizontalAlignment="Center"/>
-                                                        <TextBlock Text="{Binding DubEpisodeCount}" Foreground="White" FontSize="16"/>
+                                                        <TextBlock Text="{CompiledBinding DubEpisodeCount}" Foreground="White" FontSize="16"/>
                                                     </StackPanel>
                                                     
                                                     <StackPanel Name="SubStackPanel" Background="#313131" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2,0,0,0" Orientation="Horizontal">
                                                         <ui:SymbolIcon Symbol="ClosedCaption" FontSize="20" Foreground="White" HorizontalAlignment="Center"/>
-                                                        <TextBlock Text="{Binding SubEpisodeCount}" Foreground="White" FontSize="16"/>
+                                                        <TextBlock Text="{CompiledBinding SubEpisodeCount}" Foreground="White" FontSize="16"/>
                                                     </StackPanel>
                                                     
                                                     <StackPanel Name="OverallStackPanel" Background="#313131" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2,0,0,0" Orientation="Horizontal">
-                                                        <TextBlock Text="{Binding OverallEpisodeCount}" Foreground="White" FontSize="16"/>
+                                                        <TextBlock Text="{CompiledBinding OverallEpisodeCount}" Foreground="White" FontSize="16"/>
                                                     </StackPanel>
                                                 </StackPanel>
                                             </Panel>
-                                            <TextBlock Grid.Row="1" Text="{Binding AnimeName}" Foreground="{StaticResource LightBlueTextColor}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,10" MaxWidth="{Binding ImageMaxWidth}" Height="40" MaxHeight="40" TextWrapping="Wrap" Padding="10,0"/>
+                                            <TextBlock Grid.Row="1" Text="{CompiledBinding AnimeName}" Foreground="{StaticResource LightBlueTextColor}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,10" MaxWidth="{CompiledBinding ImageMaxWidth}" Height="40" MaxHeight="40" TextWrapping="Wrap" Padding="10,0"/>
                                         </Grid>
                                     </Border>
                                 </Button>
                             </DataTemplate>
-                        </ItemsControl.ItemTemplate>
+                        </ItemsRepeater.ItemTemplate>
                         
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <Grid HorizontalAlignment="Center" VerticalAlignment="Top"></Grid>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                    </ItemsControl>
+                        <ItemsRepeater.Layout>
+                            <UniformGridLayout ItemsJustification="Center"/>
+                        </ItemsRepeater.Layout>
+                    </ItemsRepeater>
                 </ScrollViewer>
             </Grid>
 

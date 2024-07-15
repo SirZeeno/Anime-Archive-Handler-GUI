@@ -1,8 +1,7 @@
-using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Avalonia;
-using System.Linq;
-using Avalonia.Media;
+using System.Collections.Specialized;
+using System.IO;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using System.Threading.Tasks;
@@ -11,8 +10,10 @@ using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Threading;
 using Avalonia.Markup.Xaml.Templates;
+using Avalonia.Media.Imaging;
+using Avalonia.VisualTree;
 using DynamicData;
-using FluentAvalonia.UI.Controls;
+using FluentAvalonia.Core;
 
 namespace Anime_Archive_Handler_GUI.Views;
 using static Helpers.DailyFeatured;
@@ -30,16 +31,16 @@ public partial class MainView : UserControl
         MainViewModel.AnimePreviewItems = new ObservableCollection<CarouselItem>();
         DataContext = new MainViewModel(); // Only for example purposes
         AnimeItemDisplayControl.MainViewInstance = this;
-        AnimeItemDisplayControl.AnimeItemsControlInstance = AnimeItemsControl;
-        AnimeItemDisplayControl.SetGridItems().OnCompleted(AdjustGridLayout);
-        this.GetObservable(BoundsProperty).Subscribe(_ => AdjustGridLayout());
+        AnimeItemDisplayControl.SetGridItems();//.OnCompleted(AdjustGridLayout);
+        ConsoleExt.WriteLineWithPretext(MainViewModel.DynamicAnimeItemGrid.Count, ConsoleExt.OutputType.Info);
+        //this.GetObservable(BoundsProperty).Subscribe(_ => AdjustGridLayout());
         AnimeCategoryTabControl.SelectionChanged += HeaderTabControl_SelectionChanged;
         AnimeTypeTabControl.SelectionChanged += AnimeTypeTabControl_SelectionChanged;
         HomeButton.Click += SetTabIndexToHome;
         Task.Run(InitializeAsync);
         LoadHomePage();
-        AdjustGridLayout();
-        ChangeStatus(Language.Sub, 12, 12, "Cowboy Bebop");
+        //AdjustGridLayout();
+        //ChangeStatus(Language.Sub, 12, 12, "Cowboy Bebop"); // needs to get fixed to get working again
     }
 
     private void LoadHomePage()
@@ -98,9 +99,10 @@ public partial class MainView : UserControl
 
     private void AdjustGridLayout()
     {
-        AnimeItemDisplayControl.AdjustGridLayout(AnimeItemsControl);
+        //AnimeItemDisplayControl.AdjustGridLayout(AnimeItemsControl);
     }
 
+    /*
     private void ChangeStatus(Language subOrDub, int subEpisodeCount, int dubEpisodeCount, string animeName)
     {
         var matches = AnimeItemsControl.Items.OfType<Border>().Where(b => b.Name == animeName);
@@ -207,6 +209,7 @@ public partial class MainView : UserControl
             }
         }
     }
+    */
 
     private void AddRowToAnimeList(int rowCount = 1)
     {
@@ -238,7 +241,7 @@ public partial class MainView : UserControl
                 ConsoleExt.WriteLineWithPretext("Tab 2 selected", ConsoleExt.OutputType.Info);
                 break;
             case 3:
-                AnimeItemDisplayControl.SetGridItems().OnCompleted(AdjustGridLayout);
+                AnimeItemDisplayControl.SetGridItems();//.OnCompleted(AdjustGridLayout);
                 break;
             case 4:
                 break;
@@ -296,12 +299,11 @@ public partial class MainView : UserControl
                 new SettingsView {DataContext = new SettingsViewModel()}.Show();
                 break;
             case "HelpButton":
-                TestStarter.StartTest();
                 break;
             case "CopyButton":
-                TestStarter.PortDatabase();
                 break;
             case "PasteButton":
+                
                 break;
         }
     }

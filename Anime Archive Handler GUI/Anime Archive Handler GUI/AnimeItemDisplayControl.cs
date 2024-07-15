@@ -1,23 +1,25 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Anime_Archive_Handler_GUI.ViewModels;
-using Anime_Archive_Handler_GUI.Views;
 using Avalonia.Controls;
-using Avalonia.Interactivity;
 using Avalonia.Layout;
+using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using DynamicData;
 
 namespace Anime_Archive_Handler_GUI;
+using Database_Handeling;
+using ViewModels;
+using Views;
 
 public class AnimeItemDisplayControl
 {
     public static MainView MainViewInstance { get; set; } = null!;
-    public static ItemsControl AnimeItemsControlInstance { get; set; } = null!;
     
     private const int PaddingThickness = 10;
     private const int ImageMaxWidth = 225;
@@ -26,27 +28,32 @@ public class AnimeItemDisplayControl
     private const int TotalImageHeight = ImageMaxHeight + PaddingThickness * 2; // Responsible for the row spacing that each square of the grid takes
     private const int AnimeListViewColor = 32;
 
-    public static TaskAwaiter SetGridItems(int count = 20)
+    // 5GB of ram when loading 10000 animes
+    public static void SetGridItems(int count = 50000) //TODO: add a folder-watch so this can be updated when new animes are added
     {
         ObservableCollection<AnimeDisplayItem> animeItems = [];
+
+        IEnumerable<AnimeDto> animeList = SqlDbHandler.GetAnimesByCount(count);
+        List<long?> malIds = new List<long?>();
         
-        for (int i = 0; i < count; i++)
+        foreach (var searchResult in animeList) // (Warning) if i convert this into linq this will make tons of db calls
         {
-            const int paddingThickness = 10;
-            const int imageMaxWidth = 225;
-            const int imageMaxHeight = 335;
-            const int totalImageWidth = imageMaxWidth + paddingThickness * 2;
-            var columnDefinition = new ColumnDefinition { Width = new GridLength(totalImageWidth, GridUnitType.Pixel) };
+            malIds.Add(searchResult.MalId);
+        }
+
+        // TODO: use images that have been reduced in size by bitmaptowidth
+        Dictionary<long?, ICollection<TitleEntryDto>> titles = SqlDbHandler.GetAnimeTitlesByIds(malIds);
+
+        foreach (var malId in malIds)
+        {
+            titles.TryGetValue(malId, out var titleEntries);
+            string title = (titleEntries.Where(x => x.Type.ToLower() == "english").Select(x => x.Title).FirstOrDefault() ?? titleEntries.Where(x => x.Type.ToLower() == "default").Select(x => x.Title).FirstOrDefault()) ?? string.Empty;
             
-            var gridInstance = AnimeItemsControlInstance.ItemsPanelRoot as Grid;
-            gridInstance?.ColumnDefinitions.Add(columnDefinition);
-            
-            animeItems.Add(new AnimeDisplayItem("https://cdn.myanimelist.net/images/anime/4/19644l.jpg", "Cowboy Bebop", 12, 12, 12, Language.Dub));
-            animeItems.Add(new AnimeDisplayItem("https://cdn.myanimelist.net/images/anime/7/20310l.jpg", "Trigun", 12, 12, 12, Language.Dub));
+            animeItems.Add(new AnimeDisplayItem(malId, title, 12, 12, 12, Language.Dub));
         }
         
         ConsoleExt.WriteLineWithPretext("Picked Grid Items", ConsoleExt.OutputType.Info);
-        return Dispatcher.UIThread.InvokeAsync(() => MainViewModel.DynamicAnimeItemGrid.AddRange(animeItems)).GetAwaiter();
+        Dispatcher.UIThread.InvokeAsync(() => MainViewModel.DynamicAnimeItemGrid.AddRange(animeItems)).GetAwaiter();
     }
     
     public TaskAwaiter AddAnimeToAnimeGrid(AnimeDisplayItem animeItem, int count = 1)
@@ -87,7 +94,7 @@ public class AnimeItemDisplayControl
         });
     }
     
-    public static void AdjustGridLayout(ItemsControl itemsControl)
+    public static void AdjustGridLayout(ItemsControl itemsControl) //TODO: Fix anime display items clipping into the side of the scroll view
     {
         // Make sure to use the correct total width for each image including padding
         var availableWidth = itemsControl.Bounds.Width;

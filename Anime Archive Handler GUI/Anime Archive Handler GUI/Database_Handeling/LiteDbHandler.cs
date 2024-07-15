@@ -124,6 +124,7 @@ public static class LiteDbHandler
     
     // TODO: Add that animes that haven't been released yet dont get returned unless specified
     // TODO: Rewrite this method to use less task runs
+    /*
     public static async Task<IEnumerable<AnimeDto>?> GetAnimesWithTitle(string title)
     {
         var similarityPercentage = int.Parse(SettingsManager.GetSetting("Execution Settings", "SimilarityPercentage"));
@@ -165,6 +166,7 @@ public static class LiteDbHandler
     
         return animeDtos;
     }
+    */
 
     private static List<Tuple<string, int>> RankNames(string targetName, List<string> nameList)
     {

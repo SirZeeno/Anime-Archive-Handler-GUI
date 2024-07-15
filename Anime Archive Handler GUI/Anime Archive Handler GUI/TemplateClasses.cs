@@ -1,7 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using Anime_Archive_Handler_GUI.Database_Handeling;
 using Anime_Archive_Handler_GUI.Helpers;
+using Anime_Archive_Handler_GUI.ViewModels;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
@@ -53,10 +57,10 @@ public class AnimeCarousel(ObservableCollection<CarouselItem>? items)
     }
 }
 
-public class AnimeDisplayItem(string animeImageUrl, string animeName, int subEpisodeCount, int dubEpisodeCount, int overallEpisodeCount, Language subOrDub = default, int paddingThickness = 10, int imageMaxWidth = 225, int imageMaxHeight = 335)
+public class AnimeDisplayItem(long? animeId, string animeName, int subEpisodeCount, int dubEpisodeCount, int overallEpisodeCount, Language subOrDub = default, int paddingThickness = 10, int imageMaxWidth = 225, int imageMaxHeight = 335)
 {
     // Main Information
-    public Bitmap? AnimeImage { get; } = ImageHelper.LoadFromWeb(animeImageUrl);
+    public Task<Bitmap?> AnimeImage => LoadThumbnailAsync();
     public string AnimeName { get; } = animeName;
     public int SubEpisodeCount { get; } = subEpisodeCount;
     public int DubEpisodeCount { get; } = dubEpisodeCount;
@@ -83,6 +87,24 @@ public class AnimeDisplayItem(string animeImageUrl, string animeName, int subEpi
             new GradientStop(Color.FromArgb(255, 32, 32, 32), 0.98) // Replace with your border's background color, fully opaque at the bottom
         ]
     };
+
+    // Virtualization of the image property
+    private long? AnimeId { get; } = animeId;
+
+    private Task<Bitmap?> LoadThumbnailAsync()
+    {
+        return Task.Run(() =>
+        {
+            var result = SqlDbHandler.GetAnimeBitmapImagesByIds([AnimeId]).GetAwaiter().GetResult();
+            result.TryGetValue(AnimeId, out var imagesSet);
+            if (imagesSet != null && imagesSet.JPG.ImageBitmap != null)
+            {
+                return new Bitmap(new MemoryStream(imagesSet.JPG.ImageBitmap));
+            }
+            ConsoleExt.WriteLineWithPretext("Anime image not found", ConsoleExt.OutputType.Error);
+            return null;
+        });
+    }
 }
 
 public class AnimeImportDisplayItem(string animeTitle, ObservableCollection<AnimeDisplayItem>? animeSearchResults)

@@ -136,7 +136,7 @@ internal abstract partial class AnimeArchiveHandler
             ConsoleExt.WriteLineWithPretext($"Has sub-folders: {_hasSubFolder}", ConsoleExt.OutputType.Info);
                     
             _animeName = Task.Run(() => RemoveUnnecessaryNamePieces(new DirectoryInfo(arg).Name)).GetAwaiter().GetResult();
-            var animeTitleInDb = GetAnimesWithTitle(_animeName).GetAwaiter().GetResult()!.First();
+            var animeTitleInDb = SqlDbHandler.GetAnimeByTitle(_animeName).First();
 
             ConsoleExt.WriteLineWithPretext(animeTitleInDb.MalId, ConsoleExt.OutputType.Info);
             ConsoleExt.WriteLineWithPretext($"{GetAnimeTitleWithAnime(animeTitleInDb)}, {animeTitleInDb.MalId}", ConsoleExt.OutputType.Info);
