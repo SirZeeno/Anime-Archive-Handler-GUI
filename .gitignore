@@ -6,3 +6,4 @@ riderModule.iml
 Anime Archive Handler GUI/Anime Archive Handler GUI.Desktop/External Dependencies/ffmpeg.exe
 Anime Archive Handler GUI/Anime Archive Handler GUI.Desktop/External Dependencies/ffprobe.exe
 Anime Archive Handler GUI/Anime Archive Handler GUI/Databases/SQLiteTest.db
+*.db
