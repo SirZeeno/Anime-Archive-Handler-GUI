@@ -60,7 +60,7 @@ public class AnimeCarousel(ObservableCollection<CarouselItem>? items)
 public class AnimeDisplayItem(long? animeId, string animeName, int subEpisodeCount, int dubEpisodeCount, int overallEpisodeCount, Language subOrDub = default, int paddingThickness = 10, int imageMaxWidth = 225, int imageMaxHeight = 335)
 {
     // Main Information
-    public Task<Bitmap?> AnimeImage => LoadThumbnailAsync();
+    public Task<Bitmap?> AnimeImage => LoadThumbnailAsync(); // TODO: change this to load not one by one
     public string AnimeName { get; } = animeName;
     public int SubEpisodeCount { get; } = subEpisodeCount;
     public int DubEpisodeCount { get; } = dubEpisodeCount;
@@ -93,9 +93,9 @@ public class AnimeDisplayItem(long? animeId, string animeName, int subEpisodeCou
 
     private Task<Bitmap?> LoadThumbnailAsync()
     {
-        return Task.Run(() =>
+        return Task.Run(async () =>
         {
-            var result = SqlDbHandler.GetAnimeBitmapImagesByIds([AnimeId]).GetAwaiter().GetResult();
+            var result = await SqlDbHandler.GetAnimeBitmapImagesByIds([AnimeId]);
             result.TryGetValue(AnimeId, out var imagesSet);
             if (imagesSet != null && imagesSet.JPG.ImageBitmap != null)
             {
