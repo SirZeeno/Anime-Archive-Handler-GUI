@@ -84,7 +84,7 @@ public class AnimeDisplayItem(long? animeId, string animeName, int subEpisodeCou
             new GradientStop(Color.FromArgb(150, 32, 32, 32), 0.75),
             new GradientStop(Color.FromArgb(225, 32, 32, 32), 0.85),
             new GradientStop(Color.FromArgb(235, 32, 32, 32), 0.9),
-            new GradientStop(Color.FromArgb(255, 32, 32, 32), 0.98) // Replace with your border's background color, fully opaque at the bottom
+            new GradientStop(Color.FromArgb(255, 32, 32, 32), 0.98) // Fully opaque at the bottom
         ]
     };
 
