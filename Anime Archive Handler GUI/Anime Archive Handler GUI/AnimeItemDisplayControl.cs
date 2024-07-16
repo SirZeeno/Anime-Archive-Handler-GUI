@@ -19,7 +19,7 @@ using Views;
 
 public class AnimeItemDisplayControl
 {
-    public static MainView MainViewInstance { get; set; } = null!;
+    public static AnimeListControl AnimeListInstance { get; set; } = null!;
     
     private const int PaddingThickness = 10;
     private const int ImageMaxWidth = 225;
@@ -53,7 +53,7 @@ public class AnimeItemDisplayControl
         }
         
         ConsoleExt.WriteLineWithPretext("Picked Grid Items", ConsoleExt.OutputType.Info);
-        Dispatcher.UIThread.InvokeAsync(() => MainViewModel.DynamicAnimeItemGrid.AddRange(animeItems)).GetAwaiter();
+        Dispatcher.UIThread.InvokeAsync(() => AnimeListViewModel.DynamicAnimeItemGrid.AddRange(animeItems)).GetAwaiter();
     }
     
     public TaskAwaiter AddAnimeToAnimeGrid(AnimeDisplayItem animeItem, int count = 1)
@@ -66,13 +66,13 @@ public class AnimeItemDisplayControl
         }
         
         ConsoleExt.WriteLineWithPretext("Added Anime Grid Items", ConsoleExt.OutputType.Info);
-        return Dispatcher.UIThread.InvokeAsync(() => MainViewModel.DynamicAnimeItemGrid.AddRange(animeItems)).GetAwaiter();
+        return Dispatcher.UIThread.InvokeAsync(() => AnimeListViewModel.DynamicAnimeItemGrid.AddRange(animeItems)).GetAwaiter();
     }
 
     internal static async Task UserAddAnimeToAnimeGrid() //TODO: Add functionality for user to add anime to grid
     {
         // Get top level from the current control. Alternatively, you can use Window reference instead.
-        var topLevel = TopLevel.GetTopLevel(MainViewInstance);
+        var topLevel = TopLevel.GetTopLevel(AnimeListInstance);
 
         // Start async operation to open the dialog.
         var files = await topLevel!.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
@@ -84,7 +84,7 @@ public class AnimeItemDisplayControl
     internal static async Task UserAddAnimeEpisodeToAnimeGrid() //TODO: Add functionality for user to add anime to grid
     {
         // Get top level from the current control. Alternatively, you can use Window reference instead.
-        var topLevel = TopLevel.GetTopLevel(MainViewInstance);
+        var topLevel = TopLevel.GetTopLevel(AnimeListInstance);
 
         // Start async operation to open the dialog.
         var files = await topLevel!.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()

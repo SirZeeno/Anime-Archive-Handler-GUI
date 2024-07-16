@@ -1,0 +1,178 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Anime_Archive_Handler_GUI.ViewModels"
+             xmlns:ui="using:FluentAvalonia.UI.Controls"
+             xmlns:animeArchiveHandlerGui="clr-namespace:Anime_Archive_Handler_GUI"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Anime_Archive_Handler_GUI.Views.AnimeListControl"
+             x:DataType="vm:AnimeListViewModel">
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+         to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:AnimeListViewModel/>
+    </Design.DataContext>
+    
+    <UserControl.DataContext>
+        <vm:AnimeListViewModel />
+    </UserControl.DataContext>
+    
+    <UserControl.Styles>
+        <!-- Style for transparent buttons -->
+        <Style Selector="Button.transparentButton">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <!-- Default Foreground -->
+            <Setter Property="Foreground" Value="#929292"/>
+        </Style>
+        
+        <!-- Style for hover effect -->
+        <Style Selector="Button.transparentButton:pointerover /template/ ui|FABorder#Root">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+        </Style>
+        <Style Selector="Button.transparentButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Foreground" Value="#96b6d0"/>
+        </Style>
+        
+        <Style Selector="Button.transparentIcon">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+        </Style>
+        
+        <Style Selector="Button.transparentIcon:pointerover /template/ ui|FABorder#Root">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+        </Style>
+        
+        <!-- Style for buttons with images -->
+        <Style Selector="Button.transparentIcon Image">
+            <Setter Property="Opacity" Value="0.5"/> <!-- Less opaque normally -->
+        </Style>
+        
+        <!-- Style for image opacity on hover -->
+        <Style Selector="Button.transparentIcon:pointerover Image">
+            <Setter Property="Opacity" Value="1"/> <!-- Fully opaque (light up) on hover -->
+        </Style>
+        
+        <!-- Style for the TextBox to make it blend with the background -->
+        <Style Selector="TextBox.transparentTextbox">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        
+        <!-- TextBox style when focused to add a subtle outline -->
+        <Style Selector="TextBox.transparentTextbox:pointerover /template/ Border">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+        </Style>
+
+        <!-- TextBox style when focused to add a subtle outline -->
+        <Style Selector="TextBox.transparentTextbox:focus /template/ Border">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+        </Style>
+    </UserControl.Styles>
+    
+    <UserControl.Resources>
+        <DataTemplate x:Key="AnimeRecommendationCarousel" DataType="animeArchiveHandlerGui:AnimeCarousel">
+            <Border BorderThickness="2" BorderBrush="#191919" CornerRadius="10" Margin="10" ClipToBounds="True" MaxHeight="335">
+                <Panel>
+                    <Carousel x:Name="Slides" ItemsSource="{CompiledBinding Items}">
+                        <Carousel.PageTransition>
+                            <CompositePageTransition>
+                                <PageSlide Duration="0:00:00.250" Orientation="Horizontal" />
+                            </CompositePageTransition>
+                        </Carousel.PageTransition>
+                        <Carousel.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingCarouselPanel />
+                            </ItemsPanelTemplate>
+                        </Carousel.ItemsPanel>
+                    </Carousel>
+                    <Panel Margin="10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="80">
+                        <Button Classes="transparentButton" Command="{CompiledBinding Previous}" CommandParameter="{CompiledBinding ElementName=Slides}" Background="Transparent" FontWeight="Bold" FontSize="30">&lt;</Button>
+                        <Button Classes="transparentButton" Command="{CompiledBinding Next}" CommandParameter="{CompiledBinding ElementName=Slides}" Background="Transparent" FontWeight="Bold" FontSize="30" HorizontalAlignment="Right">&gt;</Button>
+                    </Panel>
+                </Panel>
+            </Border>
+        </DataTemplate>
+    </UserControl.Resources>
+    
+    <Grid Background="#191919" RowDefinitions="*,Auto">
+        
+        <!-- Main Content Area -->
+        <Grid Grid.Row="0" Background="#191919" ColumnDefinitions="*,250">
+            <Grid Grid.Column="0" RowDefinitions="Auto,40,*">
+                <!-- Featured Section -->
+                <ContentControl Grid.Row="0" ContentTemplate="{StaticResource AnimeRecommendationCarousel}" Content="{CompiledBinding AnimeRecommendations}"/>
+
+                <StackPanel Grid.Row="1" Orientation="Horizontal" x:Name="AnimeMenuButtonStackPanel">
+                    <TabStrip Name="AnimeTypeTabControl" HorizontalAlignment="Right" FlowDirection="LeftToRight">
+                        <TabItem Header="All" FontWeight="Heavy" Height="20" FontSize="15" BorderThickness="1" BorderBrush="Black" />
+                        <TabItem Header="Sub" FontWeight="Heavy" Height="20" FontSize="15" BorderThickness="1" BorderBrush="Black" />
+                        <TabItem Header="Dub" FontWeight="Heavy" Height="20" FontSize="15" BorderThickness="1" BorderBrush="Black" />
+                        <TabItem Header="Chinese" FontWeight="Heavy" Height="20" FontSize="15" BorderThickness="1" BorderBrush="Black" />
+                        <TabItem Header="Trending" FontWeight="Heavy" Height="20" FontSize="15" BorderThickness="1" BorderBrush="Black" />
+                    </TabStrip>
+                </StackPanel>
+                
+                <!-- Anime Display Section -->
+                <ScrollViewer Grid.Row="2" x:Name="DynamicScrollViewer" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                    <ItemsRepeater ItemsSource="{CompiledBinding DynamicAnimeItemGrid}" Name="AnimeItemsControl" ElementPrepared="AnimeItemsControl_OnElementPrepared" ElementClearing="AnimeItemsControl_OnElementClearing">
+                        <ItemsRepeater.ItemTemplate>
+                            <DataTemplate DataType="animeArchiveHandlerGui:AnimeDisplayItem">
+                                <Button Margin="10" CornerRadius="5" ClipToBounds="True" Padding="0">
+                                    <Border CornerRadius="5" ClipToBounds="True" Background="#202020">
+                                        <Grid RowDefinitions="Auto,Auto">
+                                            <Panel Grid.Row="0" Name="ImagePanel">
+                                                <Image MaxHeight="{CompiledBinding ImageMaxHeight}" MaxWidth="{CompiledBinding ImageMaxWidth}" MinHeight="{CompiledBinding ImageMaxHeight}" MinWidth="{CompiledBinding ImageMaxWidth}" Stretch="UniformToFill" Source="{CompiledBinding AnimeImage}"/>
+                                                <Border Background="{CompiledBinding LinearGradientBrush}" Height="{CompiledBinding ImageMaxHeight}" Width="{CompiledBinding ImageMaxWidth}"/>
+                                                
+                                                <StackPanel Name = "SubDubStackPanel" Background="Transparent" Height="40" Width="80" VerticalAlignment="Bottom" HorizontalAlignment="Center" Orientation="Horizontal">
+                                                    <StackPanel Name="DubStackPanel" Background="#313131" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2,0,0,0" Orientation="Horizontal">
+                                                        <ui:SymbolIcon Symbol="Microphone" FontSize="20" Foreground="White" HorizontalAlignment="Center"/>
+                                                        <TextBlock Text="{CompiledBinding DubEpisodeCount}" Foreground="White" FontSize="16"/>
+                                                    </StackPanel>
+                                                    
+                                                    <StackPanel Name="SubStackPanel" Background="#313131" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2,0,0,0" Orientation="Horizontal">
+                                                        <ui:SymbolIcon Symbol="ClosedCaption" FontSize="20" Foreground="White" HorizontalAlignment="Center"/>
+                                                        <TextBlock Text="{CompiledBinding SubEpisodeCount}" Foreground="White" FontSize="16"/>
+                                                    </StackPanel>
+                                                    
+                                                    <StackPanel Name="OverallStackPanel" Background="#313131" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2,0,0,0" Orientation="Horizontal">
+                                                        <TextBlock Text="{CompiledBinding OverallEpisodeCount}" Foreground="White" FontSize="16"/>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </Panel>
+                                            <TextBlock Grid.Row="1" Text="{CompiledBinding AnimeName}" Foreground="{StaticResource LightBlueTextColor}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,10" MaxWidth="{CompiledBinding ImageMaxWidth}" Height="40" MaxHeight="40" TextWrapping="Wrap" Padding="10,0"/>
+                                        </Grid>
+                                    </Border>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsRepeater.ItemTemplate>
+                        
+                        <ItemsRepeater.Layout>
+                            <UniformGridLayout ItemsJustification="Center"/>
+                        </ItemsRepeater.Layout>
+                    </ItemsRepeater>
+                </ScrollViewer>
+            </Grid>
+
+            <!-- Sidebar for Most Viewed -->
+            <Border Grid.Column="1" Background="#202020" Padding="10">
+                <StackPanel x:Name="MostViewedStackPanel" Orientation="Vertical">
+                    <Image Source="/Assets/19644l.jpg"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- Footer -->
+        <StackPanel Grid.Row="1" Background="Black">
+            <TextBlock Text="Footer" HorizontalAlignment="Center"></TextBlock>
+            <!-- Footer content here -->
+        </StackPanel>
+    </Grid>
+</UserControl>

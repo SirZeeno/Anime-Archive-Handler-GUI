@@ -1,13 +1,20 @@
 ﻿using System.Collections.ObjectModel;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using FluentAvalonia.Core;
 using ReactiveUI;
 
 namespace Anime_Archive_Handler_GUI.ViewModels;
 
-public class MainViewModel : ViewModelBase
+public class AnimeListViewModel : ViewModelBase
 {
+    private AnimeCarousel? _animeRecommendations;
+    public AnimeCarousel? AnimeRecommendations
+    {
+        get => _animeRecommendations;
+        set => this.RaiseAndSetIfChanged(ref _animeRecommendations, value);
+    }
+    public static ObservableCollection<AnimeDisplayItem> DynamicAnimeItemGrid { get; set; } = [];
+    
     public ObservableCollection<YourResultType> SearchResults { get; } = [];
     
     public static ObservableCollection<long?> AnimesToGetImagesFor { get; } = [];
@@ -35,4 +42,9 @@ public class MainViewModel : ViewModelBase
         get => _selectedAnimeTypeMenuTabIndex;
         set => this.RaiseAndSetIfChanged(ref _selectedAnimeTypeMenuTabIndex, value);
     }
+}
+
+public class YourResultType
+{
+    
 }
