@@ -31,7 +31,6 @@ public partial class AnimeDisplayListControl : UserControl
         InitializeComponent();
         _navigateToAnimeDetail = navigateToAnime;
         animeListViewModel = DataContext as AnimeDisplayListViewModel;
-        AnimeDisplayListViewModel.AnimeListInstance = this;
         AnimeItemDisplayControl.AnimeListInstance = this;
         AnimeItemDisplayControl.SetGridItems();//.OnCompleted(AdjustGridLayout);
         ConsoleExt.WriteLineWithPretext(AnimeDisplayListViewModel.DynamicAnimeItemGrid.Count, ConsoleExt.OutputType.Info);

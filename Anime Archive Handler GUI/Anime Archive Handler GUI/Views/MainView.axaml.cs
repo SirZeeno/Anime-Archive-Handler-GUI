@@ -11,16 +11,15 @@ using ViewModels;
 public partial class MainView : UserControl
 {
     private ObservableCollection<YourResultType> SearchResults { get; } = new();
-    private AnimeDisplayListControl AnimeDisplayListControl { get; } = AnimeDisplayListViewModel.AnimeListInstance;
+    private AnimeDisplayListControl? AnimeDisplayListControl { get; set; }
 
     public MainView()
     {
         InitializeComponent();
-        //this.GetObservable(BoundsProperty).Subscribe(_ => AdjustGridLayout());
+        AnimeDisplayListControl ??= new AnimeDisplayListControl(NavigateToShowDetail); // This is so the Front page doesn't have to get loaded every time you switch pages
         AnimeCategoryTabControl.SelectionChanged += HeaderTabControl_SelectionChanged;
         HomeButton.Click += SetTabIndexToHome;
         LoadHomePage();
-        //AdjustGridLayout();
         //ChangeStatus(Language.Sub, 12, 12, "Cowboy Bebop"); // needs to get fixed to get working again
     }
 
@@ -33,15 +32,6 @@ public partial class MainView : UserControl
     private void SearchBox_KeyUp(object sender, KeyEventArgs e)
     {
         SearchResults.Clear(); // Clear previous results
-    }
-
-    private void AddRowToAnimeList(int rowCount = 1)
-    {
-        for (int i = 0; i < rowCount; i++)
-        {
-            var rowDefinition = new RowDefinition { Height = GridLength.Auto };
-            //DynamicGrid.RowDefinitions.Add(rowDefinition);
-        }
     }
     
     private void NavigateToShowDetail(AnimeDto show)
@@ -65,7 +55,7 @@ public partial class MainView : UserControl
             case 0:
                 // Load content for Tab 1
                 ConsoleExt.WriteLineWithPretext("HomePage Tab selected", ConsoleExt.OutputType.Info);
-                AnimeListControlView.Content = new AnimeDisplayListControl(NavigateToShowDetail);
+                AnimeListControlView.Content = AnimeDisplayListControl;
                 break;
             case 1:
                 break;
@@ -111,7 +101,6 @@ public partial class MainView : UserControl
             case "HelpButton":
                 break;
             case "CopyButton":
-                SqlDbHandler.CorrectAnimeImageRelations();
                 break;
             case "PasteButton":
                 

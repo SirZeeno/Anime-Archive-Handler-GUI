@@ -173,12 +173,12 @@ public static class SqlDbHandler
         Context.TitlesFts.FromSqlRaw("CREATE VIRTUAL TABLE Titles_fts USING fts5(AnimeId UNINDEXED, Title, Type UNINDEXED);");
         Task.Run(() => Context.TitlesFts.FromSqlRaw("INSERT INTO Titles_fts (AnimeId, Title, Type) SELECT AnimeId, Title, Type FROM TitleEntries;"));
     }
-    
-    public static List<TitleFtsDto> SearchTitles(string searchText) // runs through different methods to search for the title
+
+    private static List<TitleFtsDto> SearchTitles(string searchText) // runs through different methods to search for the title
     {
         List<TitleFtsDto> matchingTitles = new List<TitleFtsDto>();
         string safeSearchText = searchText.Replace("'", "\"\"");
-        if (safeSearchText.Contains(",") || safeSearchText.Contains("-") || safeSearchText.Contains(".")) safeSearchText = "\"" + safeSearchText + "\"";
+        if (safeSearchText.Contains(',') || safeSearchText.Contains('-') || safeSearchText.Contains(':') || safeSearchText.Contains('.')) safeSearchText = "\"" + safeSearchText + "\"";
         
         // Conventional Search
         var conventionalSearch = Context.TitlesFts.FromSqlRaw($"SELECT * FROM Titles_fts WHERE Title MATCH '{safeSearchText}';").ToList();

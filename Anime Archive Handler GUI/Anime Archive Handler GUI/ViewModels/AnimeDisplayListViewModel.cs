@@ -6,8 +6,6 @@ namespace Anime_Archive_Handler_GUI.ViewModels;
 
 public class AnimeDisplayListViewModel : ViewModelBase
 {
-    public static AnimeDisplayListControl AnimeListInstance { get; set; }
-    
     private AnimeCarousel? _animeRecommendations;
     
     // The carousel that displays the recommendations
