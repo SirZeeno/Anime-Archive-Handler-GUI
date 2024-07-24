@@ -5,31 +5,31 @@
 namespace Anime_Archive_Handler_GUI.Migrations
 {
     /// <inheritdoc />
-    public partial class RelationChange17 : Migration
+    public partial class RelationChange2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<string>(
-                name: "Type",
+            migrationBuilder.AlterColumn<long>(
+                name: "AnimeImageSetBitmapId",
                 table: "Animes",
-                type: "TEXT",
+                type: "INTEGER",
                 nullable: true,
-                oldClrType: typeof(string),
-                oldType: "TEXT");
+                oldClrType: typeof(long),
+                oldType: "INTEGER");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<string>(
-                name: "Type",
+            migrationBuilder.AlterColumn<long>(
+                name: "AnimeImageSetBitmapId",
                 table: "Animes",
-                type: "TEXT",
+                type: "INTEGER",
                 nullable: false,
-                defaultValue: "",
-                oldClrType: typeof(string),
-                oldType: "TEXT",
+                defaultValue: 0L,
+                oldClrType: typeof(long),
+                oldType: "INTEGER",
                 oldNullable: true);
         }
     }

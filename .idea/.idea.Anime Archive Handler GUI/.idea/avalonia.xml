@@ -4,7 +4,8 @@
     <option name="projectPerEditor">
       <map>
         <entry key="Anime Archive Handler GUI/Anime Archive Handler GUI/App.axaml" value="Anime Archive Handler GUI/Anime Archive Handler GUI.Browser/Anime Archive Handler GUI.Browser.csproj" />
-        <entry key="Anime Archive Handler GUI/Anime Archive Handler GUI/Views/AnimeDetailControl.axaml" value="Anime Archive Handler GUI/Anime Archive Handler GUI.Browser/Anime Archive Handler GUI.Browser.csproj" />
+        <entry key="Anime Archive Handler GUI/Anime Archive Handler GUI/Views/AnimeDetailControl.axaml" value="Anime Archive Handler GUI/Anime Archive Handler GUI.Desktop/Anime Archive Handler GUI.Desktop.csproj" />
+        <entry key="Anime Archive Handler GUI/Anime Archive Handler GUI/Views/AnimeDisplayListControl.axaml" value="Anime Archive Handler GUI/Anime Archive Handler GUI.Desktop/Anime Archive Handler GUI.Desktop.csproj" />
         <entry key="Anime Archive Handler GUI/Anime Archive Handler GUI/Views/AnimeListControl.axaml" value="Anime Archive Handler GUI/Anime Archive Handler GUI.Desktop/Anime Archive Handler GUI.Desktop.csproj" />
         <entry key="Anime Archive Handler GUI/Anime Archive Handler GUI/Views/ImportView.axaml" value="Anime Archive Handler GUI/Anime Archive Handler GUI.Desktop/Anime Archive Handler GUI.Desktop.csproj" />
         <entry key="Anime Archive Handler GUI/Anime Archive Handler GUI/Views/ImportWindow.axaml" value="Anime Archive Handler GUI/Anime Archive Handler GUI.Browser/Anime Archive Handler GUI.Browser.csproj" />

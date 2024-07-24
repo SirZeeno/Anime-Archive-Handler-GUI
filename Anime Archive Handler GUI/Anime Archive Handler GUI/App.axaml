@@ -3,6 +3,7 @@
              xmlns:local="using:Anime_Archive_Handler_GUI"
              xmlns:animeArchiveHandlerGui="clr-namespace:Anime_Archive_Handler_GUI"
              xmlns:sty="using:FluentAvalonia.Styling"
+             xmlns:converters="clr-namespace:Anime_Archive_Handler_GUI.Converters"
              x:Class="Anime_Archive_Handler_GUI.App"
              RequestedThemeVariant="Dark">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
@@ -39,6 +40,8 @@
         <SolidColorBrush x:Key="DropdownCheckersDark" Color="#282828" />
         <SolidColorBrush x:Key="DropdownCheckersLight" Color="#2d2d2d" />
         <SolidColorBrush x:Key="DropdownSelected" Color="#242424" />
+        
+        <converters:ByteArrayToBitmapConverter x:Key="ByteArrayToBitmapConverter"/>
         
     </Application.Resources>
     <Application.DataTemplates>

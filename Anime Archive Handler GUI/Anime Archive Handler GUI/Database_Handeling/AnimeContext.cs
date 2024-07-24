@@ -25,10 +25,10 @@ public class AnimeContext : DbContext
     
     private readonly string _dbPath;
 
-    public AnimeContext()
+    public AnimeContext(string? dbPath = null)
     {
         //_dbPath = FileHandler.GetFileInProgramFolder("SQLiteTest.db");
-        _dbPath = "F:\\Rider Projects\\Anime Archive Handler GUI\\Anime Archive Handler GUI\\Anime Archive Handler GUI\\Anime Archive Handler GUI\\Databases\\SQLiteTest.db"; // Absolute path to the database file
+        _dbPath = dbPath ?? @"F:\Rider Projects\Anime Archive Handler GUI\Anime Archive Handler GUI\Anime Archive Handler GUI\Anime Archive Handler GUI\Databases\SQLiteTest.db"; // Absolute path to the database file
     }
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -81,7 +81,7 @@ public class AnimeContext : DbContext
             .HasMany(a => a.Demographics)
             .WithOne()
             .HasForeignKey(a => a.AnimeId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Cascade);
         
         modelBuilder.Entity<AnimeDto>()
             .HasOne(a => a.Aired)
@@ -105,16 +105,21 @@ public class AnimeContext : DbContext
             .HasOne(isd => isd.JPG)
             .WithMany()
             .HasForeignKey(isd => isd.JPGId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<ImagesSetDto>()
             .HasOne(isd => isd.WebP)
             .WithMany()
             .HasForeignKey(isd => isd.WebPId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<AnimeDto>()
             .HasOne(a => a.Images)
+            .WithMany()
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<AnimeDto>()
+            .HasOne(a => a.ImageBitmaps)
             .WithMany()
             .OnDelete(DeleteBehavior.Cascade);
         
@@ -122,13 +127,13 @@ public class AnimeContext : DbContext
             .HasOne(isb => isb.JPG)
             .WithMany()
             .HasForeignKey(isb => isb.JPGId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
         
         modelBuilder.Entity<AnimeImageSetBitmap>()
             .HasOne(isb => isb.WebP)
             .WithMany()
             .HasForeignKey(isb => isb.WebPId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<TimePeriod>().HasNoKey();
         modelBuilder.Entity<TitleFtsDto>().HasNoKey().ToTable("Titles_fts");

@@ -3,9 +3,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Anime_Archive_Handler_GUI.ViewModels"
-             xmlns:animeArchiveHandlerGui="clr-namespace:Anime_Archive_Handler_GUI"
+             xmlns:views="clr-namespace:Anime_Archive_Handler_GUI.Views"
              xmlns:ui="using:FluentAvalonia.UI.Controls"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="1080" d:DesignHeight="720"
              x:Class="Anime_Archive_Handler_GUI.Views.MainView"
              x:DataType="vm:MainViewModel">
     
@@ -80,7 +80,6 @@
     
     
     <Grid Background="#191919" RowDefinitions="Auto,Auto,*,Auto">
-
         <Border Grid.Row="0" Height="32">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                 <TextBlock Text="{CompiledBinding Title, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" VerticalAlignment="Center" Margin="10 0" />
@@ -113,6 +112,7 @@
                 </DropDownButton>
             </StackPanel>
         </Border>
+        
         <!-- Header -->
         <Border Grid.Row="1" MaxHeight="40" Background="Transparent" BoxShadow="0 0 10 5 #161616" Margin="0,0,0,10">
             <StackPanel Orientation="Horizontal">

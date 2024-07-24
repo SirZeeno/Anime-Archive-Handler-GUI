@@ -19,7 +19,7 @@ using Views;
 
 public class AnimeItemDisplayControl
 {
-    public static AnimeListControl AnimeListInstance { get; set; } = null!;
+    public static AnimeDisplayListControl AnimeListInstance { get; set; } = null!;
     
     private const int PaddingThickness = 10;
     private const int ImageMaxWidth = 225;
@@ -27,8 +27,7 @@ public class AnimeItemDisplayControl
     private const int TotalImageWidth = ImageMaxWidth + PaddingThickness * 2; // Responsible for the column spacing that each square of the grid takes
     private const int TotalImageHeight = ImageMaxHeight + PaddingThickness * 2; // Responsible for the row spacing that each square of the grid takes
     private const int AnimeListViewColor = 32;
-
-    // 5GB of ram when loading 10000 animes
+    
     public static void SetGridItems(int count = 50000) //TODO: add a folder-watch so this can be updated when new animes are added
     {
         ObservableCollection<AnimeDisplayItem> animeItems = [];
@@ -53,7 +52,7 @@ public class AnimeItemDisplayControl
         }
         
         ConsoleExt.WriteLineWithPretext("Picked Grid Items", ConsoleExt.OutputType.Info);
-        Dispatcher.UIThread.InvokeAsync(() => AnimeListViewModel.DynamicAnimeItemGrid.AddRange(animeItems)).GetAwaiter();
+        Dispatcher.UIThread.InvokeAsync(() => AnimeDisplayListViewModel.DynamicAnimeItemGrid.AddRange(animeItems)).GetAwaiter();
     }
     
     public TaskAwaiter AddAnimeToAnimeGrid(AnimeDisplayItem animeItem, int count = 1)
@@ -66,7 +65,7 @@ public class AnimeItemDisplayControl
         }
         
         ConsoleExt.WriteLineWithPretext("Added Anime Grid Items", ConsoleExt.OutputType.Info);
-        return Dispatcher.UIThread.InvokeAsync(() => AnimeListViewModel.DynamicAnimeItemGrid.AddRange(animeItems)).GetAwaiter();
+        return Dispatcher.UIThread.InvokeAsync(() => AnimeDisplayListViewModel.DynamicAnimeItemGrid.AddRange(animeItems)).GetAwaiter();
     }
 
     internal static async Task UserAddAnimeToAnimeGrid() //TODO: Add functionality for user to add anime to grid

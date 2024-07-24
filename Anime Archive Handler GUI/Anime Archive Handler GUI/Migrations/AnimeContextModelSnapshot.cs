@@ -53,6 +53,9 @@ namespace Anime_Archive_Handler_GUI.Migrations
                     b.Property<bool>("Airing")
                         .HasColumnType("INTEGER");
 
+                    b.Property<long?>("AnimeImageSetBitmapId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("Approved")
                         .HasColumnType("INTEGER");
 
@@ -139,6 +142,8 @@ namespace Anime_Archive_Handler_GUI.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("MalId");
+
+                    b.HasIndex("AnimeImageSetBitmapId");
 
                     b.HasIndex("BroadcastId");
 
@@ -481,6 +486,11 @@ namespace Anime_Archive_Handler_GUI.Migrations
 
             modelBuilder.Entity("Anime_Archive_Handler_GUI.AnimeDto", b =>
                 {
+                    b.HasOne("Anime_Archive_Handler_GUI.AnimeImageSetBitmap", "ImageBitmaps")
+                        .WithMany()
+                        .HasForeignKey("AnimeImageSetBitmapId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("Anime_Archive_Handler_GUI.AnimeBroadcastDto", "Broadcast")
                         .WithMany()
                         .HasForeignKey("BroadcastId")
@@ -499,6 +509,8 @@ namespace Anime_Archive_Handler_GUI.Migrations
 
                     b.Navigation("Broadcast");
 
+                    b.Navigation("ImageBitmaps");
+
                     b.Navigation("Images");
                 });
 
@@ -516,13 +528,13 @@ namespace Anime_Archive_Handler_GUI.Migrations
                     b.HasOne("Anime_Archive_Handler_GUI.AnimeImageBitmap", "JPG")
                         .WithMany()
                         .HasForeignKey("JPGId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Anime_Archive_Handler_GUI.AnimeImageBitmap", "WebP")
                         .WithMany()
                         .HasForeignKey("WebPId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("JPG");
@@ -554,13 +566,13 @@ namespace Anime_Archive_Handler_GUI.Migrations
                     b.HasOne("Anime_Archive_Handler_GUI.ImageDto", "JPG")
                         .WithMany()
                         .HasForeignKey("JPGId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Anime_Archive_Handler_GUI.ImageDto", "WebP")
                         .WithMany()
                         .HasForeignKey("WebPId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("JPG");
@@ -606,8 +618,7 @@ namespace Anime_Archive_Handler_GUI.Migrations
                     b.HasOne("Anime_Archive_Handler_GUI.AnimeDto", null)
                         .WithMany("Demographics")
                         .HasForeignKey("AnimeId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("FK_MalUrls_Animes_AnimeId1");
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Anime_Archive_Handler_GUI.ExplicitGenresDto", b =>

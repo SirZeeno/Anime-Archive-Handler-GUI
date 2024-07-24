@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using Avalonia.Media.Imaging;
+using Anime_Archive_Handler_GUI.ViewModels;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
@@ -16,6 +16,8 @@ public class AnimeDto
     public string Url { get; set; }
     public ImagesSetDto Images { get; set; }
     public AnimeTrailerDto Trailer { get; set; }
+    public long? AnimeImageSetBitmapId { get; set; } // Foreign key to AnimeImageSetBitmap
+    public AnimeImageSetBitmap? ImageBitmaps { get; set; }
     [MaxLength(150)]
     public string? Title { get; set; }
     [MaxLength(150)]

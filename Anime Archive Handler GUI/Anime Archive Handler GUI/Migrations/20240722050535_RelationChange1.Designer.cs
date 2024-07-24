@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Anime_Archive_Handler_GUI.Migrations
 {
     [DbContext(typeof(AnimeContext))]
-    [Migration("20240624085108_RelationChange13")]
-    partial class RelationChange13
+    [Migration("20240722050535_RelationChange1")]
+    partial class RelationChange1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,22 +20,26 @@ namespace Anime_Archive_Handler_GUI.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.20");
 
-            modelBuilder.Entity("AnimeBroadcastDto", b =>
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.AnimeBroadcastDto", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Day")
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("String")
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Time")
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Timezone")
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -43,13 +47,17 @@ namespace Anime_Archive_Handler_GUI.Migrations
                     b.ToTable("AnimeBroadcasts");
                 });
 
-            modelBuilder.Entity("AnimeDto", b =>
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.AnimeDto", b =>
                 {
                     b.Property<long?>("MalId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("Airing")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long?>("AnimeImageSetBitmapId")
+                        .IsRequired()
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("Approved")
@@ -63,6 +71,7 @@ namespace Anime_Archive_Handler_GUI.Migrations
 
                     b.Property<string>("Duration")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("Episodes")
@@ -87,7 +96,7 @@ namespace Anime_Archive_Handler_GUI.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Rating")
-                        .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<double?>("Score")
@@ -101,40 +110,44 @@ namespace Anime_Archive_Handler_GUI.Migrations
 
                     b.Property<string>("Source")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Status")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Synopsis")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Title")
-                        .IsRequired()
+                        .HasMaxLength(150)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("TitleEnglish")
-                        .IsRequired()
+                        .HasMaxLength(150)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("TitleJapanese")
-                        .IsRequired()
+                        .HasMaxLength(150)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Type")
-                        .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Url")
                         .IsRequired()
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("Year")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("MalId");
+
+                    b.HasIndex("AnimeImageSetBitmapId");
 
                     b.HasIndex("BroadcastId");
 
@@ -145,7 +158,59 @@ namespace Anime_Archive_Handler_GUI.Migrations
                     b.ToTable("Animes");
                 });
 
-            modelBuilder.Entity("AnimeTrailerDto", b =>
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.AnimeImageBitmap", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long?>("AnimeImageSetBitmapId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<byte[]>("ImageBitmap")
+                        .HasColumnType("BLOB");
+
+                    b.Property<byte[]>("LargeImageBitmap")
+                        .HasColumnType("BLOB");
+
+                    b.Property<byte[]>("MaximumImageBitmap")
+                        .HasColumnType("BLOB");
+
+                    b.Property<byte[]>("MediumImageBitmap")
+                        .HasColumnType("BLOB");
+
+                    b.Property<byte[]>("SmallImageBitmap")
+                        .HasColumnType("BLOB");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnimeImageSetBitmapId");
+
+                    b.ToTable("AnimeImageBitmap");
+                });
+
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.AnimeImageSetBitmap", b =>
+                {
+                    b.Property<long?>("MalId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("JPGId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("WebPId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("MalId");
+
+                    b.HasIndex("JPGId");
+
+                    b.HasIndex("WebPId");
+
+                    b.ToTable("ImageBitmaps");
+                });
+
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.AnimeTrailerDto", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -155,18 +220,18 @@ namespace Anime_Archive_Handler_GUI.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("EmbedUrl")
-                        .IsRequired()
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("ImageId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Url")
-                        .IsRequired()
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("YoutubeId")
-                        .IsRequired()
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -179,25 +244,30 @@ namespace Anime_Archive_Handler_GUI.Migrations
                     b.ToTable("AnimeTrailers");
                 });
 
-            modelBuilder.Entity("ImageDto", b =>
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.ImageDto", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("ImageUrl")
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LargeImageUrl")
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("MaximumImageUrl")
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("MediumImageUrl")
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SmallImageUrl")
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -205,7 +275,7 @@ namespace Anime_Archive_Handler_GUI.Migrations
                     b.ToTable("ImageDto");
                 });
 
-            modelBuilder.Entity("ImagesSetDto", b =>
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.ImagesSetDto", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -226,13 +296,13 @@ namespace Anime_Archive_Handler_GUI.Migrations
                     b.ToTable("ImagesSets");
                 });
 
-            modelBuilder.Entity("MalUrlDto", b =>
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.MalUrlDto", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<long>("AnimeId")
+                    b.Property<long?>("AnimeId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Discriminator")
@@ -240,15 +310,15 @@ namespace Anime_Archive_Handler_GUI.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Type")
-                        .IsRequired()
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Url")
-                        .IsRequired()
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -260,7 +330,7 @@ namespace Anime_Archive_Handler_GUI.Migrations
                     b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("TimePeriod", b =>
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.TimePeriod", b =>
                 {
                     b.Property<DateTime?>("From")
                         .HasColumnType("TEXT");
@@ -271,7 +341,7 @@ namespace Anime_Archive_Handler_GUI.Migrations
                     b.ToTable("TimePeriod");
                 });
 
-            modelBuilder.Entity("TimePeriodDto", b =>
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.TimePeriodDto", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -294,7 +364,7 @@ namespace Anime_Archive_Handler_GUI.Migrations
                     b.ToTable("TimePeriodDto");
                 });
 
-            modelBuilder.Entity("TitleEntryDto", b =>
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.TitleEntryDto", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -304,11 +374,12 @@ namespace Anime_Archive_Handler_GUI.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Title")
-                        .IsRequired()
+                        .HasMaxLength(150)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Type")
                         .IsRequired()
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -318,7 +389,24 @@ namespace Anime_Archive_Handler_GUI.Migrations
                     b.ToTable("TitleEntries");
                 });
 
-            modelBuilder.Entity("TitleSynonymDto", b =>
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.TitleFtsDto", b =>
+                {
+                    b.Property<long>("AnimeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(150)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.ToTable("Titles_fts", (string)null);
+                });
+
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.TitleSynonymDto", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -328,7 +416,6 @@ namespace Anime_Archive_Handler_GUI.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Synonym")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -338,141 +425,118 @@ namespace Anime_Archive_Handler_GUI.Migrations
                     b.ToTable("TitleSynonyms");
                 });
 
-            modelBuilder.Entity("DemographicsDto", b =>
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.DemographicsDto", b =>
                 {
-                    b.HasBaseType("MalUrlDto");
+                    b.HasBaseType("Anime_Archive_Handler_GUI.MalUrlDto");
 
-                    b.Property<long?>("ExplicitGenreAnimeId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasIndex("ExplicitGenreAnimeId");
-
-                    b.ToTable("MalUrls", t =>
-                        {
-                            t.Property("ExplicitGenreAnimeId")
-                                .HasColumnName("DemographicsDto_ExplicitGenreAnimeId");
-                        });
+                    b.HasIndex("AnimeId");
 
                     b.HasDiscriminator().HasValue("DemographicsDto");
                 });
 
-            modelBuilder.Entity("ExplicitGenresDto", b =>
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.ExplicitGenresDto", b =>
                 {
-                    b.HasBaseType("MalUrlDto");
+                    b.HasBaseType("Anime_Archive_Handler_GUI.MalUrlDto");
 
-                    b.Property<long?>("ExplicitGenreAnimeId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasIndex("ExplicitGenreAnimeId");
+                    b.HasIndex("AnimeId");
 
                     b.HasDiscriminator().HasValue("ExplicitGenresDto");
                 });
 
-            modelBuilder.Entity("GenresDto", b =>
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.GenresDto", b =>
                 {
-                    b.HasBaseType("MalUrlDto");
+                    b.HasBaseType("Anime_Archive_Handler_GUI.MalUrlDto");
 
-                    b.Property<long?>("LicensorAnimeId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasIndex("LicensorAnimeId");
+                    b.HasIndex("AnimeId");
 
                     b.HasDiscriminator().HasValue("GenresDto");
                 });
 
-            modelBuilder.Entity("LicensorsDto", b =>
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.LicensorsDto", b =>
                 {
-                    b.HasBaseType("MalUrlDto");
+                    b.HasBaseType("Anime_Archive_Handler_GUI.MalUrlDto");
 
                     b.HasIndex("AnimeId");
 
                     b.HasDiscriminator().HasValue("LicensorsDto");
                 });
 
-            modelBuilder.Entity("ProducersDto", b =>
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.ProducersDto", b =>
                 {
-                    b.HasBaseType("MalUrlDto");
+                    b.HasBaseType("Anime_Archive_Handler_GUI.MalUrlDto");
 
                     b.HasIndex("AnimeId");
 
                     b.HasDiscriminator().HasValue("ProducersDto");
                 });
 
-            modelBuilder.Entity("StudiosDto", b =>
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.StudiosDto", b =>
                 {
-                    b.HasBaseType("MalUrlDto");
+                    b.HasBaseType("Anime_Archive_Handler_GUI.MalUrlDto");
 
-                    b.Property<long?>("ProducerAnimeId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasIndex("ProducerAnimeId");
+                    b.HasIndex("AnimeId");
 
                     b.HasDiscriminator().HasValue("StudiosDto");
                 });
 
-            modelBuilder.Entity("ThemesDto", b =>
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.ThemesDto", b =>
                 {
-                    b.HasBaseType("MalUrlDto");
+                    b.HasBaseType("Anime_Archive_Handler_GUI.MalUrlDto");
 
-                    b.Property<long?>("ThemeAnimeId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasIndex("ThemeAnimeId");
+                    b.HasIndex("AnimeId");
 
                     b.HasDiscriminator().HasValue("ThemesDto");
                 });
 
-            modelBuilder.Entity("AnimeDto", b =>
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.AnimeDto", b =>
                 {
-                    b.HasOne("AnimeBroadcastDto", "Broadcast")
+                    b.HasOne("Anime_Archive_Handler_GUI.AnimeImageSetBitmap", "ImageBitmaps")
+                        .WithMany()
+                        .HasForeignKey("AnimeImageSetBitmapId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Anime_Archive_Handler_GUI.AnimeBroadcastDto", "Broadcast")
                         .WithMany()
                         .HasForeignKey("BroadcastId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ImagesSetDto", "Images")
+                    b.HasOne("Anime_Archive_Handler_GUI.ImagesSetDto", "Images")
                         .WithMany()
                         .HasForeignKey("ImagesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MalUrlDto", null)
+                    b.HasOne("Anime_Archive_Handler_GUI.MalUrlDto", null)
                         .WithMany("Anime")
                         .HasForeignKey("MalUrlDtoId");
 
                     b.Navigation("Broadcast");
 
+                    b.Navigation("ImageBitmaps");
+
                     b.Navigation("Images");
                 });
 
-            modelBuilder.Entity("AnimeTrailerDto", b =>
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.AnimeImageBitmap", b =>
                 {
-                    b.HasOne("AnimeDto", "Anime")
-                        .WithOne("Trailer")
-                        .HasForeignKey("AnimeTrailerDto", "AnimeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ImageDto", "Image")
+                    b.HasOne("Anime_Archive_Handler_GUI.AnimeImageSetBitmap", "AnimeImageSetBitmap")
                         .WithMany()
-                        .HasForeignKey("ImageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AnimeImageSetBitmapId");
 
-                    b.Navigation("Anime");
-
-                    b.Navigation("Image");
+                    b.Navigation("AnimeImageSetBitmap");
                 });
 
-            modelBuilder.Entity("ImagesSetDto", b =>
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.AnimeImageSetBitmap", b =>
                 {
-                    b.HasOne("ImageDto", "JPG")
+                    b.HasOne("Anime_Archive_Handler_GUI.AnimeImageBitmap", "JPG")
                         .WithMany()
                         .HasForeignKey("JPGId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ImageDto", "WebP")
+                    b.HasOne("Anime_Archive_Handler_GUI.AnimeImageBitmap", "WebP")
                         .WithMany()
                         .HasForeignKey("WebPId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -483,20 +547,58 @@ namespace Anime_Archive_Handler_GUI.Migrations
                     b.Navigation("WebP");
                 });
 
-            modelBuilder.Entity("TimePeriodDto", b =>
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.AnimeTrailerDto", b =>
                 {
-                    b.HasOne("AnimeDto", "Anime")
+                    b.HasOne("Anime_Archive_Handler_GUI.AnimeDto", "Anime")
+                        .WithOne("Trailer")
+                        .HasForeignKey("Anime_Archive_Handler_GUI.AnimeTrailerDto", "AnimeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Anime_Archive_Handler_GUI.ImageDto", "Image")
+                        .WithMany()
+                        .HasForeignKey("ImageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Anime");
+
+                    b.Navigation("Image");
+                });
+
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.ImagesSetDto", b =>
+                {
+                    b.HasOne("Anime_Archive_Handler_GUI.ImageDto", "JPG")
+                        .WithMany()
+                        .HasForeignKey("JPGId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Anime_Archive_Handler_GUI.ImageDto", "WebP")
+                        .WithMany()
+                        .HasForeignKey("WebPId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("JPG");
+
+                    b.Navigation("WebP");
+                });
+
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.TimePeriodDto", b =>
+                {
+                    b.HasOne("Anime_Archive_Handler_GUI.AnimeDto", "Anime")
                         .WithOne("Aired")
-                        .HasForeignKey("TimePeriodDto", "AnimeId")
+                        .HasForeignKey("Anime_Archive_Handler_GUI.TimePeriodDto", "AnimeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Anime");
                 });
 
-            modelBuilder.Entity("TitleEntryDto", b =>
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.TitleEntryDto", b =>
                 {
-                    b.HasOne("AnimeDto", "Anime")
+                    b.HasOne("Anime_Archive_Handler_GUI.AnimeDto", "Anime")
                         .WithMany("Titles")
                         .HasForeignKey("AnimeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -505,9 +607,9 @@ namespace Anime_Archive_Handler_GUI.Migrations
                     b.Navigation("Anime");
                 });
 
-            modelBuilder.Entity("TitleSynonymDto", b =>
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.TitleSynonymDto", b =>
                 {
-                    b.HasOne("AnimeDto", "Anime")
+                    b.HasOne("Anime_Archive_Handler_GUI.AnimeDto", "Anime")
                         .WithMany("TitleSynonyms")
                         .HasForeignKey("AnimeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -516,65 +618,63 @@ namespace Anime_Archive_Handler_GUI.Migrations
                     b.Navigation("Anime");
                 });
 
-            modelBuilder.Entity("DemographicsDto", b =>
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.DemographicsDto", b =>
                 {
-                    b.HasOne("AnimeDto", null)
+                    b.HasOne("Anime_Archive_Handler_GUI.AnimeDto", null)
                         .WithMany("Demographics")
-                        .HasForeignKey("ExplicitGenreAnimeId")
+                        .HasForeignKey("AnimeId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("ExplicitGenresDto", b =>
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.ExplicitGenresDto", b =>
                 {
-                    b.HasOne("AnimeDto", null)
+                    b.HasOne("Anime_Archive_Handler_GUI.AnimeDto", null)
                         .WithMany("ExplicitGenres")
-                        .HasForeignKey("ExplicitGenreAnimeId")
+                        .HasForeignKey("AnimeId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("GenresDto", b =>
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.GenresDto", b =>
                 {
-                    b.HasOne("AnimeDto", null)
+                    b.HasOne("Anime_Archive_Handler_GUI.AnimeDto", null)
                         .WithMany("Genres")
-                        .HasForeignKey("LicensorAnimeId")
+                        .HasForeignKey("AnimeId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("LicensorsDto", b =>
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.LicensorsDto", b =>
                 {
-                    b.HasOne("AnimeDto", null)
+                    b.HasOne("Anime_Archive_Handler_GUI.AnimeDto", null)
                         .WithMany("Licensors")
                         .HasForeignKey("AnimeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("ProducersDto", b =>
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.ProducersDto", b =>
                 {
-                    b.HasOne("AnimeDto", null)
+                    b.HasOne("Anime_Archive_Handler_GUI.AnimeDto", null)
                         .WithMany("Producers")
                         .HasForeignKey("AnimeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("StudiosDto", b =>
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.StudiosDto", b =>
                 {
-                    b.HasOne("AnimeDto", null)
+                    b.HasOne("Anime_Archive_Handler_GUI.AnimeDto", null)
                         .WithMany("Studios")
-                        .HasForeignKey("ProducerAnimeId")
+                        .HasForeignKey("AnimeId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("ThemesDto", b =>
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.ThemesDto", b =>
                 {
-                    b.HasOne("AnimeDto", null)
+                    b.HasOne("Anime_Archive_Handler_GUI.AnimeDto", null)
                         .WithMany("Themes")
-                        .HasForeignKey("ThemeAnimeId")
+                        .HasForeignKey("AnimeId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("AnimeDto", b =>
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.AnimeDto", b =>
                 {
                     b.Navigation("Aired")
                         .IsRequired();
@@ -601,7 +701,7 @@ namespace Anime_Archive_Handler_GUI.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MalUrlDto", b =>
+            modelBuilder.Entity("Anime_Archive_Handler_GUI.MalUrlDto", b =>
                 {
                     b.Navigation("Anime");
                 });

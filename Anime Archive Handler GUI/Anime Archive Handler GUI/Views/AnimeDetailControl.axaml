@@ -2,8 +2,50 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Anime_Archive_Handler_GUI.ViewModels"
              xmlns:ui="using:FluentAvalonia.UI.Controls"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Anime_Archive_Handler_GUI.Views.AnimeDetailControl">
-    Here goes the Anime Info
+             xmlns:vlc="using:LibVLCSharp.Avalonia"
+             xmlns:animeArchiveHandlerGui="clr-namespace:Anime_Archive_Handler_GUI"
+             mc:Ignorable="d" d:DesignWidth="1080" d:DesignHeight="720"
+             x:Class="Anime_Archive_Handler_GUI.Views.AnimeDetailControl"
+             x:DataType="vm:AnimeDetailViewModel">
+    
+    <Design.DataContext>
+        <vm:AnimeDetailViewModel/>
+    </Design.DataContext>
+    
+    <UserControl.DataContext>
+        <vm:AnimeDetailViewModel />
+    </UserControl.DataContext>
+    
+    <Grid RowDefinitions="Auto,Auto,Auto,*" Background="#191919">
+        <Button Grid.Row="0" Click="BackClicked">
+            <TextBlock Text="Back"  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Button>
+        <vlc:VideoView Grid.Row="1" Name="VideoView" MinHeight="720" MinWidth="1080"/>
+        <Border Grid.Row="2" MaxHeight="40" Background="Transparent" BoxShadow="0 0 10 5 #161616" Margin="0,0,0,10">
+            <StackPanel Orientation="Horizontal">
+                <Button Height="40" />
+                <Button Height="40" />
+                <Button Height="40" />
+                <Button Height="40" />                                 
+            </StackPanel>
+        </Border>
+        <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
+            <ContentPresenter Content="{CompiledBinding AnimeToDisplay}" VerticalAlignment="Top">
+                <ContentPresenter.ContentTemplate>
+                    <DataTemplate DataType="animeArchiveHandlerGui:AnimeDto">
+                        <Grid ColumnDefinitions="Auto,*">
+                            <Border Grid.Column="0" Background="#202020" HorizontalAlignment="Left" CornerRadius="5">
+                                <Image Source="{CompiledBinding ImageBitmaps.JPG.ImageBitmap, Converter={StaticResource ByteArrayToBitmapConverter}}" Width="250" Height="335" ClipToBounds="True"/>
+                            </Border>
+                            <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                                <TextBlock Text="{CompiledBinding Synopsis}" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ContentPresenter.ContentTemplate>
+            </ContentPresenter>
+        </ScrollViewer>
+    </Grid>
 </UserControl>

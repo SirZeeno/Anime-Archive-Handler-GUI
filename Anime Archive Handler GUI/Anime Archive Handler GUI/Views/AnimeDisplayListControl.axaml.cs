@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
@@ -8,33 +9,62 @@ using System.Timers;
 using Anime_Archive_Handler_GUI.Database_Handeling;
 using Anime_Archive_Handler_GUI.ViewModels;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
+using Avalonia.LogicalTree;
 using Avalonia.Media.Imaging;
-using DynamicData;
 
 namespace Anime_Archive_Handler_GUI.Views;
 using static Helpers.DailyFeatured;
 
-public partial class AnimeListControl : UserControl
+public partial class AnimeDisplayListControl : UserControl
 {
     private Grid _animeDynamicGrid;
     
     private static List<long?> _buffer = [];
     private static readonly Timer Timer = new(500);
 
-    private AnimeListViewModel? animeListViewModel;
+    private AnimeDisplayListViewModel? animeListViewModel;
+    private readonly Action<AnimeDto> _navigateToAnimeDetail;
     
-    public AnimeListControl()
+    public AnimeDisplayListControl(Action<AnimeDto> navigateToAnime)
     {
         InitializeComponent();
-        animeListViewModel = DataContext as AnimeListViewModel;
+        _navigateToAnimeDetail = navigateToAnime;
+        animeListViewModel = DataContext as AnimeDisplayListViewModel;
+        AnimeDisplayListViewModel.AnimeListInstance = this;
         AnimeItemDisplayControl.AnimeListInstance = this;
         AnimeItemDisplayControl.SetGridItems();//.OnCompleted(AdjustGridLayout);
-        ConsoleExt.WriteLineWithPretext(AnimeListViewModel.DynamicAnimeItemGrid.Count, ConsoleExt.OutputType.Info);
+        ConsoleExt.WriteLineWithPretext(AnimeDisplayListViewModel.DynamicAnimeItemGrid.Count, ConsoleExt.OutputType.Info);
         AnimeTypeTabControl.SelectionChanged += AnimeTypeTabControl_SelectionChanged;
-        AnimeListViewModel.AnimesToGetImagesFor.CollectionChanged += OnCollectionChanged;
+        AnimeDisplayListViewModel.AnimesToGetImagesFor.CollectionChanged += OnCollectionChanged;
         Timer.Elapsed += GetImagesForViewableAnimes;
         Timer.AutoReset = false; // Timer should not automatically reset, we will reset it manually
         Task.Run(InitializeAsync);
+    }
+    
+    private async void ShowClickedAnime(object sender, RoutedEventArgs e)
+    {
+        // In a real app, you would determine which TV show was clicked on.
+        string? animeName  = null;
+        if (sender is not Button button) return;
+        var templateChildren = button.GetLogicalChildren();
+        foreach (var child in templateChildren)
+        {
+            if (child is not Border border) continue;
+            var templateChildren2 = border.Child;
+            if (templateChildren2 is not Grid grid) continue;
+            var templateChildren3 = grid.Children;
+            foreach (var gridChild in templateChildren3)
+            {
+                if (gridChild is not TextBlock textBlock) continue;
+                ConsoleExt.WriteLineWithPretext(textBlock.Text, ConsoleExt.OutputType.Info);
+                animeName = textBlock.Text;
+            }
+        }
+
+        if (animeName == null) return;
+        var show = await Task.Run(() => SqlDbHandler.GetAnimeByTitle(animeName)); // This needs to contain the data from the database gathered by the name that the anime has displayed
+        _navigateToAnimeDetail(show.First());
     }
     
     private async Task InitializeAsync()
@@ -73,7 +103,7 @@ public partial class AnimeListControl : UserControl
     {
         if (e.Element is Button { DataContext: AnimeDisplayItem animeDisplayItem })
         {
-            AnimeListViewModel.AnimesToGetImagesFor.Add(animeDisplayItem.AnimeId);
+            AnimeDisplayListViewModel.AnimesToGetImagesFor.Add(animeDisplayItem.AnimeId);
         }
     }
 
@@ -81,7 +111,7 @@ public partial class AnimeListControl : UserControl
     {
         if (e.Element is Button { DataContext: AnimeDisplayItem animeDisplayItem })
         {
-            AnimeListViewModel.AnimesToGetImagesFor.Remove(animeDisplayItem.AnimeId);
+            AnimeDisplayListViewModel.AnimesToGetImagesFor.Remove(animeDisplayItem.AnimeId);
         }
     }
     
@@ -107,7 +137,7 @@ public partial class AnimeListControl : UserControl
         ConsoleExt.WriteLineWithPretext(itemsThatNeedImages.Count, ConsoleExt.OutputType.Info);
         var result = await SqlDbHandler.GetAnimeBitmapImagesByIds(itemsThatNeedImages);
             
-        foreach (var item in AnimeListViewModel.DynamicAnimeItemGrid)
+        foreach (var item in AnimeDisplayListViewModel.DynamicAnimeItemGrid)
         {
             if (!result.TryGetValue(item.AnimeId, out var imagesSet)) continue;
             if (imagesSet.JPG.ImageBitmap != null)

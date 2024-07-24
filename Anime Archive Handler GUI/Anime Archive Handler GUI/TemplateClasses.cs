@@ -1,10 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using Anime_Archive_Handler_GUI.Database_Handeling;
-using Anime_Archive_Handler_GUI.Helpers;
 using Anime_Archive_Handler_GUI.ViewModels;
 using Avalonia;
 using Avalonia.Controls;
@@ -85,32 +81,17 @@ public class AnimeDisplayItem(long? animeId, string animeName, int subEpisodeCou
         EndPoint = new RelativePoint(0, 1, RelativeUnit.Relative),
         GradientStops =
         [
-            new GradientStop(Color.FromArgb(0, 0, 0, 0), 0), // Fully transparent at the top
-            new GradientStop(Color.FromArgb(0, 0, 0, 0), 0.6), // Fully transparent at the top
-            new GradientStop(Color.FromArgb(150, 32, 32, 32), 0.75),
-            new GradientStop(Color.FromArgb(225, 32, 32, 32), 0.85),
-            new GradientStop(Color.FromArgb(235, 32, 32, 32), 0.9),
-            new GradientStop(Color.FromArgb(255, 32, 32, 32), 0.98) // Fully opaque at the bottom
+            new(Color.FromArgb(0, 0, 0, 0), 0), // Fully transparent at the top
+            new(Color.FromArgb(0, 0, 0, 0), 0.6), // Fully transparent at the top
+            new(Color.FromArgb(150, 32, 32, 32), 0.75),
+            new(Color.FromArgb(225, 32, 32, 32), 0.85),
+            new(Color.FromArgb(235, 32, 32, 32), 0.9),
+            new(Color.FromArgb(255, 32, 32, 32), 0.98) // Fully opaque at the bottom
         ]
     };
 
     // Virtualization of the image property
     public long? AnimeId { get; } = animeId;
-
-    private Task<Bitmap?> LoadThumbnailAsync()
-    {
-        return Task.Run(async () =>
-        {
-            var result = await SqlDbHandler.GetAnimeBitmapImagesByIds([AnimeId]);
-            result.TryGetValue(AnimeId, out var imagesSet);
-            if (imagesSet != null && imagesSet.JPG.ImageBitmap != null)
-            {
-                return new Bitmap(new MemoryStream(imagesSet.JPG.ImageBitmap));
-            }
-            ConsoleExt.WriteLineWithPretext("Anime image not found", ConsoleExt.OutputType.Error);
-            return null;
-        });
-    }
 }
 
 public class AnimeImportDisplayItem(string animeTitle, ObservableCollection<AnimeDisplayItem>? animeSearchResults)

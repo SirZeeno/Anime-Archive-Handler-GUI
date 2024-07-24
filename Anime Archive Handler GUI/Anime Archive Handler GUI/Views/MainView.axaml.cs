@@ -1,9 +1,8 @@
 using System.Collections.ObjectModel;
+using Anime_Archive_Handler_GUI.Database_Handeling;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Input;
-using Avalonia.Threading;
-using Avalonia.Markup.Xaml.Templates;
 
 namespace Anime_Archive_Handler_GUI.Views;
 
@@ -12,6 +11,7 @@ using ViewModels;
 public partial class MainView : UserControl
 {
     private ObservableCollection<YourResultType> SearchResults { get; } = new();
+    private AnimeDisplayListControl AnimeDisplayListControl { get; } = AnimeDisplayListViewModel.AnimeListInstance;
 
     public MainView()
     {
@@ -44,6 +44,16 @@ public partial class MainView : UserControl
         }
     }
     
+    private void NavigateToShowDetail(AnimeDto show)
+    {
+        AnimeListControlView.Content = new AnimeDetailControl(show, NavigateToShowList);
+    }
+    
+    private void NavigateToShowList()
+    {
+        AnimeListControlView.Content = AnimeDisplayListControl;
+    }
+    
     private void HeaderTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         // Get the selected tab item
@@ -55,7 +65,7 @@ public partial class MainView : UserControl
             case 0:
                 // Load content for Tab 1
                 ConsoleExt.WriteLineWithPretext("HomePage Tab selected", ConsoleExt.OutputType.Info);
-                AnimeListControlView.Content = new AnimeListControl();
+                AnimeListControlView.Content = new AnimeDisplayListControl(NavigateToShowDetail);
                 break;
             case 1:
                 break;
@@ -101,6 +111,7 @@ public partial class MainView : UserControl
             case "HelpButton":
                 break;
             case "CopyButton":
+                SqlDbHandler.CorrectAnimeImageRelations();
                 break;
             case "PasteButton":
                 

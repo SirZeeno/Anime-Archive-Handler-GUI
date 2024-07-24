@@ -74,10 +74,16 @@ public static class SqlDbHandler
     
         return animes.ToDictionary(a => a.MalId, a => a.Titles);
     }
-    
-    public static Dictionary<long?, AnimeDto> GetAnimesByIds(List<long?> malIds)
+
+    private static Dictionary<long?, AnimeDto> GetAnimesByIds(List<long?> malIds)
     {
-        return Context.Animes.Where(a => malIds.Contains(a.MalId)).ToDictionary(a => a.MalId, a => a);
+        return Context.Animes.Where(a => malIds.Contains(a.MalId))
+            .Include(a => a.ImageBitmaps)
+            .ThenInclude(i => i.JPG)
+            .Include(a => a.ImageBitmaps)
+            .ThenInclude(i => i.WebP)
+            .Include(a => a.Titles)
+            .ToDictionary(a => a.MalId, a => a);
     }
     
     // Gets a specific anime by id
@@ -86,14 +92,15 @@ public static class SqlDbHandler
         return Context.Animes.Find(malId);
     }
 
-    public static void ProcessAllImages()
+    // Processes all images in the database into bitmaps
+    public static async void ProcessAllImages(List<long?>? Ids = null)
     {
-        int animeCount = Context.Animes.Count();
-        List<long?> malIds = Enumerable.Range(1, animeCount).ToList().ConvertAll(i => (long?) i);
-        var images = GetAnimeImagesByIds(malIds).GetAwaiter().GetResult();
+        int animeCount = (int)Context.Animes.Max(a => a.MalId)!;
+        List<long?> malIds = Ids ?? Enumerable.Range(1, animeCount).ToList().ConvertAll(i => (long?) i);
+        var images = await Task.Run(() => GetAnimeImagesByIds(malIds).GetAwaiter().GetResult());
         ConsoleExt.WriteLineWithPretext("Got all images", ConsoleExt.OutputType.Info);
         List<AnimeImageSetBitmap> animeImageSetBitmaps = new List<AnimeImageSetBitmap>();
-        foreach (var image in images) // not sure if this is the best way to do this
+        foreach (var image in images)
         {
             ConsoleExt.WriteLineWithPretext("Processing images for malId: " + image.Key, ConsoleExt.OutputType.Info);
             
@@ -124,8 +131,25 @@ public static class SqlDbHandler
             });
         }
         Context.ImageBitmaps.AddRange(animeImageSetBitmaps);
-        Context.SaveChanges();
+        await Context.SaveChangesAsync();
+        CorrectAnimeImageRelations(Ids);
         ConsoleExt.WriteLineWithPretext("Processed all images", ConsoleExt.OutputType.Info);
+    }
+
+    public static async void CorrectAnimeImageRelations(List<long?>? Ids = null)
+    {
+        int animeCount = (int)Context.Animes.Max(a => a.MalId)!;
+        List<long?> malIds = Ids ?? Enumerable.Range(1, animeCount).ToList().ConvertAll(i => (long?) i);
+        var animes = GetAnimesByIds(malIds);
+        foreach (var anime in animes.Values)
+        {
+            long? malId = anime.MalId;
+            var images = await GetAnimeBitmapImagesByIds([malId]);
+            anime.ImageBitmaps = images[malId];
+            anime.AnimeImageSetBitmapId = images[malId].MalId;
+        }
+        ConsoleExt.WriteLineWithPretext("Done correcting anime image relations", ConsoleExt.OutputType.Info);
+        await Context.SaveChangesAsync();
     }
     
     // Get all anime similar titles by title
@@ -147,7 +171,7 @@ public static class SqlDbHandler
         Context.Database.EnsureCreated();
         Context.TitlesFts.FromSqlRaw("drop table Titles_fts;");
         Context.TitlesFts.FromSqlRaw("CREATE VIRTUAL TABLE Titles_fts USING fts5(AnimeId UNINDEXED, Title, Type UNINDEXED);");
-        Context.TitlesFts.FromSqlRaw("INSERT INTO Titles_fts (AnimeId, Title, Type) SELECT AnimeId, Title, Type FROM TitleEntries;");
+        Task.Run(() => Context.TitlesFts.FromSqlRaw("INSERT INTO Titles_fts (AnimeId, Title, Type) SELECT AnimeId, Title, Type FROM TitleEntries;"));
     }
     
     public static List<TitleFtsDto> SearchTitles(string searchText) // runs through different methods to search for the title

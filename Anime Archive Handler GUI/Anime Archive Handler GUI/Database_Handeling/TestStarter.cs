@@ -16,7 +16,7 @@ public static class TestStarter
         dbPorter.PortData(LiteDBReader.ReadAnimes().Select(x => new AnimeService(new AnimeMapper()).GetAnimeDto(x)).ToList());
 
         // Copy LiteDB to another LiteDB
-        var liteDbPorter = new LiteDbPorter(sourceLiteDbPath, destinationLiteDbPath);
+        //var liteDbPorter = new LiteDbPorter(sourceLiteDbPath, destinationLiteDbPath);
         //liteDbPorter.CopyLiteDbToLiteDb();
     }
 }
