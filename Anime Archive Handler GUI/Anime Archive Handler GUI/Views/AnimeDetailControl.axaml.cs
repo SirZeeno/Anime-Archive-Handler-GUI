@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Anime_Archive_Handler_GUI.ViewModels;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -9,7 +10,7 @@ public partial class AnimeDetailControl : UserControl
 {
     private readonly Action _navigateToAnimeDisplayList;
     AnimeDetailViewModel AnimeDetailViewModel => (DataContext as AnimeDetailViewModel)!;
-    public AnimeDetailControl(AnimeDto anime, Action navigation)
+    public AnimeDetailControl(AnimeDto? anime, Action navigation)
     {
         InitializeComponent();
         _navigateToAnimeDisplayList = navigation;

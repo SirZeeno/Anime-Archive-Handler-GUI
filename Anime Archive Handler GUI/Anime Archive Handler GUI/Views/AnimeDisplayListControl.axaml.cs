@@ -12,6 +12,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using Avalonia.Media.Imaging;
+using DynamicData;
 
 namespace Anime_Archive_Handler_GUI.Views;
 using static Helpers.DailyFeatured;
@@ -33,7 +34,6 @@ public partial class AnimeDisplayListControl : UserControl
         animeListViewModel = DataContext as AnimeDisplayListViewModel;
         AnimeItemDisplayControl.AnimeListInstance = this;
         AnimeItemDisplayControl.SetGridItems();//.OnCompleted(AdjustGridLayout);
-        ConsoleExt.WriteLineWithPretext(AnimeDisplayListViewModel.DynamicAnimeItemGrid.Count, ConsoleExt.OutputType.Info);
         AnimeTypeTabControl.SelectionChanged += AnimeTypeTabControl_SelectionChanged;
         AnimeDisplayListViewModel.AnimesToGetImagesFor.CollectionChanged += OnCollectionChanged;
         Timer.Elapsed += GetImagesForViewableAnimes;
@@ -43,7 +43,6 @@ public partial class AnimeDisplayListControl : UserControl
     
     private async void ShowClickedAnime(object sender, RoutedEventArgs e)
     {
-        // In a real app, you would determine which TV show was clicked on.
         string? animeName  = null;
         if (sender is not Button button) return;
         var templateChildren = button.GetLogicalChildren();
@@ -56,7 +55,6 @@ public partial class AnimeDisplayListControl : UserControl
             foreach (var gridChild in templateChildren3)
             {
                 if (gridChild is not TextBlock textBlock) continue;
-                ConsoleExt.WriteLineWithPretext(textBlock.Text, ConsoleExt.OutputType.Info);
                 animeName = textBlock.Text;
             }
         }
@@ -116,9 +114,25 @@ public partial class AnimeDisplayListControl : UserControl
     
     private static void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
-        if (e.Action != NotifyCollectionChangedAction.Add) return;
-        // Add new items to the buffer
-        _buffer.AddRange(e.NewItems.OfType<long?>());
+        switch (e.Action)
+        {
+            case NotifyCollectionChangedAction.Add:
+                // Add new items to the buffer
+                _buffer.AddRange(e.NewItems.OfType<long?>());
+                break;
+            case NotifyCollectionChangedAction.Remove:
+                // Remove items from the buffer
+                _buffer.Remove(e.OldItems.OfType<long?>().ToList());
+                break;
+            case NotifyCollectionChangedAction.Replace:
+                break;
+            case NotifyCollectionChangedAction.Move:
+                break;
+            case NotifyCollectionChangedAction.Reset:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
 
         // Restart the timer
         Timer.Stop();
@@ -133,7 +147,6 @@ public partial class AnimeDisplayListControl : UserControl
         _buffer.Clear();
 
         // Process itemsThatNeedImages as needed
-        ConsoleExt.WriteLineWithPretext(itemsThatNeedImages.Count, ConsoleExt.OutputType.Info);
         var result = await SqlDbHandler.GetAnimeBitmapImagesByIds(itemsThatNeedImages);
             
         foreach (var item in AnimeDisplayListViewModel.DynamicAnimeItemGrid)

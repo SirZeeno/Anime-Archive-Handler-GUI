@@ -18,34 +18,236 @@
         <vm:AnimeDetailViewModel />
     </UserControl.DataContext>
     
-    <Grid RowDefinitions="Auto,Auto,Auto,*" Background="#191919">
-        <Button Grid.Row="0" Click="BackClicked">
-            <TextBlock Text="Back"  HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        </Button>
-        <vlc:VideoView Grid.Row="1" Name="VideoView" MinHeight="720" MinWidth="1080"/>
-        <Border Grid.Row="2" MaxHeight="40" Background="Transparent" BoxShadow="0 0 10 5 #161616" Margin="0,0,0,10">
+    <UserControl.Styles>
+        <!-- Style for transparent buttons -->
+        <Style Selector="Button.transparentButton">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <!-- Default Foreground -->
+            <Setter Property="Foreground" Value="#929292"/>
+        </Style>
+    </UserControl.Styles>
+    
+    <Grid RowDefinitions="Auto,Auto,40,Auto,*" Background="#191919">
+        <Button Grid.Row="0" Click="BackClicked" Classes="transparentButton">
             <StackPanel Orientation="Horizontal">
-                <Button Height="40" />
-                <Button Height="40" />
-                <Button Height="40" />
-                <Button Height="40" />                                 
+                <ui:SymbolIcon Symbol="Back" Margin="0,0,4,0" />
+                <TextBlock Text="Back" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Button>
+        
+        <!-- Add Anime Trailer -->
+        
+        <vlc:VideoView Grid.Row="1" Name="VideoView" MinHeight="720" MinWidth="1080" Margin="10,0"/>
+        <Border Grid.Row="2" MaxHeight="40" Background="Transparent" BoxShadow="0 0 10 5 #161616" Margin="0,0,0,10">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="5,0">
+                <CheckBox Height="40" VerticalAlignment="Top">
+                    <TextBlock Text="AutoPlay" FontWeight="Bold" VerticalAlignment="Center"/>
+                </CheckBox>
+                <CheckBox Height="40" VerticalAlignment="Top">
+                    <TextBlock Text="AutoNext" FontWeight="Bold" VerticalAlignment="Center"/>
+                </CheckBox>
+                <Button Height="40" Classes="transparentButton">
+                    <TextBlock Text="Previous" FontWeight="Bold" VerticalAlignment="Center"/>
+                </Button>
+                <Button Height="40" Classes="transparentButton">
+                    <TextBlock Text="Next" FontWeight="Bold" VerticalAlignment="Center"/>
+                </Button>
             </StackPanel>
         </Border>
-        <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
-            <ContentPresenter Content="{CompiledBinding AnimeToDisplay}" VerticalAlignment="Top">
-                <ContentPresenter.ContentTemplate>
-                    <DataTemplate DataType="animeArchiveHandlerGui:AnimeDto">
-                        <Grid ColumnDefinitions="Auto,*">
-                            <Border Grid.Column="0" Background="#202020" HorizontalAlignment="Left" CornerRadius="5">
-                                <Image Source="{CompiledBinding ImageBitmaps.JPG.ImageBitmap, Converter={StaticResource ByteArrayToBitmapConverter}}" Width="250" Height="335" ClipToBounds="True"/>
-                            </Border>
-                            <StackPanel Grid.Column="1" HorizontalAlignment="Center">
-                                <TextBlock Text="{CompiledBinding Synopsis}" TextWrapping="Wrap"/>
-                            </StackPanel>
-                        </Grid>
-                    </DataTemplate>
-                </ContentPresenter.ContentTemplate>
-            </ContentPresenter>
+        <ItemsRepeater Grid.Row="3" ItemsSource="{CompiledBinding EpisodeDisplayItem}">
+            <ItemsRepeater.ItemTemplate>
+                <DataTemplate DataType="animeArchiveHandlerGui:EpisodeDisplayItem">
+                    <RadioButton GroupName="{CompiledBinding AnimeName}">
+                        <TextBlock Text="{CompiledBinding EpisodeNumber}" FontWeight="ExtraBold" />
+                    </RadioButton>
+                </DataTemplate>
+            </ItemsRepeater.ItemTemplate>
+            
+            <ItemsRepeater.Layout>
+                <UniformGridLayout ItemsJustification="Center"/>
+            </ItemsRepeater.Layout>
+        </ItemsRepeater>
+        <ScrollViewer Grid.Row="4" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <TextBlock Text="{CompiledBinding AnimeTitle}" FontWeight="Bold" FontSize="20" Margin="10,0,0,10"/>
+                <ContentPresenter Content="{CompiledBinding AnimeToDisplay}" VerticalAlignment="Top">
+                    <ContentPresenter.ContentTemplate>
+                        <DataTemplate DataType="animeArchiveHandlerGui:AnimeDto">
+                            <Grid ColumnDefinitions="Auto,*">
+                                <Border Grid.Column="0" Background="#202020" HorizontalAlignment="Left">
+                                    <StackPanel Spacing="5">
+                                        <Border CornerRadius="5" ClipToBounds="True">
+                                            <Image Source="{CompiledBinding ImageBitmaps.JPG.ImageBitmap, Converter={StaticResource ByteArrayToBitmapConverter}}" MaxWidth="225" MaxHeight="335" ClipToBounds="True"/>
+                                        </Border>
+                                        <TextBlock Text="{CompiledBinding Type, StringFormat='{}Type: {0}'}" TextWrapping="Wrap" Foreground="{StaticResource LightGreyTextColor}" LineSpacing="0" />
+                                            
+                                        <TextBlock Text="{CompiledBinding Score, StringFormat='{}Score: {0}'}" TextWrapping="Wrap" Foreground="{StaticResource LightGreyTextColor}" LineSpacing="0" />
+                                            
+                                        <TextBlock Text="{CompiledBinding Rank, StringFormat='{}Rank: {0}'}" TextWrapping="Wrap" Foreground="{StaticResource LightGreyTextColor}" LineSpacing="0" />
+                                        
+                                        <TextBlock Text="{CompiledBinding Episodes, StringFormat='{}Episodes: {0}'}" TextWrapping="Wrap" Foreground="{StaticResource LightGreyTextColor}" LineSpacing="0" />
+                                            
+                                        <TextBlock Text="{CompiledBinding Status, StringFormat='{}Status: {0}'}" TextWrapping="Wrap" Foreground="{StaticResource LightGreyTextColor}" LineSpacing="0" />
+                                            
+                                        <TextBlock Text="{CompiledBinding Year, StringFormat='{}Year: {0}'}" TextWrapping="Wrap" Foreground="{StaticResource LightGreyTextColor}" LineSpacing="0" />
+                                            
+                                        <TextBlock TextWrapping="Wrap" Foreground="{StaticResource LightGreyTextColor}" LineSpacing="0">
+                                            Mal Url:
+                                            <Button Command="{CompiledBinding $parent[ScrollViewer].((vm:AnimeDetailViewModel)DataContext).OpenLinkCommand}" CommandParameter="{CompiledBinding Url}" Padding="0" Cursor="Hand" Classes="transparentButton">
+                                                <TextBlock Text="{CompiledBinding Url}" Foreground="LightBlue" TextDecorations="Underline"/>
+                                            </Button>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </Border>
+                                <StackPanel Grid.Column="1" HorizontalAlignment="Stretch">
+                                    <Border BorderBrush="{StaticResource ListDisplayCheckersLight}" BorderThickness="1" Background="{StaticResource ListDisplayCheckersLight}">
+                                        <StackPanel Margin="10">
+                                            <TextBlock Text="Synopsis" FontWeight="Bold" FontSize="16" Foreground="{StaticResource LightGreyTextColor}" Margin="0,0,0,10" />
+                                            <TextBlock Text="{CompiledBinding Synopsis}" TextWrapping="Wrap" Foreground="{StaticResource LightGreyTextColor}" LineSpacing="0"/>
+                                            
+                                            <!-- Genres -->
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Genres: " FontWeight="Bold" FontSize="16" Foreground="{StaticResource LightGreyTextColor}" IsVisible="{CompiledBinding Genres, Converter={StaticResource ListHasItemsConverter}}" />
+                                                <ItemsControl ItemsSource="{CompiledBinding Genres, Converter={StaticResource HashSetToObservableConverter}}" x:Name="Genres">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate DataType="animeArchiveHandlerGui:GenresDto">
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <TextBlock Text="{CompiledBinding Name}" Foreground="{StaticResource LightGreyTextColor}" />
+                                                                <TextBlock Text=", " Foreground="{StaticResource LightGreyTextColor}">
+                                                                    <TextBlock.IsVisible>
+                                                                        <MultiBinding Converter="{StaticResource ListSeparatorConverter}">
+                                                                            <Binding Path="."/>
+                                                                            <Binding Path="Items" RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}}"/>
+                                                                        </MultiBinding>
+                                                                    </TextBlock.IsVisible>
+                                                                </TextBlock>
+                                                            </StackPanel>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <StackPanel Orientation="Horizontal" />
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                </ItemsControl>
+                                            </StackPanel>
+                                            
+                                            <!-- ExplicitGenres -->
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Explicit Genres: " FontWeight="Bold" FontSize="16" Foreground="{StaticResource LightGreyTextColor}" IsVisible="{CompiledBinding ExplicitGenres, Converter={StaticResource ListHasItemsConverter}}" />
+                                                <ItemsControl ItemsSource="{CompiledBinding ExplicitGenres, Converter={StaticResource HashSetToObservableConverter}}" x:Name="ExplicitGenres">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate DataType="animeArchiveHandlerGui:ExplicitGenresDto">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{CompiledBinding Name}" Foreground="{StaticResource LightGreyTextColor}" />
+                                                            <TextBlock Text=", " Foreground="{StaticResource LightGreyTextColor}">
+                                                                <TextBlock.IsVisible>
+                                                                    <MultiBinding Converter="{StaticResource ListSeparatorConverter}">
+                                                                        <Binding Path="."/>
+                                                                        <Binding Path="Items" RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}}"/>
+                                                                    </MultiBinding>
+                                                                </TextBlock.IsVisible>
+                                                            </TextBlock>
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <StackPanel Orientation="Horizontal" />
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                            </ItemsControl>
+                                            </StackPanel>
+                                            
+                                            <!-- Producers -->
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Producers: " FontWeight="Bold" FontSize="16" Foreground="{StaticResource LightGreyTextColor}" IsVisible="{CompiledBinding Producers, Converter={StaticResource ListHasItemsConverter}}" />
+                                                <ItemsControl ItemsSource="{CompiledBinding Producers, Converter={StaticResource HashSetToObservableConverter}}" x:Name="Producers">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate DataType="animeArchiveHandlerGui:ProducersDto">
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <TextBlock Text="{CompiledBinding Name}" Foreground="{StaticResource LightGreyTextColor}" />
+                                                                <TextBlock Text=", " Foreground="{StaticResource LightGreyTextColor}">
+                                                                    <TextBlock.IsVisible>
+                                                                        <MultiBinding Converter="{StaticResource ListSeparatorConverter}">
+                                                                            <Binding Path="."/>
+                                                                            <Binding Path="Items" RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}}"/>
+                                                                        </MultiBinding>
+                                                                    </TextBlock.IsVisible>
+                                                                </TextBlock>
+                                                            </StackPanel>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <StackPanel Orientation="Horizontal" />
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                </ItemsControl>
+                                            </StackPanel>
+                                            
+                                            <!-- Licensors -->
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Licensors: " FontWeight="Bold" FontSize="16" Foreground="{StaticResource LightGreyTextColor}" IsVisible="{CompiledBinding Licensors, Converter={StaticResource ListHasItemsConverter}}" />
+                                                <ItemsControl ItemsSource="{CompiledBinding Licensors, Converter={StaticResource HashSetToObservableConverter}}" x:Name="Licensors">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate DataType="animeArchiveHandlerGui:LicensorsDto">
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <TextBlock Text="{CompiledBinding Name}" Foreground="{StaticResource LightGreyTextColor}" />
+                                                                <TextBlock Text=", " Foreground="{StaticResource LightGreyTextColor}">
+                                                                    <TextBlock.IsVisible>
+                                                                        <MultiBinding Converter="{StaticResource ListSeparatorConverter}">
+                                                                            <Binding Path="."/>
+                                                                            <Binding Path="Items" RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}}"/>
+                                                                        </MultiBinding>
+                                                                    </TextBlock.IsVisible>
+                                                                </TextBlock>
+                                                            </StackPanel>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <StackPanel Orientation="Horizontal" />
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                </ItemsControl>
+                                            </StackPanel>
+                                            
+                                            <!-- Studios -->
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Studios: " FontWeight="Bold" FontSize="16" Foreground="{StaticResource LightGreyTextColor}" />
+                                                <ItemsControl ItemsSource="{CompiledBinding Studios, Converter={StaticResource HashSetToObservableConverter}}" x:Name="Studios">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate DataType="animeArchiveHandlerGui:StudiosDto">
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <TextBlock Text="{CompiledBinding Name}" Foreground="{StaticResource LightGreyTextColor}" />
+                                                                <TextBlock Text=", " Foreground="{StaticResource LightGreyTextColor}">
+                                                                    <TextBlock.IsVisible>
+                                                                        <MultiBinding Converter="{StaticResource ListSeparatorConverter}">
+                                                                            <Binding Path="."/>
+                                                                            <Binding Path="Items" RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}}"/>
+                                                                        </MultiBinding>
+                                                                    </TextBlock.IsVisible>
+                                                                </TextBlock>
+                                                            </StackPanel>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <StackPanel Orientation="Horizontal" />
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                </ItemsControl>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </ContentPresenter.ContentTemplate>
+                </ContentPresenter>
+            </StackPanel>
         </ScrollViewer>
     </Grid>
 </UserControl>

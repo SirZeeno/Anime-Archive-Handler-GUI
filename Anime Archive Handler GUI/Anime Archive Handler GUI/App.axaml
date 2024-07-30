@@ -41,7 +41,10 @@
         <SolidColorBrush x:Key="DropdownCheckersLight" Color="#2d2d2d" />
         <SolidColorBrush x:Key="DropdownSelected" Color="#242424" />
         
-        <converters:ByteArrayToBitmapConverter x:Key="ByteArrayToBitmapConverter"/>
+        <converters:ByteArrayToBitmapConverter x:Key="ByteArrayToBitmapConverter" />
+        <converters:HashSetToObservableConverter x:Key="HashSetToObservableConverter" />
+        <converters:ListSeparatorConverter x:Key="ListSeparatorConverter" />
+        <converters:ListHasItemsConverter x:Key="ListHasItemsConverter" />
         
     </Application.Resources>
     <Application.DataTemplates>

@@ -83,6 +83,11 @@ public static class SqlDbHandler
             .Include(a => a.ImageBitmaps)
             .ThenInclude(i => i.WebP)
             .Include(a => a.Titles)
+            .Include(x => x.Genres)
+            .Include(x => x.ExplicitGenres)
+            .Include(x => x.Producers)
+            .Include(x => x.Licensors)
+            .Include(x => x.Studios)
             .ToDictionary(a => a.MalId, a => a);
     }
     
@@ -150,14 +155,6 @@ public static class SqlDbHandler
         }
         ConsoleExt.WriteLineWithPretext("Done correcting anime image relations", ConsoleExt.OutputType.Info);
         await Context.SaveChangesAsync();
-    }
-    
-    // Get all anime similar titles by title
-    public static List<TitleEntryDto> GetAnimeTitlesByTitle(string animeTitle)
-    {
-        Context.Database.EnsureCreated();
-        var anime = Context.TitleEntries.Where(a => EF.Functions.Like(a.Title, $"%{animeTitle}%") || a.Title.ToLower() == animeTitle.ToLower()).ToList();
-        return anime;
     }
     
     public static IQueryable<AnimeDto> GetAnimesByCount(int count)

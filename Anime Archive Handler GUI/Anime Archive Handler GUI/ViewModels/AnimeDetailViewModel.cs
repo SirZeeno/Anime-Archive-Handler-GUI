@@ -1,13 +1,69 @@
-﻿using ReactiveUI;
+﻿using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Reactive.Linq;
+using System.Windows.Input;
+using Avalonia.Controls;
+using Avalonia.Interactivity;
+using ReactiveUI;
 
 namespace Anime_Archive_Handler_GUI.ViewModels;
 
 public class AnimeDetailViewModel : ViewModelBase
 {
-    private AnimeDto _animeToDisplay;
-    public AnimeDto AnimeToDisplay
+    private EpisodeDisplayItem? _episodeDisplayItem;
+    public EpisodeDisplayItem? EpisodeDisplayItem
+    {
+        get => _episodeDisplayItem;
+        set => this.RaiseAndSetIfChanged(ref _episodeDisplayItem, value);
+    }
+    
+    private AnimeDto? _animeToDisplay;
+    public AnimeDto? AnimeToDisplay
     {
         get => _animeToDisplay;
         set => this.RaiseAndSetIfChanged(ref _animeToDisplay, value);
+    }
+    
+    private string _animeTitle = string.Empty;
+    public string AnimeTitle
+    {
+        get => _animeTitle;
+        set => this.RaiseAndSetIfChanged(ref _animeTitle, value);
+    }
+
+    private void SelectedTitle(AnimeDto? animeDto)
+    {
+        string? englishTitle = animeDto?.Titles
+            .Where(t => t.Type.ToLower() == "english")
+            .Select(t => t.Title)
+            .FirstOrDefault();
+        string? defaultTitle = animeDto?.Titles
+            .Where(t => t.Type.ToLower() == "default")
+            .Select(t => t.Title)
+            .FirstOrDefault();
+        string title = englishTitle ?? defaultTitle ?? string.Empty;
+        ConsoleExt.WriteLineWithPretext("Selected Title: " + title, ConsoleExt.OutputType.Info);
+        AnimeTitle = title;
+    }
+    
+    public ICommand OpenLinkCommand { get; }
+    
+    private void OpenLink(string url)
+    {
+        if (!string.IsNullOrEmpty(url))
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = url,
+                UseShellExecute = true
+            });
+        }
+    }
+
+    public AnimeDetailViewModel()
+    {
+        this.WhenAnyValue(x => x.AnimeToDisplay).Where(newAnime => newAnime != null).Subscribe(SelectedTitle);
+        OpenLinkCommand = ReactiveCommand.Create<string>(OpenLink);
     }
 }

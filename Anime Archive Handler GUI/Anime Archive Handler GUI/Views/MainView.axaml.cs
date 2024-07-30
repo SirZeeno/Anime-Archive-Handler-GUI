@@ -34,7 +34,7 @@ public partial class MainView : UserControl
         SearchResults.Clear(); // Clear previous results
     }
     
-    private void NavigateToShowDetail(AnimeDto show)
+    private void NavigateToShowDetail(AnimeDto? show)
     {
         AnimeListControlView.Content = new AnimeDetailControl(show, NavigateToShowList);
     }

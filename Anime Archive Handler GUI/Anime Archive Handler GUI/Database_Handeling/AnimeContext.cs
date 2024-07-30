@@ -23,6 +23,13 @@ public class AnimeContext : DbContext
     public DbSet<TitleFtsDto> TitlesFts { get; set; }
     public DbSet<AnimeImageSetBitmap> ImageBitmaps { get; set; }
     
+    // For future purposes
+    /*
+    public DbSet<AnimeLibraryListItem> AnimeLibraryList { get; set; }
+    
+    public DbSet<AnimeToWatchListItem> AnimeToWatchList { get; set; }
+    */
+    
     private readonly string _dbPath;
 
     public AnimeContext(string? dbPath = null)
@@ -97,6 +104,12 @@ public class AnimeContext : DbContext
 
         modelBuilder.Entity<AnimeDto>()
             .HasMany(a => a.TitleSynonyms)
+            .WithOne(ts => ts.Anime)
+            .HasForeignKey(ts => ts.AnimeId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<AnimeDto>()
+            .HasMany(a => a.Titles)
             .WithOne(ts => ts.Anime)
             .HasForeignKey(ts => ts.AnimeId)
             .OnDelete(DeleteBehavior.Cascade);

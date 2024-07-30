@@ -81,12 +81,13 @@ public class AnimeDisplayItem(long? animeId, string animeName, int subEpisodeCou
         EndPoint = new RelativePoint(0, 1, RelativeUnit.Relative),
         GradientStops =
         [
-            new(Color.FromArgb(0, 0, 0, 0), 0), // Fully transparent at the top
-            new(Color.FromArgb(0, 0, 0, 0), 0.6), // Fully transparent at the top
-            new(Color.FromArgb(150, 32, 32, 32), 0.75),
-            new(Color.FromArgb(225, 32, 32, 32), 0.85),
-            new(Color.FromArgb(235, 32, 32, 32), 0.9),
-            new(Color.FromArgb(255, 32, 32, 32), 0.98) // Fully opaque at the bottom
+            // Object allocation problem
+            new GradientStop(Color.FromArgb(0, 0, 0, 0), 0), // Fully transparent at the top
+            new GradientStop(Color.FromArgb(0, 0, 0, 0), 0.6), // Fully transparent at the top
+            new GradientStop(Color.FromArgb(150, 32, 32, 32), 0.75),
+            new GradientStop(Color.FromArgb(225, 32, 32, 32), 0.85),
+            new GradientStop(Color.FromArgb(235, 32, 32, 32), 0.9),
+            new GradientStop(Color.FromArgb(255, 32, 32, 32), 0.98) // Fully opaque at the bottom
         ]
     };
 
@@ -98,6 +99,29 @@ public class AnimeImportDisplayItem(string animeTitle, ObservableCollection<Anim
 {
     public string AnimeTitle { get; set; } = animeTitle;
     public ObservableCollection<AnimeDisplayItem>? AnimeSearchResults { get; set; } = animeSearchResults;
+}
+
+public class EpisodeLanguageDisplayItem(List<Languages> languagesList)
+{
+    List<Languages> LanguagesList { get; set; } = languagesList;
+}
+
+public abstract class EpisodeDisplayItem(int episodeNumber, string animeName)
+{
+    public int EpisodeNumber { get; set; } = episodeNumber;
+    public string AnimeName { get; set; } = animeName;
+}
+
+// The Animes that the user has imported and are integrated into the app for their use
+public class AnimeLibraryListItem
+{
+    public int MalId { get; set; }
+    public string? Title { get; set; }
+}
+
+public class AnimeToWatchListItem
+{
+    
 }
 
 public class ImportSettings(string? selectedPath, bool hasMultipleInOneFolder, bool hasSeasonFolders, bool isOva, bool isMovie, ImportType importType)
