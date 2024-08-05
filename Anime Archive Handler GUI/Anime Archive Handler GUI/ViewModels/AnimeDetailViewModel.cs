@@ -5,11 +5,13 @@ using System.Reactive.Linq;
 using System.Windows.Input;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Media.Imaging;
+using LibVLCSharp.Shared;
 using ReactiveUI;
 
 namespace Anime_Archive_Handler_GUI.ViewModels;
 
-public class AnimeDetailViewModel : ViewModelBase
+public class AnimeDetailViewModel : ViewModelBase, IDisposable
 {
     private EpisodeDisplayItem? _episodeDisplayItem;
     public EpisodeDisplayItem? EpisodeDisplayItem
@@ -31,6 +33,22 @@ public class AnimeDetailViewModel : ViewModelBase
         get => _animeTitle;
         set => this.RaiseAndSetIfChanged(ref _animeTitle, value);
     }
+    
+    private MediaPlayer _mediaPlayer;
+    
+    public MediaPlayer MediaPlayer
+    {
+        get => _mediaPlayer;
+        set => this.RaiseAndSetIfChanged(ref _mediaPlayer, value);
+    }
+    
+    private Bitmap _trailerThumbnail;
+    
+    public Bitmap TrailerThumbnail
+    {
+        get => _trailerThumbnail;
+        set => this.RaiseAndSetIfChanged(ref _trailerThumbnail, value);
+    }
 
     private void SelectedTitle(AnimeDto? animeDto)
     {
@@ -43,7 +61,7 @@ public class AnimeDetailViewModel : ViewModelBase
             .Select(t => t.Title)
             .FirstOrDefault();
         string title = englishTitle ?? defaultTitle ?? string.Empty;
-        ConsoleExt.WriteLineWithPretext("Selected Title: " + title, ConsoleExt.OutputType.Info);
+        ConsoleExt.WriteLineWithPretext("Selected Title: " + title);
         AnimeTitle = title;
     }
     
@@ -65,5 +83,11 @@ public class AnimeDetailViewModel : ViewModelBase
     {
         this.WhenAnyValue(x => x.AnimeToDisplay).Where(newAnime => newAnime != null).Subscribe(SelectedTitle);
         OpenLinkCommand = ReactiveCommand.Create<string>(OpenLink);
+    }
+    
+    public void Dispose()
+    {
+        MediaPlayer.Stop();
+        MediaPlayer.Dispose();
     }
 }

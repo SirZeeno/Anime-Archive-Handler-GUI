@@ -88,6 +88,7 @@ public static class SqlDbHandler
             .Include(x => x.Producers)
             .Include(x => x.Licensors)
             .Include(x => x.Studios)
+            .Include(x => x.Trailer)
             .ToDictionary(a => a.MalId, a => a);
     }
     
@@ -175,7 +176,7 @@ public static class SqlDbHandler
     {
         List<TitleFtsDto> matchingTitles = new List<TitleFtsDto>();
         string safeSearchText = searchText.Replace("'", "\"\"");
-        if (safeSearchText.Contains(',') || safeSearchText.Contains('-') || safeSearchText.Contains(':') || safeSearchText.Contains('.')) safeSearchText = "\"" + safeSearchText + "\"";
+        if (safeSearchText.Contains(',') || safeSearchText.Contains('-') || safeSearchText.Contains(':') || safeSearchText.Contains('!') || safeSearchText.Contains('?') || safeSearchText.Contains('.')) safeSearchText = "\"" + safeSearchText + "\"";
         
         // Conventional Search
         var conventionalSearch = Context.TitlesFts.FromSqlRaw($"SELECT * FROM Titles_fts WHERE Title MATCH '{safeSearchText}';").ToList();

@@ -18,5 +18,9 @@
   {
     "path": "./Databases/Downloads",
     "enabled": true
+  },
+  {
+    "path": "./Databases/TempFiles",
+    "enabled": true
   }
 ]

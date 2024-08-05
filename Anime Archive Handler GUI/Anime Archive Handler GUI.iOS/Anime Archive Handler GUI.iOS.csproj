@@ -8,6 +8,7 @@
 
     <ItemGroup>
         <PackageReference Include="Avalonia.iOS" Version="11.0.11" />
+        <PackageReference Include="VideoLAN.LibVLC.iOS" Version="3.3.18" />
     </ItemGroup>
 
     <ItemGroup>

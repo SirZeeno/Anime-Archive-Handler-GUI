@@ -38,7 +38,8 @@
         
         <!-- Add Anime Trailer -->
         
-        <vlc:VideoView Grid.Row="1" Name="VideoView" MinHeight="720" MinWidth="1080" Margin="10,0"/>
+        
+        <vlc:VideoView Grid.Row="1" MediaPlayer="{CompiledBinding MediaPlayer}" Name="VideoView" MinHeight="720" MinWidth="1080" Margin="10,0"/>
         <Border Grid.Row="2" MaxHeight="40" Background="Transparent" BoxShadow="0 0 10 5 #161616" Margin="0,0,0,10">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="5,0">
                 <CheckBox Height="40" VerticalAlignment="Top">
@@ -240,6 +241,23 @@
                                                     </ItemsControl.ItemsPanel>
                                                 </ItemsControl>
                                             </StackPanel>
+                                            
+                                            <ContentPresenter Content="{CompiledBinding Trailer}">
+                                                <ContentPresenter.ContentTemplate>
+                                                    <DataTemplate DataType="animeArchiveHandlerGui:AnimeTrailerDto">
+                                                        <Panel>
+                                                            <ContentPresenter Content="{CompiledBinding $parent[ScrollViewer].((vm:AnimeDetailViewModel)DataContext).TrailerThumbnail}">
+                                                                <ContentPresenter.ContentTemplate>
+                                                                    <DataTemplate DataType="vm:AnimeDetailViewModel">
+                                                                        <Image Source="{CompiledBinding TrailerThumbnail}" />
+                                                                    </DataTemplate>
+                                                                </ContentPresenter.ContentTemplate>
+                                                            </ContentPresenter>
+                                                            <Button Content="Play Trailer" Click="PlayVideo_Click"/>
+                                                        </Panel>
+                                                    </DataTemplate>
+                                                </ContentPresenter.ContentTemplate>
+                                            </ContentPresenter>
                                         </StackPanel>
                                     </Border>
                                 </StackPanel>

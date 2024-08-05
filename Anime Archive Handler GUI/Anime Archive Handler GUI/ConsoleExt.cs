@@ -15,7 +15,7 @@ public static class ConsoleExt
         Question
     }
 
-    public static int WriteLineWithPretext<T>(T output, OutputType outputType, Exception? exception = null)
+    public static int WriteLineWithPretext<T>(T output, OutputType outputType = OutputType.Info, Exception? exception = null)
     {
         var length1 = CurrentTime();
         var length2 = DetermineOutputType(outputType);
@@ -34,7 +34,7 @@ public static class ConsoleExt
         return length1 + length2;
     }
 
-    public static int WriteWithPretext<T>(T output, OutputType outputType, Exception? exception = null)
+    public static int WriteWithPretext<T>(T output, OutputType outputType = OutputType.Info, Exception? exception = null)
     {
         var length1 = CurrentTime();
         var length2 = DetermineOutputType(outputType);
