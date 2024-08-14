@@ -37,9 +37,63 @@
         </Button>
         
         <!-- Add Anime Trailer -->
+        <vlc:VideoView Grid.Row="1" MediaPlayer="{CompiledBinding MediaPlayer}" Name="VideoView" MinHeight="720" MinWidth="1080" Margin="10,0">
+            <Grid VerticalAlignment="Bottom" ColumnDefinitions="Auto,Auto,*">
+                <Button Grid.Column="0" Click="PlayOrPause" VerticalAlignment="Bottom" Margin="10,0,0,5" Classes="transparentButton" Width="25" Height="25" Padding="0">
+                    <Panel>
+                        <ui:SymbolIcon Name="PlaySymbol" Symbol="Play" />
+                    </Panel>
+                    <Button.Styles>
+                        <Style Selector="Button">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="BorderBrush" Value="Transparent"/>
+                            <!-- Default Foreground -->
+                            <Setter Property="Foreground" Value="#929292"/>
+                        </Style>
+                    </Button.Styles>
+                </Button>
+                <Border Grid.Column="1" Background="Transparent" PointerExited="VolumeControl_PointerLeave" Margin="10,0,10,5" Width="30" Height="125" Padding="0">
+                    <Grid RowDefinitions="100,25" Width="30">
+                        <Slider Grid.Row="0" Name="VolumeSlider" Orientation="Vertical" Height="100" Value="{CompiledBinding VolumeSliderValue}" Minimum="0" Maximum="100" HorizontalAlignment="Left" Width="25" Margin="0" Padding="0" IsVisible="{CompiledBinding IsVolumeControlVisible}">
+                            <Slider.Styles>
+                                <!-- Transparent Thumb Style for Slider -->
+                                <Style Selector="Slider /template/ Thumb">
+                                    <Setter Property="IsVisible" Value="False"/>
+                                </Style>
+                        
+                                <Style Selector="Slider /template/ Track">
+                                    <Setter Property="Width" Value="10" />
+                                </Style>
+                            </Slider.Styles>
+                        </Slider>
+                        <Button Grid.Row="1" Name="VolumeButton" Width="25" Height="25" Padding="0" HorizontalAlignment="Center" PointerEntered="VolumeControl_PointerEnter" Click="MuteOrUnmute">
+                            <ui:SymbolIcon Name="SpeakerButton" Symbol="Speaker2" />
+                            <Button.Styles>
+                                <Style Selector="Button">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="BorderBrush" Value="Transparent"/>
+                                    <!-- Default Foreground -->
+                                    <Setter Property="Foreground" Value="#929292"/>
+                                </Style>
+                            </Button.Styles>
+                        </Button>
+                    </Grid>
+                </Border>
+                <Slider Grid.Column="2" Name="ProgressSlider" HorizontalAlignment="Stretch" Minimum="0" Maximum="100" Value="{CompiledBinding VideoProgressSliderValue}" TickFrequency="1" Background="{StaticResource LightGreyTextColor}" VerticalAlignment="Bottom" Margin="0,0,10,0">
+                    <Slider.Styles>
+                        <!-- Transparent Thumb Style for Slider -->
+                        <Style Selector="Slider /template/ Thumb">
+                            <Setter Property="IsVisible" Value="False"/>
+                        </Style>
+                        
+                        <Style Selector="Slider /template/ Track">
+                            <Setter Property="Height" Value="10" />
+                        </Style>
+                    </Slider.Styles>
+                </Slider>
+            </Grid>
+        </vlc:VideoView>
         
-        
-        <vlc:VideoView Grid.Row="1" MediaPlayer="{CompiledBinding MediaPlayer}" Name="VideoView" MinHeight="720" MinWidth="1080" Margin="10,0"/>
         <Border Grid.Row="2" MaxHeight="40" Background="Transparent" BoxShadow="0 0 10 5 #161616" Margin="0,0,0,10">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="5,0">
                 <CheckBox Height="40" VerticalAlignment="Top">
@@ -58,7 +112,7 @@
         </Border>
         <ItemsRepeater Grid.Row="3" ItemsSource="{CompiledBinding EpisodeDisplayItem}">
             <ItemsRepeater.ItemTemplate>
-                <DataTemplate DataType="animeArchiveHandlerGui:EpisodeDisplayItem">
+                <DataTemplate DataType="animeArchiveHandlerGui:EpisodeDisplayItem"> 
                     <RadioButton GroupName="{CompiledBinding AnimeName}">
                         <TextBlock Text="{CompiledBinding EpisodeNumber}" FontWeight="ExtraBold" />
                     </RadioButton>

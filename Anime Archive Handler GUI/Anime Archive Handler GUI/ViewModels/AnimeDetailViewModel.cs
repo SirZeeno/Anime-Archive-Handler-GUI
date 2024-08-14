@@ -6,6 +6,7 @@ using System.Windows.Input;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
+using FluentAvalonia.UI.Controls;
 using LibVLCSharp.Shared;
 using ReactiveUI;
 
@@ -49,6 +50,29 @@ public class AnimeDetailViewModel : ViewModelBase, IDisposable
         get => _trailerThumbnail;
         set => this.RaiseAndSetIfChanged(ref _trailerThumbnail, value);
     }
+    
+    private int _volumeSliderValue;
+    
+    public int VolumeSliderValue
+    {
+        get => _volumeSliderValue;
+        set => this.RaiseAndSetIfChanged(ref _volumeSliderValue, value);
+    }
+    
+    private float _videoProgressSliderValue;
+    
+    public float VideoProgressSliderValue
+    {
+        get => _videoProgressSliderValue;
+        set => this.RaiseAndSetIfChanged(ref _videoProgressSliderValue, value);
+    }
+    
+    private bool _isVolumeControlVisible;
+    public bool IsVolumeControlVisible
+    {
+        get => _isVolumeControlVisible;
+        set => this.RaiseAndSetIfChanged(ref _isVolumeControlVisible, value);
+    }
 
     private void SelectedTitle(AnimeDto? animeDto)
     {
@@ -81,6 +105,8 @@ public class AnimeDetailViewModel : ViewModelBase, IDisposable
 
     public AnimeDetailViewModel()
     {
+        this.WhenAnyValue(x => x.MediaPlayer).Where(mediaPlayer => mediaPlayer != null).Subscribe(x => x.Volume = 100);
+        VolumeSliderValue = 100;
         this.WhenAnyValue(x => x.AnimeToDisplay).Where(newAnime => newAnime != null).Subscribe(SelectedTitle);
         OpenLinkCommand = ReactiveCommand.Create<string>(OpenLink);
     }
