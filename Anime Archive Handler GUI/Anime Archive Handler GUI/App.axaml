@@ -3,6 +3,7 @@
              xmlns:local="using:Anime_Archive_Handler_GUI"
              xmlns:animeArchiveHandlerGui="clr-namespace:Anime_Archive_Handler_GUI"
              xmlns:sty="using:FluentAvalonia.Styling"
+             xmlns:ui="using:FluentAvalonia.UI.Controls"
              xmlns:converters="clr-namespace:Anime_Archive_Handler_GUI.Converters"
              x:Class="Anime_Archive_Handler_GUI.App"
              RequestedThemeVariant="Dark">
@@ -70,5 +71,21 @@
     <Application.Styles>
         <sty:FluentAvaloniaTheme PreferUserAccentColor="True"/>
         
+        <!-- Style for transparent buttons -->
+        <Style Selector="Button.transparentButton">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <!-- Default Foreground -->
+            <Setter Property="Foreground" Value="#929292"/>
+        </Style>
+        
+        <!-- Style for hover effect -->
+        <Style Selector="Button.transparentButton:pointerover /template/ ui|FABorder#Root">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+        </Style>
+        <Style Selector="Button.transparentButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Foreground" Value="#96b6d0"/>
+        </Style>
     </Application.Styles>
 </Application>

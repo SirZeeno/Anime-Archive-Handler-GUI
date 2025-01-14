@@ -17,7 +17,7 @@ using DynamicData;
 namespace Anime_Archive_Handler_GUI.Views;
 using static Helpers.DailyFeatured;
 
-public partial class AnimeDisplayListControl : UserControl
+public partial class AnimeDisplayListControlView : UserControl
 {
     private Grid _animeDynamicGrid;
     
@@ -27,7 +27,7 @@ public partial class AnimeDisplayListControl : UserControl
     private AnimeDisplayListViewModel? animeListViewModel;
     private readonly Action<AnimeDto> _navigateToAnimeDetail;
     
-    public AnimeDisplayListControl(Action<AnimeDto> navigateToAnime)
+    public AnimeDisplayListControlView(Action<AnimeDto> navigateToAnime)
     {
         InitializeComponent();
         _navigateToAnimeDetail = navigateToAnime;

@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
-using Anime_Archive_Handler_GUI.Database_Handeling;
+using Avalonia.VisualTree;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Input;
@@ -10,17 +11,27 @@ using ViewModels;
 
 public partial class MainView : UserControl
 {
-    private ObservableCollection<YourResultType> SearchResults { get; } = new();
-    private AnimeDisplayListControl? AnimeDisplayListControl { get; set; }
+    private ObservableCollection<YourResultType> SearchResults { get; } = [];
+    private AnimeDisplayListControlView? AnimeDisplayListControl { get; set; }
 
     public MainView()
     {
         InitializeComponent();
-        AnimeDisplayListControl ??= new AnimeDisplayListControl(NavigateToShowDetail); // This is so the Front page doesn't have to get loaded every time you switch pages
+        AnimeDisplayListControl ??= new AnimeDisplayListControlView(NavigateToShowDetail); // This is so the Front page doesn't have to get loaded every time you switch pages
         AnimeCategoryTabControl.SelectionChanged += HeaderTabControl_SelectionChanged;
         HomeButton.Click += SetTabIndexToHome;
         LoadHomePage();
+        AttachedToVisualTree += OnAttachedToVisualTree;
         //ChangeStatus(Language.Sub, 12, 12, "Cowboy Bebop"); // needs to get fixed to get working again
+    }
+    
+    private void OnAttachedToVisualTree(object sender, VisualTreeAttachmentEventArgs e)
+    {
+        var window = GetParentWindow();
+        if (window != null)
+        {
+            new PopupView { DataContext = new PopupView(), SystemDecorations = SystemDecorations.None, ExtendClientAreaToDecorationsHint = true, ExtendClientAreaTitleBarHeightHint = -1 }.ShowDialog(window);
+        }
     }
 
     private void LoadHomePage()
@@ -36,12 +47,17 @@ public partial class MainView : UserControl
     
     private void NavigateToShowDetail(AnimeDto? show)
     {
-        AnimeListControlView.Content = new AnimeDetailControl(show, NavigateToShowList);
+        AnimeListControlView.Content = new AnimeDetailControlView(show, NavigateToShowList);
     }
     
     private void NavigateToShowList()
     {
         AnimeListControlView.Content = AnimeDisplayListControl;
+    }
+
+    private Window? GetParentWindow()
+    {
+        return this.FindAncestorOfType<Window>();
     }
     
     private void HeaderTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)

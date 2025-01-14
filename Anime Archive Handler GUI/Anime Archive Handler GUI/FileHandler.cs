@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -58,12 +59,19 @@ public static class FileHandler
         }
         catch (Exception e)
         {
-            ConsoleExt.WriteLineWithPretext($"Anime Episode {episodeNumber} encountered an error!", ConsoleExt.OutputType.Error);
+            ConsoleExt.WriteLineWithPretext($"Anime Episode {episodeNumber} encountered an error!", ConsoleExt.OutputType.Error, e);
             ConsoleExt.WriteLineWithPretext(e, ConsoleExt.OutputType.Error);
             nothingCorrupt = false;
         }
 
         return nothingCorrupt;
+    }
+    
+    public static ObservableCollection<EpisodeDisplayItem> GetAnimeEpisodeList(string animePath) // TODO: Make this funtional
+    {
+        
+        
+        return new ObservableCollection<EpisodeDisplayItem>();
     }
     
     public static string ReadAnimetoshoTxt(string filePath)

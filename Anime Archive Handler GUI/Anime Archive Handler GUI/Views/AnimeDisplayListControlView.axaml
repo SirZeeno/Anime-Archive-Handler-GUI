@@ -6,7 +6,7 @@
              xmlns:ui="using:FluentAvalonia.UI.Controls"
              xmlns:animeArchiveHandlerGui="clr-namespace:Anime_Archive_Handler_GUI"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Anime_Archive_Handler_GUI.Views.AnimeDisplayListControl"
+             x:Class="Anime_Archive_Handler_GUI.Views.AnimeDisplayListControlView"
              x:DataType="vm:AnimeDisplayListViewModel">
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,

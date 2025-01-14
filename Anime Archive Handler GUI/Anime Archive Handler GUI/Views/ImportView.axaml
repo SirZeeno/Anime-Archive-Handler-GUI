@@ -117,7 +117,7 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate DataType="animeArchiveHandlerGui:AnimeImportDisplayItem">
                             <StackPanel>
-                                <TextBlock Text="{CompiledBinding AnimeTitle}" Margin="10,5,0,0"/>
+                                <TextBlock Text="{CompiledBinding FileAnimeTitle}" Margin="10,5,0,0"/>
                                 <Border BorderBrush="Black" BorderThickness="1" Margin="10,0" Padding="5">
                                     <ScrollViewer HorizontalScrollBarVisibility="Auto">
                                         <ItemsControl ItemsSource="{CompiledBinding AnimeSearchResults}">
@@ -155,7 +155,7 @@
                                                                 <TextBlock Grid.Row="1" Text="{CompiledBinding AnimeName}" Foreground="{StaticResource LightBlueTextColor}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,10" MaxWidth="{CompiledBinding ImageMaxWidth}" Height="40" MaxHeight="40" TextWrapping="Wrap" Padding="10,0"/>
                                                             </Grid>
                                                         </Border>
-                                                        <RadioButton Name="{CompiledBinding AnimeName}" Margin="5,5" CornerRadius="5" ClipToBounds="True" Padding="0" GroupName="{CompiledBinding $parent[ItemsControl].((animeArchiveHandlerGui:AnimeImportDisplayItem)DataContext).AnimeTitle}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                                                        <RadioButton Name="{CompiledBinding AnimeName}" Margin="5,5" CornerRadius="5" ClipToBounds="True" Padding="0" GroupName="{CompiledBinding $parent[ItemsControl].((animeArchiveHandlerGui:AnimeImportDisplayItem)DataContext).FileAnimeTitle}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                                                     </Panel>
                                                 </DataTemplate>
                                             </ItemsControl.ItemTemplate>

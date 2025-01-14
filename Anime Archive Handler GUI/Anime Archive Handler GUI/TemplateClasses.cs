@@ -62,7 +62,7 @@ public class AnimeDisplayItem(long? animeId, string animeName, int subEpisodeCou
     {
         get => ImageToLoad;
         set => this.RaiseAndSetIfChanged(ref ImageToLoad, value);
-    } // TODO: change this to not load one by one
+    }
     public string AnimeName { get; } = animeName;
     public int SubEpisodeCount { get; } = subEpisodeCount;
     public int DubEpisodeCount { get; } = dubEpisodeCount;
@@ -95,9 +95,9 @@ public class AnimeDisplayItem(long? animeId, string animeName, int subEpisodeCou
     public long? AnimeId { get; } = animeId;
 }
 
-public class AnimeImportDisplayItem(string animeTitle, ObservableCollection<AnimeDisplayItem>? animeSearchResults)
+public class AnimeImportDisplayItem(string fileAnimeTitle, ObservableCollection<AnimeDisplayItem>? animeSearchResults)
 {
-    public string AnimeTitle { get; set; } = animeTitle;
+    public string FileAnimeTitle { get; set; } = fileAnimeTitle;
     public ObservableCollection<AnimeDisplayItem>? AnimeSearchResults { get; set; } = animeSearchResults;
 }
 
@@ -106,10 +106,12 @@ public class EpisodeLanguageDisplayItem(List<Languages> languagesList)
     List<Languages> LanguagesList { get; set; } = languagesList;
 }
 
-public abstract class EpisodeDisplayItem(int episodeNumber, string animeName)
+public abstract class EpisodeDisplayItem(int episodeNumber, string animeName, string seasonPath, string episodePath)
 {
     public int EpisodeNumber { get; set; } = episodeNumber;
     public string AnimeName { get; set; } = animeName;
+    public string SeasonPath { get; set; } = seasonPath;
+    public string EpisodePath { get; set; } = episodePath;
 }
 
 // The Animes that the user has imported and are integrated into the app for their use

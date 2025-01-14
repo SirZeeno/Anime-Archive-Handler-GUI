@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Anime_Archive_Handler_GUI;
@@ -66,6 +69,39 @@ public static class HelperClass
         }
 
         return result;
+    }
+    
+    public static bool IsValidUrl(string url)
+    {
+        return Uri.TryCreate(url, UriKind.Absolute, out Uri? uriResult)
+               && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+    }
+    
+    public static async Task<HttpStatusCode?> GetStatusCodeAsync(string url)
+    {
+        if (!Uri.TryCreate(url, UriKind.Absolute, out Uri uriResult) ||
+            (uriResult.Scheme != Uri.UriSchemeHttp && uriResult.Scheme != Uri.UriSchemeHttps))
+        {
+            return null; // URL is not valid
+        }
+
+        try
+        {
+            using HttpClient client = new HttpClient();
+            client.Timeout = TimeSpan.FromSeconds(10); // Set a reasonable timeout
+            HttpResponseMessage response = await client.GetAsync(uriResult);
+            return response.StatusCode;
+        }
+        catch (HttpRequestException)
+        {
+            // Handle network errors (e.g., DNS failure, refused connection, etc.)
+            return null;
+        }
+        catch (TaskCanceledException)
+        {
+            // Handle request timeout
+            return null;
+        }
     }
 
     public static int ConvertMixedStringToNumber(string input)

@@ -1,78 +1,44 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Windows.Input;
-using Avalonia.Controls;
-using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
 using FluentAvalonia.UI.Controls;
 using LibVLCSharp.Shared;
+using CommunityToolkit.Mvvm.ComponentModel;
+
 using ReactiveUI;
 
 namespace Anime_Archive_Handler_GUI.ViewModels;
 
-public class AnimeDetailViewModel : ViewModelBase, IDisposable
+public partial class AnimeDetailViewModel : ObservableObject, IDisposable
 {
-    private EpisodeDisplayItem? _episodeDisplayItem;
-    public EpisodeDisplayItem? EpisodeDisplayItem
-    {
-        get => _episodeDisplayItem;
-        set => this.RaiseAndSetIfChanged(ref _episodeDisplayItem, value);
-    }
+    [ObservableProperty]
+    private ObservableCollection<EpisodeDisplayItem?> _episodeDisplayItem;
     
+    [ObservableProperty]
     private AnimeDto? _animeToDisplay;
-    public AnimeDto? AnimeToDisplay
-    {
-        get => _animeToDisplay;
-        set => this.RaiseAndSetIfChanged(ref _animeToDisplay, value);
-    }
     
+    [ObservableProperty]
     private string _animeTitle = string.Empty;
-    public string AnimeTitle
-    {
-        get => _animeTitle;
-        set => this.RaiseAndSetIfChanged(ref _animeTitle, value);
-    }
-    
+
+    public LibVLC LibVlc { get; set; }
+    [ObservableProperty]
     private MediaPlayer _mediaPlayer;
     
-    public MediaPlayer MediaPlayer
-    {
-        get => _mediaPlayer;
-        set => this.RaiseAndSetIfChanged(ref _mediaPlayer, value);
-    }
-    
+    [ObservableProperty]
     private Bitmap _trailerThumbnail;
     
-    public Bitmap TrailerThumbnail
-    {
-        get => _trailerThumbnail;
-        set => this.RaiseAndSetIfChanged(ref _trailerThumbnail, value);
-    }
-    
+    [ObservableProperty]
     private int _volumeSliderValue;
     
-    public int VolumeSliderValue
-    {
-        get => _volumeSliderValue;
-        set => this.RaiseAndSetIfChanged(ref _volumeSliderValue, value);
-    }
-    
+    [ObservableProperty]
     private float _videoProgressSliderValue;
     
-    public float VideoProgressSliderValue
-    {
-        get => _videoProgressSliderValue;
-        set => this.RaiseAndSetIfChanged(ref _videoProgressSliderValue, value);
-    }
-    
+    [ObservableProperty]
     private bool _isVolumeControlVisible;
-    public bool IsVolumeControlVisible
-    {
-        get => _isVolumeControlVisible;
-        set => this.RaiseAndSetIfChanged(ref _isVolumeControlVisible, value);
-    }
 
     private void SelectedTitle(AnimeDto? animeDto)
     {
@@ -102,18 +68,94 @@ public class AnimeDetailViewModel : ViewModelBase, IDisposable
             });
         }
     }
+    
+    public ICommand SelectEpisodeCommand { get; }
+    
+    private void SelectEpisode(int episodeNumber)
+    {
+        
+    }
+    
+    public ICommand MuteCommand { get; }
+    
+    [ObservableProperty]
+    private bool _isMuted;
+    
+    public ICommand PlayPauseCommand { get; }
+    public ICommand FullscreenToggleCommand { get; }
+    
+    public Symbol MuteUnmuteSymbol => IsMuted ? Symbol.SpeakerOff : Symbol.Speaker2;
+    public Symbol PlayPauseSymbol => MediaPlayer.IsPlaying ? Symbol.Pause : Symbol.Play;
+    public Symbol FullscreenSymbol => MediaPlayer.Fullscreen ? Symbol.FullScreenMinimize : Symbol.FullScreenMaximize; // not visually changing the symbol
 
+    
     public AnimeDetailViewModel()
     {
-        this.WhenAnyValue(x => x.MediaPlayer).Where(mediaPlayer => mediaPlayer != null).Subscribe(x => x.Volume = 100);
+        LibVlc = new LibVLC();
+        MediaPlayer = new MediaPlayer(LibVlc)
+        {
+            EnableHardwareDecoding = true
+        };
+        MediaPlayer.Volume = 100;
         VolumeSliderValue = 100;
+        IsMuted = MediaPlayer.Mute;
+        
+        PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(IsMuted))
+            {
+                OnPropertyChanged(nameof(MuteUnmuteSymbol));
+            }
+        };
+        
+        // Subscribe to an event that indicates a change in the playback state
+        MediaPlayer.Playing += (_, _) => OnPropertyChanged(nameof(PlayPauseSymbol));
+        MediaPlayer.Paused += (_, _) => OnPropertyChanged(nameof(PlayPauseSymbol));
+        MediaPlayer.Stopped += (_, _) => OnPropertyChanged(nameof(PlayPauseSymbol));
+        
+        PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(MediaPlayer.Fullscreen))
+            {
+                OnPropertyChanged(nameof(FullscreenSymbol));
+            }
+        };
+        
         this.WhenAnyValue(x => x.AnimeToDisplay).Where(newAnime => newAnime != null).Subscribe(SelectedTitle);
         OpenLinkCommand = ReactiveCommand.Create<string>(OpenLink);
+        SelectEpisodeCommand = ReactiveCommand.Create<int>(SelectEpisode);
+        MuteCommand = ReactiveCommand.Create(MuteOrUnmute);
+        PlayPauseCommand = ReactiveCommand.Create(PlayOrPause);
+        FullscreenToggleCommand = ReactiveCommand.Create(FullscreenToggle);
+    }
+    
+    private void MuteOrUnmute()
+    {
+        MediaPlayer.Mute = !MediaPlayer.Mute;
+        IsMuted = !MediaPlayer.Mute;
+    }
+
+    private void PlayOrPause()
+    {
+        if (MediaPlayer.IsPlaying)
+        {
+            MediaPlayer.Pause();
+        }
+        else
+        {
+            MediaPlayer.Play();
+        }
+    }
+
+    private void FullscreenToggle()
+    {
+        MediaPlayer.ToggleFullscreen(); // Toggle for the fullscreen state is not working as expected
     }
     
     public void Dispose()
     {
         MediaPlayer.Stop();
         MediaPlayer.Dispose();
+        LibVlc.Dispose();
     }
 }

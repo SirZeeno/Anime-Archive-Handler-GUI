@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anime Archive Handler GUI.i
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anime Archive Handler GUI.Browser", "Anime Archive Handler GUI\Anime Archive Handler GUI.Browser\Anime Archive Handler GUI.Browser.csproj", "{0490E89F-F94C-4BDF-AAC0-2932A1D954E3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anime Archive Handler GUI.UnitTesting", "Anime Archive Handler GUI.UnitTesting\Anime Archive Handler GUI.UnitTesting.csproj", "{236AFBE5-00E7-488A-9036-6E40B51D7404}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,5 +34,9 @@ Global
 		{0490E89F-F94C-4BDF-AAC0-2932A1D954E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0490E89F-F94C-4BDF-AAC0-2932A1D954E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0490E89F-F94C-4BDF-AAC0-2932A1D954E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{236AFBE5-00E7-488A-9036-6E40B51D7404}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{236AFBE5-00E7-488A-9036-6E40B51D7404}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{236AFBE5-00E7-488A-9036-6E40B51D7404}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{236AFBE5-00E7-488A-9036-6E40B51D7404}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

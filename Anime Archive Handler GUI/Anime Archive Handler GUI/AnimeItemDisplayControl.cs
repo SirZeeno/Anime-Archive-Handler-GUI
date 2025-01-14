@@ -19,7 +19,7 @@ using Views;
 
 public class AnimeItemDisplayControl
 {
-    public static AnimeDisplayListControl AnimeListInstance { get; set; } = null!;
+    public static AnimeDisplayListControlView AnimeListInstance { get; set; } = null!;
     
     private const int PaddingThickness = 10;
     private const int ImageMaxWidth = 225;
@@ -80,7 +80,7 @@ public class AnimeItemDisplayControl
             AllowMultiple = true
         });
     }
-    internal static async Task UserAddAnimeEpisodeToAnimeGrid() //TODO: Add functionality for user to add anime to grid
+    internal static async Task UserAddAnimeEpisodeToAnimeGrid() //TODO: Add functionality for user to add anime episode to grid
     {
         // Get top level from the current control. Alternatively, you can use Window reference instead.
         var topLevel = TopLevel.GetTopLevel(AnimeListInstance);
