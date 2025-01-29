@@ -142,19 +142,19 @@
             </StackPanel>
         </Border>
         
-        <ItemsRepeater Grid.Row="3" ItemsSource="{CompiledBinding EpisodeDisplayItem}">
-            <ItemsRepeater.ItemTemplate>
+        <ui:ItemsRepeater Grid.Row="3" ItemsSource="{CompiledBinding EpisodeDisplayItem}">
+            <ui:ItemsRepeater.ItemTemplate>
                 <DataTemplate DataType="animeArchiveHandlerGui:EpisodeDisplayItem"> 
                     <RadioButton GroupName="{CompiledBinding AnimeName}" Command="{CompiledBinding $parent[Grid].((vm:AnimeDetailViewModel)DataContext).SelectEpisodeCommand}" CommandParameter="{CompiledBinding EpisodeNumber}">
                         <TextBlock Text="{CompiledBinding EpisodeNumber}" FontWeight="ExtraBold" />
                     </RadioButton>
                 </DataTemplate>
-            </ItemsRepeater.ItemTemplate>
+            </ui:ItemsRepeater.ItemTemplate>
             
-            <ItemsRepeater.Layout>
-                <UniformGridLayout ItemsJustification="Center"/>
-            </ItemsRepeater.Layout>
-        </ItemsRepeater>
+            <ui:ItemsRepeater.Layout>
+                <ui:UniformGridLayout ItemsJustification="Center"/>
+            </ui:ItemsRepeater.Layout>
+        </ui:ItemsRepeater>
         <ScrollViewer Grid.Row="4" VerticalScrollBarVisibility="Auto">
             <StackPanel>
                 <TextBlock Text="{CompiledBinding AnimeTitle}" FontWeight="Bold" FontSize="20" Margin="10,0,0,10"/>

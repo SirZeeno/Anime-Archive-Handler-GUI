@@ -13,6 +13,9 @@ using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using Avalonia.Media.Imaging;
 using DynamicData;
+using FluentAvalonia.UI.Controls;
+using ItemsRepeaterElementClearingEventArgs = Avalonia.Controls.ItemsRepeaterElementClearingEventArgs;
+using ItemsRepeaterElementPreparedEventArgs = Avalonia.Controls.ItemsRepeaterElementPreparedEventArgs;
 
 namespace Anime_Archive_Handler_GUI.Views;
 using static Helpers.DailyFeatured;
