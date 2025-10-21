@@ -22,8 +22,6 @@ using static Helpers.DailyFeatured;
 
 public partial class AnimeDisplayListControlView : UserControl
 {
-    private Grid _animeDynamicGrid;
-    
     private static List<long?> _buffer = [];
     private static readonly Timer Timer = new(500);
 
@@ -154,7 +152,7 @@ public partial class AnimeDisplayListControlView : UserControl
             
         foreach (var item in AnimeDisplayListViewModel.DynamicAnimeItemGrid)
         {
-            if (!result.TryGetValue(item.AnimeId, out var imagesSet)) continue;
+            if (!result.TryGetValue((long)item.AnimeId!, out var imagesSet)) continue;
             if (imagesSet.JPG.ImageBitmap != null)
             {
                 item.AnimeImage ??= new Bitmap(new MemoryStream(imagesSet.JPG.ImageBitmap));

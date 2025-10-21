@@ -19,13 +19,13 @@ public partial class MainView : UserControl
         InitializeComponent();
         AnimeDisplayListControl ??= new AnimeDisplayListControlView(NavigateToShowDetail); // This is so the Front page doesn't have to get loaded every time you switch pages
         AnimeCategoryTabControl.SelectionChanged += HeaderTabControl_SelectionChanged;
-        HomeButton.Click += SetTabIndexToHome;
+        HomeButton.Click += GoHome;
         LoadHomePage();
         AttachedToVisualTree += OnAttachedToVisualTree;
         //ChangeStatus(Language.Sub, 12, 12, "Cowboy Bebop"); // needs to get fixed to get working again
     }
     
-    private void OnAttachedToVisualTree(object sender, VisualTreeAttachmentEventArgs e)
+    private void OnAttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
     {
         var window = GetParentWindow();
         if (window != null)
@@ -60,23 +60,23 @@ public partial class MainView : UserControl
         return this.FindAncestorOfType<Window>();
     }
     
-    private void HeaderTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    private void HeaderTabControl_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
         // Get the selected tab item
-        TabItem selectedTab = (TabItem)AnimeCategoryTabControl.SelectedItem;
+        TabItem selectedTab = (TabItem)AnimeCategoryTabControl.SelectedItem!;
 
         switch (AnimeCategoryTabControl.SelectedIndex)
         {
             // Set the content of the ContentControl based on the selected tab
             case 0:
                 // Load content for Tab 1
-                ConsoleExt.WriteLineWithPretext("HomePage Tab selected", ConsoleExt.OutputType.Info);
+                ConsoleExt.WriteLineWithPretext("HomePage Tab selected");
                 AnimeListControlView.Content = AnimeDisplayListControl;
                 break;
             case 1:
                 break;
             case 2:
-                ConsoleExt.WriteLineWithPretext("Tab 2 selected", ConsoleExt.OutputType.Info);
+                ConsoleExt.WriteLineWithPretext("Tab 2 selected");
                 break;
             case 3:
                 AnimeItemDisplayControl.SetGridItems();//.OnCompleted(AdjustGridLayout);
@@ -90,9 +90,10 @@ public partial class MainView : UserControl
         }
     }
 
-    private void SetTabIndexToHome(object? sender, RoutedEventArgs e)
+    private void GoHome(object? sender, RoutedEventArgs e)
     {
         AnimeCategoryTabControl.SelectedIndex = 0;
+        AnimeListControlView.Content = AnimeDisplayListControl;
     }
 
     public void HeaderButtonsClickHandler(object sender, RoutedEventArgs e)
@@ -104,10 +105,10 @@ public partial class MainView : UserControl
                 new ImportView {DataContext = new ImportViewModel()}.Show();
                 break;
             case "ImportFoldersButton":
-                AnimeItemDisplayControl.UserAddAnimeToAnimeGrid();
+                _ = AnimeItemDisplayControl.UserAddAnimeToAnimeGrid();
                 break;
             case "ImportFilesButton":
-                AnimeItemDisplayControl.UserAddAnimeEpisodeToAnimeGrid();
+                _ = AnimeItemDisplayControl.UserAddAnimeEpisodeToAnimeGrid();
                 break;
             case "ExportButton":
                 break;

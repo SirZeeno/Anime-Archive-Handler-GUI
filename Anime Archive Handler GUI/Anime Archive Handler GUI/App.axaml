@@ -3,7 +3,6 @@
              xmlns:local="using:Anime_Archive_Handler_GUI"
              xmlns:animeArchiveHandlerGui="clr-namespace:Anime_Archive_Handler_GUI"
              xmlns:sty="using:FluentAvalonia.Styling"
-             xmlns:ui="using:FluentAvalonia.UI.Controls"
              xmlns:converters="clr-namespace:Anime_Archive_Handler_GUI.Converters"
              x:Class="Anime_Archive_Handler_GUI.App"
              RequestedThemeVariant="Dark">

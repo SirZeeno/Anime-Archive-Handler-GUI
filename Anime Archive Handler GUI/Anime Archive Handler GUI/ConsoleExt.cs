@@ -15,6 +15,14 @@ public static class ConsoleExt
         Question
     }
 
+    /// <summary>
+    /// Writes a line to the console with a pretext based on the output type.
+    /// </summary>
+    /// <param name="output">Output</param>
+    /// <param name="outputType">Output type default is info</param>
+    /// <param name="exception">Exception default is null</param>
+    /// <typeparam name="T">Any type</typeparam>
+    /// <returns>The length of the pretext</returns>
     public static int WriteLineWithPretext<T>(T output, OutputType outputType = OutputType.Info, Exception? exception = null)
     {
         var length1 = CurrentTime();
@@ -34,6 +42,14 @@ public static class ConsoleExt
         return length1 + length2;
     }
 
+    /// <summary>
+    /// Writes a single line to the console with a pretext based on the output type.
+    /// </summary>
+    /// <param name="output">Output</param>
+    /// <param name="outputType">Output type default is info</param>
+    /// <param name="exception">Exception default is null</param>
+    /// <typeparam name="T">Any type</typeparam>
+    /// <returns>The length of the pretext</returns>
     public static int WriteWithPretext<T>(T output, OutputType outputType = OutputType.Info, Exception? exception = null)
     {
         var length1 = CurrentTime();
@@ -53,6 +69,11 @@ public static class ConsoleExt
         return length1 + length2;
     }
 
+    /// <summary>
+    /// Determines the output type and returns the length of the pretext.
+    /// </summary>
+    /// <param name="outputType">Output type</param>
+    /// <returns>The length of the pretext</returns>
     private static int DetermineOutputType(OutputType outputType)
     {
         return outputType switch

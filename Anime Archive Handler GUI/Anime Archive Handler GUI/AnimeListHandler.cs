@@ -22,11 +22,14 @@ public static class AnimeListHandler
     private static List<AnimeDto?>? _anime;
     private static int[]? _seasonNumber;
 
+    /// <summary>
+    /// Starts the Anime List Editing process.
+    /// </summary>
     public static void StartAnimeListEditing()
     {
         if (string.IsNullOrEmpty(_animeList)) _animeList = AnimeListBackup;
 
-        ConsoleExt.WriteLineWithPretext($"Anime List is Stored at: {_animeList}", ConsoleExt.OutputType.Info);
+        ConsoleExt.WriteLineWithPretext($"Anime List is Stored at: {_animeList}");
         CheckFileExistence(_animeList);
 
         // Create the layout
@@ -51,7 +54,7 @@ public static class AnimeListHandler
             string pattern = Regex.Escape("Anime Name or URL: ");
             if (inputString == null) return;
             var cutInputString = Regex.Replace(inputString, pattern, "");
-            var animeName = CheckIfUrl(cutInputString);
+            var animeName = AnimeNameFromUrl(cutInputString);
 
             _seasonNumber = ExtractingSeasonNumber(animeName);
 
@@ -87,48 +90,75 @@ public static class AnimeListHandler
         }
     }
 
-    private static string CheckIfUrl(string cutInputString)
+    /// <summary>
+    /// Checks if the input string is a URL or not and creates a new string with the anime name.
+    /// </summary>
+    /// <param name="cutInputString">String to check</param>
+    /// <returns>Anime Name cut from the URL</returns>
+    private static string AnimeNameFromUrl(string cutInputString)
     {
         if (!cutInputString.Contains("https://") && !cutInputString.Contains("http://")) return cutInputString;
         var animeName = UrlNameExtractor(cutInputString);
-        ConsoleExt.WriteLineWithPretext($"Anime Name: {animeName}", ConsoleExt.OutputType.Info);
+        ConsoleExt.WriteLineWithPretext($"Anime Name: {animeName}");
         return animeName;
 
     }
 
+    /// <summary>
+    /// Adds the anime to the list.
+    /// </summary>
+    /// <param name="animeName">Anime Name</param>
     private static async void AddAnime(string? animeName)
     {
-        if (HeadlessOperations)
+        try
         {
-            if (animeName != null) _anime?.Add(SqlDbHandler.GetAnimeByTitle(await RemoveUnnecessaryNamePieces(animeName)).First());
-        }
-        else
-        {
-            if (animeName != null) _anime?.AddRange(SqlDbHandler.GetAnimeByTitle(await RemoveUnnecessaryNamePieces(animeName)));
-        }
+            if (HeadlessOperations)
+            {
+                if (animeName != null) _anime?.Add(SqlDbHandler.GetAnimeByTitle(await RemoveUnnecessaryNamePieces(animeName)).First());
+            }
+            else
+            {
+                if (animeName != null) _anime?.AddRange(SqlDbHandler.GetAnimeByTitle(await RemoveUnnecessaryNamePieces(animeName)));
+            }
         
-        if (_anime == null) return;
-        foreach (var anime in _anime.Where(anime => anime != null))
+            if (_anime == null) return;
+            foreach (var anime in _anime.Where(anime => anime != null))
+            {
+                if (anime != null) await SaveToDb(anime, new EditAnimeList());
+            }
+        }
+        catch (Exception e)
         {
-            if (anime != null) await SaveToDb(anime, new EditAnimeList());
+            ConsoleExt.WriteLineWithPretext($"An error has occured while adding the Anime to the Anime List. Error: {e}", ConsoleExt.OutputType.Error, e);
         }
     }
 
+    /// <summary>
+    /// Removes the anime from the list.
+    /// </summary>
+    /// <param name="animeName">Anime Name</param>
     private static async void RemoveAnime(string? animeName)
     {
-        if (HeadlessOperations)
+        try
         {
-            if (animeName != null) _anime?.Add(SqlDbHandler.GetAnimeByTitle(await RemoveUnnecessaryNamePieces(animeName)).First());
-        }
-        else
-        {
-            if (animeName != null) _anime?.AddRange(SqlDbHandler.GetAnimeByTitle(await RemoveUnnecessaryNamePieces(animeName)));
-        }
+            if (HeadlessOperations)
+            {
+                if (animeName != null) _anime?.Add(SqlDbHandler.GetAnimeByTitle(await RemoveUnnecessaryNamePieces(animeName)).First());
+            }
+            else
+            {
+                if (animeName != null) _anime?.AddRange(SqlDbHandler.GetAnimeByTitle(await RemoveUnnecessaryNamePieces(animeName)));
+            }
 
-        if (_anime == null) return;
-        foreach (var anime in _anime.Where(anime => anime != null))
+            if (_anime == null) return;
+            foreach (var anime in _anime.Where(anime => anime != null))
+            {
+                if (anime != null) RemoveFromDb((long)anime.MalId!, new EditAnimeList());
+            }
+        }
+        catch (Exception e)
         {
-            if (anime != null) RemoveFromDb((long)anime.MalId!, new EditAnimeList());
+            ConsoleExt.WriteLineWithPretext($"An error has occured while removing the Anime from the Anime List. Error: {e}", ConsoleExt.OutputType.Error, e);
         }
     }
 

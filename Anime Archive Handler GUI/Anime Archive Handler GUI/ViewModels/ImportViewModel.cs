@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using Avalonia.Controls;
 using ReactiveUI;
@@ -68,18 +66,18 @@ public class ImportViewModel : ViewModelBase
     void RemoveItem(ImportSettings item)
     {
         SelectedPathDisplay.Remove(item);
-        ConsoleExt.WriteLineWithPretext($"Removed Path: '{item.SelectedPath}'", ConsoleExt.OutputType.Info);
+        ConsoleExt.WriteLineWithPretext($"Removed Path: '{item.SelectedPath}'");
     }
 
     public ImportViewModel()
     {
         SelectedOption = ImportType.Anime;
-        IObservable<bool> canExecuteAdd = this.WhenAnyValue(vm => vm.PathTextBox, (path) => !string.IsNullOrEmpty(path));
+        IObservable<bool> canExecuteAdd = this.WhenAnyValue(vm => vm.PathTextBox, path => !string.IsNullOrEmpty(path));
         IObservable<bool> canExecuteScan = this.WhenAnyValue(x => x.Items.Count).Select(count => count > 0);
         AddPathToQueueCommand = ReactiveCommand.Create<string?>(path => ImportHandler.AddPathToQueue(new ImportSettings(path, HasMultipleAnimeInOneFolder, HasSeasonFolders, IsOva, IsMovie, SelectedOption), SelectedPathDisplay), canExecuteAdd);
         StartScanCommand = ReactiveCommand.Create(() => ImportHandler.ScanPath(SelectedPathDisplay), canExecuteScan);
         BrowseFoldersCommand = ReactiveCommand.Create(() => ImportHandler.BrowseFolders(new ImportSettings(String.Empty, HasMultipleAnimeInOneFolder, HasSeasonFolders, IsOva, IsMovie, SelectedOption)));
         BrowseFilesCommand = ReactiveCommand.Create(() => ImportHandler.BrowseFiles(new ImportSettings(String.Empty, HasMultipleAnimeInOneFolder, HasSeasonFolders, IsOva, IsMovie, SelectedOption)));
-        RemovePathFromQueueCommand = ReactiveCommand.Create<ImportSettings>(RemoveItem); // no command is being set for some reason
+        RemovePathFromQueueCommand = ReactiveCommand.Create<ImportSettings>(RemoveItem);
     }
 }

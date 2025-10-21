@@ -28,7 +28,11 @@ public static partial class InputStringHandler
         return string.Empty;
     }
     
-    //removes all unnecessary pieces from the anime name
+    /// <summary>
+    /// Removes all unnecessary pieces from the anime name.
+    /// </summary>
+    /// <param name="fileName">File name</param>
+    /// <returns>Cleaned name</returns>
     internal static async Task<string> RemoveUnnecessaryNamePieces(string fileName)
     {
         var withoutBrackets = MyRegex6().Replace(fileName, string.Empty);

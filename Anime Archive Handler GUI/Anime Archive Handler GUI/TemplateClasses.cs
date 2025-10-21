@@ -54,7 +54,7 @@ public class AnimeCarousel(ObservableCollection<CarouselItem>? items)
     }
 }
 
-public class AnimeDisplayItem(long? animeId, string animeName, int subEpisodeCount, int dubEpisodeCount, int overallEpisodeCount, Language subOrDub = default, int paddingThickness = 10, int imageMaxWidth = 225, int imageMaxHeight = 335) : ViewModelBase
+public class AnimeDisplayItem(long? animeId, string? animeName, int subEpisodeCount, int dubEpisodeCount, int overallEpisodeCount, Language subOrDub = default, int paddingThickness = 10, int imageMaxWidth = 225, int imageMaxHeight = 335) : ViewModelBase
 {
     // Main Information
     private Bitmap? ImageToLoad;
@@ -63,7 +63,7 @@ public class AnimeDisplayItem(long? animeId, string animeName, int subEpisodeCou
         get => ImageToLoad;
         set => this.RaiseAndSetIfChanged(ref ImageToLoad, value);
     }
-    public string AnimeName { get; } = animeName;
+    public string? AnimeName { get; } = animeName;
     public int SubEpisodeCount { get; } = subEpisodeCount;
     public int DubEpisodeCount { get; } = dubEpisodeCount;
     public int OverallEpisodeCount { get; } = overallEpisodeCount;

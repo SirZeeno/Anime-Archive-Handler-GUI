@@ -33,20 +33,20 @@ public class AnimeItemDisplayControl
         ObservableCollection<AnimeDisplayItem> animeItems = [];
 
         IEnumerable<AnimeDto> animeList = SqlDbHandler.GetAnimesByCount(count);
-        List<long?> malIds = new List<long?>();
+        List<long> malIds = new List<long>();
         
         foreach (var searchResult in animeList) // (Warning) if i convert this into linq this will make tons of db calls
         {
-            malIds.Add(searchResult.MalId);
+            malIds.Add((long)searchResult.MalId!);
         }
 
         // TODO: use images that have been reduced in size by bitmaptowidth
-        Dictionary<long?, ICollection<TitleEntryDto>> titles = SqlDbHandler.GetAnimeTitlesByIds(malIds);
+        Dictionary<long, ICollection<TitleEntryDto>> titles = SqlDbHandler.GetAnimeTitlesByIds(malIds);
 
         foreach (var malId in malIds)
         {
             titles.TryGetValue(malId, out var titleEntries);
-            string title = (titleEntries.Where(x => x.Type.ToLower() == "english").Select(x => x.Title).FirstOrDefault() ?? titleEntries.Where(x => x.Type.ToLower() == "default").Select(x => x.Title).FirstOrDefault()) ?? string.Empty;
+            string? title = (titleEntries.Where(x => x.Type.ToLower() == "english").Select(x => x.Title).FirstOrDefault() ?? titleEntries.Where(x => x.Type.ToLower() == "default").Select(x => x.Title).FirstOrDefault()) ?? string.Empty;
             
             animeItems.Add(new AnimeDisplayItem(malId, title, 12, 12, 12, Language.Dub));
         }

@@ -9,7 +9,7 @@
              x:Class="Anime_Archive_Handler_GUI.Views.AnimeDisplayListControlView"
              x:DataType="vm:AnimeDisplayListViewModel">
     <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
+        <!-- This only sets the DataContext for the previewer in the IDE,
          to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:AnimeDisplayListViewModel/>
     </Design.DataContext>
@@ -19,23 +19,6 @@
     </UserControl.DataContext>
     
     <UserControl.Styles>
-        <!-- Style for transparent buttons -->
-        <Style Selector="Button.transparentButton">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderBrush" Value="Transparent"/>
-            <!-- Default Foreground -->
-            <Setter Property="Foreground" Value="#929292"/>
-        </Style>
-        
-        <!-- Style for hover effect -->
-        <Style Selector="Button.transparentButton:pointerover">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderBrush" Value="Transparent"/>
-        </Style>
-        <Style Selector="Button.transparentButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Foreground" Value="#96b6d0"/>
-        </Style>
-        
         <Style Selector="Button.transparentIcon">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
@@ -106,7 +89,7 @@
         <!-- Main Content Area -->
         <Grid Grid.Row="0" Background="#191919" ColumnDefinitions="*,250">
             <Grid Grid.Column="0" RowDefinitions="Auto,40,*">
-                <!-- Featured Section -->
+                <!-- Featured Section --> <!-- Add this to the scrollable area -->
                 <ContentControl Grid.Row="0" ContentTemplate="{StaticResource AnimeRecommendationCarousel}" Content="{CompiledBinding AnimeRecommendations}"/>
 
                 <StackPanel Grid.Row="1" Orientation="Horizontal" x:Name="AnimeMenuButtonStackPanel">
@@ -134,16 +117,16 @@
                                                 <StackPanel Name = "SubDubStackPanel" Background="Transparent" Height="40" Width="80" VerticalAlignment="Bottom" HorizontalAlignment="Center" Orientation="Horizontal">
                                                     <StackPanel Name="DubStackPanel" Background="#313131" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2,0,0,0" Orientation="Horizontal">
                                                         <ui:SymbolIcon Symbol="Microphone" FontSize="20" Foreground="White" HorizontalAlignment="Center"/>
-                                                        <TextBlock Text="{CompiledBinding DubEpisodeCount}" Foreground="White" FontSize="16"/>
+                                                        <TextBlock Text="{CompiledBinding DubEpisodeCount}" Foreground="White" FontSize="16" Margin="0,0,2,0"/>
                                                     </StackPanel>
                                                     
                                                     <StackPanel Name="SubStackPanel" Background="#313131" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2,0,0,0" Orientation="Horizontal">
-                                                        <ui:SymbolIcon Symbol="ClosedCaption" FontSize="20" Foreground="White" HorizontalAlignment="Center"/>
-                                                        <TextBlock Text="{CompiledBinding SubEpisodeCount}" Foreground="White" FontSize="16"/>
+                                                        <ui:SymbolIcon Symbol="ClosedCaption" FontSize="20" Foreground="White" HorizontalAlignment="Center" Margin="2,0,2,0"/>
+                                                        <TextBlock Text="{CompiledBinding SubEpisodeCount}" Foreground="White" FontSize="16" Margin="0,0,2,0"/>
                                                     </StackPanel>
                                                     
                                                     <StackPanel Name="OverallStackPanel" Background="#313131" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2,0,0,0" Orientation="Horizontal">
-                                                        <TextBlock Text="{CompiledBinding OverallEpisodeCount}" Foreground="White" FontSize="16"/>
+                                                        <TextBlock Text="{CompiledBinding OverallEpisodeCount}" Foreground="White" FontSize="16" Margin="2,0,2,0"/>
                                                     </StackPanel>
                                                 </StackPanel>
                                             </Panel>

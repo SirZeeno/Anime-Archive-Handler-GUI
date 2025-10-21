@@ -12,6 +12,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
 using FluentAvalonia.UI.Controls;
+using JikanDotNet;
 using LibVLCSharp.Shared;
 using Media = LibVLCSharp.Shared.Media;
 
@@ -25,9 +26,12 @@ public partial class AnimeDetailControlView : UserControl
     
     private readonly CancellationTokenSource? _cancellationTokenSource;
     private AnimeDetailViewModel AnimeDetailViewModel => (DataContext as AnimeDetailViewModel)!;
+
+    private readonly AnimeDto? _animeDataObject;
     public AnimeDetailControlView(AnimeDto? anime, Action navigation)
     {
         InitializeComponent();
+        _animeDataObject = anime;
         
         _navigateToAnimeDisplayList = navigation;
         AnimeDetailViewModel.AnimeToDisplay = anime;
@@ -45,12 +49,28 @@ public partial class AnimeDetailControlView : UserControl
         _cancellationTokenSource = new CancellationTokenSource();
         PlayTrailerFromStreamAsync(_cancellationTokenSource.Token);
     }
+    
+    //This Method is called when the control is detached from the visual tree to clean up resources
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnDetachedFromVisualTree(e);
+
+        // Stop playback
+        AnimeDetailViewModel.MediaPlayer.Stop();
+
+        // Cancel stream copy / yt-dlp
+        _cancellationTokenSource?.Cancel();
+
+        // Optionally unsubscribe from events
+        ProgressSlider.PropertyChanged -= ScrubSlider_PropertyChanged;
+        VolumeSlider.PropertyChanged -= VolumeSlider_PropertyChanged;
+        AnimeDetailViewModel.MediaPlayer.TimeChanged -= MediaPlayer_TimeChanged;
+
+        Console.WriteLine($"{_animeDataObject?.Title} Detail View has been detached and cleaned up.");
+    }
 
     private void BackClicked(object sender, RoutedEventArgs e)
     {
-        AnimeDetailViewModel.MediaPlayer.Stop();
-        _cancellationTokenSource?.Cancel();
-        
         _navigateToAnimeDisplayList();
     }
     
@@ -79,7 +99,7 @@ public partial class AnimeDetailControlView : UserControl
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = @"F:\Rider Projects\Anime Archive Handler GUI\Anime Archive Handler GUI\Anime Archive Handler GUI\Anime Archive Handler GUI\External Dependencies\yt-dlp.exe",
+                    FileName = @$"{Environment.CurrentDirectory}\External Dependencies\yt-dlp.exe",
                     Arguments = $"-o - --buffer-size 10000 \"{_trailerUrl}\"",
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
@@ -127,7 +147,7 @@ public partial class AnimeDetailControlView : UserControl
     
     private void PlayVideo_Click(object sender, RoutedEventArgs e)
     {
-        using var media = new Media(AnimeDetailViewModel.LibVlc, new Uri(@"E:\TV Shows\Scott Pilgrim Takes Off\Season 1\Scott Pilgrim Takes Off - S01E01 - Scott Pilgrim's Precious Little Life WEBDL-1080p.mkv"));
+        using var media = new Media(AnimeDetailViewModel.LibVlc, new Uri(@"E:\TV Shows\Scott Pilgrim Takes Off\Season 1\Scott Pilgrim Takes Off - S01E01 - Scott Pilgrim's Precious Little Life WEBDL-1080p.mkv")); //TODO: Change this to get the correct file
         AnimeDetailViewModel.MediaPlayer.Play(media);
     }
     

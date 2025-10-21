@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using CsvHelper;
@@ -17,11 +16,16 @@ using static FileHandler;
 
 public static class FileHandler
 {
-    internal static readonly string CacheFilePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "Settings/FilePathCache.json");
+    internal static readonly string CacheFilePath = Path.Combine(Path.GetDirectoryName(Environment.CurrentDirectory)!, "Settings/FilePathCache.json");
     private static readonly Dictionary<string, string> FileCache = JsonFileUtility.LoadCache(CacheFilePath);
     private static string? _errorLogFile;
     
-    // Implements checks for file existence, integrity, etc.
+    /// <summary>
+    /// Checks if the file is valid to move by checking for file existence and integrity.
+    /// </summary>
+    /// <param name="sourceFile">Source file</param>
+    /// <param name="destinationFile">Destination file</param>
+    /// <returns>Returns true if the file is valid to move</returns>
     public static bool IsValidToMove(string sourceFile, string destinationFile)
     {
         var existence = CheckForExistence(sourceFile, destinationFile);
@@ -30,7 +34,26 @@ public static class FileHandler
         return !FileIntegrityCheck([sourceFile, destinationFile]);
     }
     
-    //File integrity checks if all the files in a anime folder aren't corrupted and returns false if the file is corrupt and is used to check if the downloaded anime is fully working
+    /// <summary>
+    /// Checks if the files are valid to move by checking for file existence and integrity.
+    /// </summary>
+    /// <param name="sourceFiles">List of source files</param>
+    /// <param name="destinationFiles">List of destination files</param>
+    /// <returns>List of booleans indicating if the files are valid to move</returns>
+    public static List<bool> IsValidToMove(List<string> sourceFiles, List<string> destinationFiles)
+    {
+        List<bool> isValid = new();
+        for (var i = 0; i < sourceFiles.Count; i++)
+        {
+            var existence = CheckForExistence(sourceFiles[i], destinationFiles[i]);
+            if (!existence) isValid.Add(FileIntegrityCheck(sourceFiles));
+            ConsoleExt.WriteLineWithPretext("File Already Exists in Output Folder", ConsoleExt.OutputType.Warning);
+            isValid.Add(!FileIntegrityCheck([sourceFiles[i], destinationFiles[i]]));
+        }
+        return isValid;
+    }
+    
+    //File integrity checks if all the files in the anime folder aren't corrupted and returns false if the file is corrupt and is used to check if the downloaded anime is fully working
     // and if one of the filed in the anime stored structure is corrupted
     public static bool FileIntegrityCheck(IEnumerable<string> videoFilePaths)
     {
@@ -74,6 +97,11 @@ public static class FileHandler
         return new ObservableCollection<EpisodeDisplayItem>();
     }
     
+    /// <summary>
+    /// Reads the Animetosho text file and converts it to a CSV file.
+    /// </summary>
+    /// <param name="filePath">The path to the text file to be converted.</param>
+    /// <returns>String containing the path to the new CSV file.</returns>
     public static string ReadAnimetoshoTxt(string filePath)
     {
         try
@@ -97,7 +125,7 @@ public static class FileHandler
                 }
             }
 
-            ConsoleExt.WriteLineWithPretext("File converted successfully.", ConsoleExt.OutputType.Info);
+            ConsoleExt.WriteLineWithPretext("File converted successfully.");
             return outputFilePath;
         }
         catch (Exception? e)
@@ -108,7 +136,11 @@ public static class FileHandler
         }
     }
     
-    //Extracts the Audio Track Language by reading the Metadata and is used for language detection of a downloaded anime
+    /// <summary>
+    /// Extracts the Audio Track Language by reading the Metadata and is used for language detection of a downloaded anime.
+    /// </summary>
+    /// <param name="videoFilePath">Path to the video file</param>
+    /// <returns>List of Audio Track Languages</returns>
     public static List<string?> TrackLanguageFromMetadata(string videoFilePath)
     {
         var mediaInfo = FFProbe.Analyse(videoFilePath);
@@ -118,7 +150,12 @@ public static class FileHandler
             .Where(audioStreamLanguage => audioStreamLanguage != null).ToList();
     }
     
-    // Checks if the file already existing in the output folder
+    /// <summary>
+    /// Checks if the file already existing in the output folder using the MD5 checksum.
+    /// </summary>
+    /// <param name="source">Source File</param>
+    /// <param name="destination">Destination File</param>
+    /// <returns>Bool is true if the files are the same</returns>
     private static bool CheckForExistence(string source, string destination)
     {
         var sourceHash = GetMd5Checksum(source);
@@ -127,7 +164,11 @@ public static class FileHandler
         return sourceHash == destinationHash;
     }
     
-    // Calculate MD5 checksum of a file and is used for checking if two of the same files are actually the same
+    /// <summary>
+    /// Calculates the MD5 checksum of a file.
+    /// </summary>
+    /// <param name="filePath">Path to the file</param>
+    /// <returns>String containing the MD5 checksum</returns>
     private static string GetMd5Checksum(string filePath)
     {
         using var md5 = MD5.Create();
@@ -136,14 +177,21 @@ public static class FileHandler
         return BitConverter.ToString(hash).Replace("-", "").ToLower();
     }
     
-    // Checks the existence of a file, creates it if it doesn't exist
+    /// <summary>
+    /// Checks if a file exists, and creates it if it doesn't.
+    /// </summary>
+    /// <param name="fileToCheck">The path to the file to check</param>
     public static void CheckFileExistence(string fileToCheck)
     {
         if (!File.Exists(fileToCheck)) File.Create(fileToCheck);
     }
     
-    // need to start caching all those, so it only has to read them from the cache and check if the exist and if they don't, search for them again
-    // returns the file path in the program folder and is used to find a file in the program directory when it isn't always going to be in the same place
+    /// <summary>
+    /// Gets the path to a file in the program directory.
+    /// </summary>
+    /// <param name="fileNameWithExtension">The name of the file with its extension</param>
+    /// <returns>Returns the path to the file</returns>
+    /// <exception cref="FileNotFoundException"></exception>
     public static string GetFileInProgramFolder(string fileNameWithExtension)
     {
         if (FileCache.TryGetValue(fileNameWithExtension, out var cachedPath) && File.Exists(cachedPath))
@@ -151,7 +199,7 @@ public static class FileHandler
             return cachedPath;
         }
 
-        var baseDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
+        var baseDirectory = Path.GetDirectoryName(Environment.CurrentDirectory)!;
 
         foreach (var file in Directory.GetFiles(baseDirectory, fileNameWithExtension, SearchOption.AllDirectories))
         {
@@ -163,13 +211,18 @@ public static class FileHandler
 
         var message = $"Couldn't find {fileNameWithExtension} file in program directory!";
         ConsoleExt.WriteLineWithPretext(message, ConsoleExt.OutputType.Error, new FileNotFoundException());
-        throw new FileNotFoundException($"");
+        throw new FileNotFoundException(message);
     }
 
-    // returns the directory in the program folder and is used when the folder directory that i'm looking for isn't always in the same spot
+    /// <summary>
+    /// Gets the path to a directory in the program folder.
+    /// </summary>
+    /// <param name="directoryName">Name of the Folder to look for</param>
+    /// <returns>Path to the directory</returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public static string GetDirectoryInProgramFolder(string directoryName)
     {
-        foreach (var directory in Directory.GetDirectories(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, directoryName, SearchOption.AllDirectories))
+        foreach (var directory in Directory.GetDirectories(Path.GetDirectoryName(Environment.CurrentDirectory)!, directoryName, SearchOption.AllDirectories))
         {
             return directory;
         }
@@ -206,7 +259,13 @@ public static partial class SettingsManager
 {
     private static readonly FileIniDataParser Parser = new();
 
-    // Returns a specified setting which can be used to get user settings or stored settings
+    /// <summary>
+    /// Gets the value of a specified setting from a file.
+    /// </summary>
+    /// <param name="filePath">Path to the file</param>
+    /// <param name="sectionName">Name of the section</param>
+    /// <param name="keyName">Name of the key</param>
+    /// <returns>String containing the value</returns>
     private static string GetValue(string filePath, string sectionName, string keyName)
     {
         var data = Parser.ReadFile(filePath);
@@ -216,7 +275,13 @@ public static partial class SettingsManager
         return match.Success ? GetDirectoryInProgramFolder(MyRegex().Replace(data[sectionName][keyName], "")) : data[sectionName][keyName];
     }
     
-    // Save a specified setting
+    /// <summary>
+    /// Saves a specified setting to a file.
+    /// </summary>
+    /// <param name="filePath">Path to the file</param>
+    /// <param name="sectionName">Name of the section</param>
+    /// <param name="keyName">Name of the key</param>
+    /// <param name="value">Value to save</param>
     public static void SaveSetting(string filePath, string sectionName, string keyName, string value)
     {
         string userSettings = JsonFileUtility.LoadCache(CacheFilePath)["UserSettings"];
@@ -225,7 +290,12 @@ public static partial class SettingsManager
         Parser.WriteFile(filePath, data);
     }
     
-    // Takes a file name and a root path and returns its cached path or gets it in the root path folder if it isn't cached or not found
+    /// <summary>
+    /// Gets the path of a file or folder from the cache or searches for it in the specified root path if it isn't cached.
+    /// </summary>
+    /// <param name="folderOrFileName">The name of the file or folder</param>
+    /// <param name="rootPath">The root path to search for the file or folder</param>
+    /// <returns>String containing the path</returns>
     public static string GetPathSetting(string folderOrFileName, string rootPath)
     {
         if (JsonFileUtility.LoadCache(CacheFilePath).TryGetValue(folderOrFileName, out var cachedPath) && Path.Exists(cachedPath)) // checks if the input folderOrFileName is cached
@@ -252,7 +322,12 @@ public static partial class SettingsManager
         return String.Empty; // returns an empty string if the file or folder isn't found
     }
     
-    // Get a specified setting from either the user settings or the default settings
+    /// <summary>
+    /// Gets a specified setting from either the user settings or the default settings.
+    /// </summary>
+    /// <param name="sectionName">Name of the section</param>
+    /// <param name="keyName">Name of the key</param>
+    /// <returns>Returns a string containing the value</returns>
     public static string GetSetting(string sectionName, string keyName)
     {
         string settings = CommonSettings.SettingsPath;

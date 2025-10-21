@@ -14,7 +14,7 @@ public class AnimeDto
     public long? MalId { get; set; }
     [MaxLength(200)]
     public string Url { get; set; }
-    public ImagesSetDto Images { get; set; }
+    public ImagesSetDto? Images { get; set; }
     public AnimeTrailerDto Trailer { get; set; }
     public long? AnimeImageSetBitmapId { get; set; } // Foreign key to AnimeImageSetBitmap
     public AnimeImageSetBitmap? ImageBitmaps { get; set; }
@@ -25,7 +25,7 @@ public class AnimeDto
     [MaxLength(150)]
     public string? TitleJapanese { get; set; }
     public ICollection<TitleSynonymDto> TitleSynonyms { get; set; }
-    public ICollection<TitleEntryDto> Titles { get; set; }
+    public ICollection<TitleEntryDto>? Titles { get; set; }
     [MaxLength(100)]
     public string? Type { get; set; }
     [MaxLength(100)]

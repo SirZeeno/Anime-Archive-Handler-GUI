@@ -5,6 +5,14 @@ namespace Anime_Archive_Handler_GUI;
 
 public static class Extensions
 {
+    /// <summary>
+    /// Splits a string into chunks of a specified size.
+    /// </summary>
+    /// <param name="str">String to split</param>
+    /// <param name="chunkSize">Chunk size</param>
+    /// <returns>IEnumerable of chunks that the string was split into</returns>
+    /// <exception cref="ArgumentNullException">String is null</exception>
+    /// <exception cref="ArgumentException">Chunk size is less than or equal to zero</exception>
     public static IEnumerable<string> SplitIntoChunks(this string str, int chunkSize)
     {
         if (str == null)
